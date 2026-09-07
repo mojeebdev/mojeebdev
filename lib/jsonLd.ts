@@ -38,7 +38,7 @@ const personEntity = {
   jobTitle: ["AI Product Engineer", "System Architect", "Product Strategist"],
   description: "Mojeeb Titilayo is an AI Product Engineer, System Architect and Product Strategist building intentional products across AI, SaaS, developer tools and Web3.",
   nationality: { "@type": "Country", name: "Nigeria" },
-  homeLocation: { "@type": "Place", name: "Ota, Nigeria" },
+  homeLocation: { "@type": "Place", name: "Lagos, Nigeria" },
   worksFor: { "@id": ORGANIZATION_ID },
   knowsAbout: [
     "AI product engineering",

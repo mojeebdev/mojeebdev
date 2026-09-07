@@ -133,7 +133,7 @@ export default function EditorialPortfolio() {
           </div>
 
           <div className="identity-meta">
-            <span>Mojeeb Titilayo · Ota, Nigeria</span>
+            <span>Mojeeb Titilayo · Lagos, Nigeria</span>
             <span>Building since 2014 · Available for selected work</span>
           </div>
         </section>
