@@ -1,6 +1,6 @@
 # Design previews: Phase 2
 
-Three standalone directions. Each shows the hero and one case-study card, uses real Phase 1 content, and has working motion. Open any `.html` file directly in a browser. There's no build step; the only network calls are Google Fonts and, in C, the Monad RPC.
+Three standalone directions. Each shows the hero and one case-study card, uses real Phase 1 content, and has working motion. Open any `.html` file directly in a browser, or on the Vercel preview at `/design-previews/<file>.html`. There's no build step; the only network calls are Google Fonts and, in C, the Monad RPC.
 
 | File | Direction | Card |
 |---|---|---|
