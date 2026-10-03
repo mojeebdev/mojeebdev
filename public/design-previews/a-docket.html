@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A · Docket: Mojeeb Titilayo</title>
+<meta name="description" content="Design direction A: Docket. Every claim footnoted to its source.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F1EA; --paper-2:#EAE7DD; --ink:#16150F; --ink-2:#4A473D; --rule:#CFCAB9;
+  --mark:#C3361B; --mark-soft:rgba(195,54,27,.10);
+  --serif:"Source Serif 4", Georgia, serif; --mono:"IBM Plex Mono", ui-monospace, monospace;
+  --ease:cubic-bezier(.2,.7,0,1);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --paper:#14130F; --paper-2:#1C1B16; --ink:#EDE9DD; --ink-2:#A7A293; --rule:#3A372E; --mark:#F0613F; --mark-soft:rgba(240,97,63,.14); }
+}
+:root[data-theme="dark"]{ --paper:#14130F; --paper-2:#1C1B16; --ink:#EDE9DD; --ink-2:#A7A293; --rule:#3A372E; --mark:#F0613F; --mark-soft:rgba(240,97,63,.14); }
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-optical-sizing:auto;font-size:18px;line-height:1.55;text-rendering:optimizeLegibility}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--mark);outline-offset:3px;border-radius:2px}
+.skip{position:absolute;left:16px;top:-60px;background:var(--ink);color:var(--paper);padding:8px 12px;font:500 13px var(--mono);z-index:10}
+.skip:focus{top:12px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+
+/* ---------- document grid: main text + margin column (sidenotes) ---------- */
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px}
+@media (min-width:720px){.wrap{padding:0 40px}}
+.doc{display:grid;grid-template-columns:minmax(0,1fr);column-gap:56px}
+@media (min-width:1000px){.doc{grid-template-columns:minmax(0,7fr) minmax(0,3fr)}}
+.main{min-width:0}
+.margin{display:none}
+@media (min-width:1000px){.margin{display:block;border-left:1px solid var(--rule);padding-left:24px;position:relative}}
+
+/* ---------- masthead ---------- */
+.mast{display:flex;justify-content:space-between;gap:16px;align-items:baseline;border-bottom:1px solid var(--ink);padding:18px 0 12px;flex-wrap:wrap}
+.mast nav{display:flex;gap:20px}
+.mast a{text-decoration:none}
+.mast a:hover{color:var(--mark)}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(40px,8vw,96px) 0 40px}
+.kicker{color:var(--ink-2);margin-bottom:28px}
+h1{font-weight:400;font-variation-settings:"opsz" 60;font-size:clamp(2.35rem,6.2vw,5.4rem);line-height:1.02;letter-spacing:-.022em;max-width:15ch}
+h1 em{font-style:italic;color:var(--mark)}
+.lede{margin-top:32px;font-size:clamp(1.08rem,1.6vw,1.3rem);line-height:1.55;max-width:38em;color:var(--ink)}
+.lede .claim{background:linear-gradient(var(--mark-soft),var(--mark-soft)) no-repeat 0 100%/0% 100%;transition:background-size .5s var(--ease)}
+.lede .claim.on{background-size:100% 100%}
+sup.cite{font:500 .62em var(--mono);vertical-align:.55em;line-height:0}
+sup.cite button{all:unset;cursor:pointer;color:var(--mark);padding:2px 3px;border-radius:2px;display:inline-block;transform:translateY(6px);opacity:0;transition:transform .5s var(--ease),opacity .5s var(--ease)}
+.ready sup.cite button{transform:none;opacity:1}
+sup.cite button:focus-visible{outline:2px solid var(--mark);outline-offset:1px}
+sup.cite button[aria-expanded="true"]{background:var(--mark);color:var(--paper)}
+
+/* inline notes (mobile) */
+.inline-note{display:block;overflow:hidden;font:400 13px/1.5 var(--mono);color:var(--ink-2);border-left:2px solid var(--mark);padding:0 0 0 12px;margin:0;max-height:0;opacity:0;transition:opacity .3s var(--ease)}
+.inline-note.open{max-height:none;opacity:1;margin:10px 0 14px}
+@media (min-width:1000px){.inline-note{display:none!important}}
+
+/* sidenotes (desktop) */
+.note{position:relative;font:400 13px/1.5 var(--mono);color:var(--ink-2);padding:10px 0 14px;border-bottom:1px dotted var(--rule);opacity:0;transform:translateX(12px);transition:opacity .6s var(--ease),transform .6s var(--ease),color .25s}
+.ready .note{opacity:1;transform:none}
+.note b{display:block;font-weight:500;color:var(--ink);margin-bottom:2px}
+.note .n{color:var(--mark);font-weight:500;margin-right:6px}
+.note::before{content:"";position:absolute;right:100%;top:19px;width:24px;height:1px;background:var(--mark);transform:scaleX(0);transform-origin:right;transition:transform .35s var(--ease)}
+.note.lit{color:var(--ink)}
+.note.lit::before{transform:scaleX(1)}
+.note a{color:var(--mark);text-underline-offset:2px}
+
+.cta{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center;margin-top:40px}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--paper);text-decoration:none;font:500 14px var(--mono);letter-spacing:.02em;padding:14px 18px;border-radius:2px;transition:transform .2s var(--ease)}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn span{transition:transform .2s var(--ease)}
+.btn:hover span{transform:translateX(3px)}
+.link{font:500 14px var(--mono);text-underline-offset:4px;text-decoration-thickness:1px}
+.link:hover{color:var(--mark)}
+
+/* ---------- ledger (proof strip) ---------- */
+.ledger{margin-top:64px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (min-width:720px){.ledger{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.ledger div{padding:16px 14px 18px 0;border-right:1px solid var(--rule)}
+.ledger div:nth-child(2n){padding-left:14px}
+@media (min-width:720px){.ledger div{padding-left:14px}.ledger div:first-child{padding-left:0}}
+.ledger div:last-child{border-right:0}
+@media (max-width:719px){.ledger div:nth-child(2){border-right:0}.ledger div:nth-child(-n+2){border-bottom:1px solid var(--rule)}}
+.ledger strong{display:block;font-weight:400;font-variation-settings:"opsz" 48;font-size:clamp(2rem,4vw,3rem);line-height:1;font-variant-numeric:tabular-nums lining-nums}
+.ledger span{display:block;margin-top:8px;font:400 12px/1.4 var(--mono);color:var(--ink-2)}
+.ledger small{display:block;margin-top:4px;font:400 11px var(--mono);color:var(--mark)}
+
+/* ---------- case file ---------- */
+.case{padding:96px 0 120px}
+.case-head{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:3px double var(--ink);padding-top:14px;margin-bottom:32px}
+.case h2{font-weight:400;font-variation-settings:"opsz" 48;font-size:clamp(2rem,4.4vw,3.4rem);line-height:1.05;letter-spacing:-.015em}
+.case h2 i{color:var(--ink-2)}
+.facts{display:grid;grid-template-columns:1fr;gap:0;margin:28px 0 36px;border-top:1px solid var(--rule)}
+@media (min-width:720px){.facts{grid-template-columns:repeat(2,1fr);column-gap:32px}}
+.facts div{border-bottom:1px solid var(--rule);padding:14px 0}
+.facts dt{margin-bottom:6px;color:var(--mark)}
+.facts dd{font-size:16px;line-height:1.5}
+.stack{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.stack li{list-style:none;font:400 12px var(--mono);border:1px solid var(--rule);padding:3px 7px;border-radius:2px}
+.stack li.layer{border-color:var(--mark);color:var(--mark)}
+
+/* demo */
+.demo{border:1px solid var(--ink);background:var(--paper-2);border-radius:3px;overflow:hidden}
+.demo-bar{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid var(--ink);font:500 12px var(--mono)}
+.demo-bar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--mark);margin-right:8px;vertical-align:1px}
+.demo-body{display:grid;grid-template-columns:1fr}
+@media (min-width:860px){.demo-body{grid-template-columns:minmax(0,5fr) minmax(0,8fr)}}
+.files{border-bottom:1px solid var(--rule);padding:14px}
+@media (min-width:860px){.files{border-bottom:0;border-right:1px solid var(--rule)}}
+.files p{margin-bottom:10px;color:var(--ink-2)}
+.files ul{list-style:none;display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+@media (min-width:860px){.files ul{flex-direction:column;overflow:visible}}
+.files button{all:unset;box-sizing:border-box;scroll-snap-align:start;cursor:pointer;display:block;font:400 12.5px/1.4 var(--mono);padding:10px 12px;border:1px solid var(--rule);border-radius:2px;white-space:nowrap;min-height:44px;transition:background .2s,border-color .2s,transform .15s var(--ease)}
+@media (min-width:860px){.files button{white-space:normal;word-break:break-all;width:100%}}
+.files button:hover{border-color:var(--ink)}
+.files button:active{transform:scale(.98)}
+.files button[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.files button:focus-visible{outline:2px solid var(--mark);outline-offset:2px}
+.out{position:relative;min-height:420px;padding:16px;font:400 12.5px/1.6 var(--mono);white-space:pre-wrap;word-break:break-word;overflow:auto;max-height:560px}
+.out .h{color:var(--ink);font-weight:500}
+.out .c{color:var(--mark)}
+.out .dim{color:var(--ink-2)}
+.out .ln{display:block;opacity:0;transform:translateY(4px);transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.out .ln.in{opacity:1;transform:none}
+.demo-foot{border-top:1px solid var(--ink);padding:10px 14px;font:400 11.5px/1.5 var(--mono);color:var(--ink-2)}
+.demo-foot a{color:var(--mark)}
+.links{display:flex;gap:24px;flex-wrap:wrap;margin-top:28px}
+
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+footer{border-top:1px solid var(--ink);padding:24px 0 48px;color:var(--ink-2)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .reveal,.note,sup.cite button,.out .ln{opacity:1!important;transform:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="wrap">
+  <header class="mast">
+    <span class="mono">Mojeeb Titilayo · Product engineer · Lagos</span>
+    <nav class="mono" aria-label="Primary"><a href="#case">Case files</a><a href="mailto:hello@mojeeb.xyz">Contact</a></nav>
+  </header>
+
+  <main id="main">
+  <section class="hero doc" aria-labelledby="h">
+    <div class="main">
+      <p class="kicker mono">Docket · Oct 2026 · All claims sourced</p>
+      <h1 id="h">I design and ship AI products and onchain systems for founders and <em>protocol&nbsp;teams.</em></h1>
+      <p class="lede" id="lede">
+        Everything here can be checked:
+        <span class="claim" data-n="1">a multi-provider AI auditor with a paid MCP endpoint</span><sup class="cite"><button type="button" data-n="1" aria-expanded="false" aria-controls="in-1" aria-label="Source 1">1</button></sup><span class="inline-note" id="in-1" role="note">Revel · BlindspotLab-Limited/revel · stacks.md · OKX ASP agent #4750</span>,
+        <span class="claim" data-n="2">an offline code-analysis CLI published on npm</span><sup class="cite"><button type="button" data-n="2" aria-expanded="false" aria-controls="in-2" aria-label="Source 2">2</button></sup><span class="inline-note" id="in-2" role="note">StackBrief · @blindspotlab/stackbrief v1.1.2 · github.com/mojeebdev/stackbrief</span>,
+        <span class="claim" data-n="3">two ERC-721 contracts on Monad Mainnet</span><sup class="cite"><button type="button" data-n="3" aria-expanded="false" aria-controls="in-3" aria-label="Source 3">3</button></sup><span class="inline-note" id="in-3" role="note">Admon · 0xb6ae…3a63 (V1, verified) · 0xCc3f…73b0 (V2)</span>,
+        and <span class="claim" data-n="4">a discovery platform maintained across 573 commits</span><sup class="cite"><button type="button" data-n="4" aria-expanded="false" aria-controls="in-4" aria-label="Source 4">4</button></sup><span class="inline-note" id="in-4" role="note">Arcapush · mojeebdev/arcapush · 2026-02-16 → 2026-10-01</span>.
+        One operator from scope to live URL.
+      </p>
+      <div class="cta">
+        <a class="btn" href="mailto:hello@mojeeb.xyz?subject=Project%20enquiry">Start a project <span aria-hidden="true">→</span></a>
+        <a class="link" href="#case">Read the case files ↓</a>
+      </div>
+    </div>
+    <aside class="margin" aria-label="Sources">
+      <div style="height:clamp(140px,17vw,250px)"></div>
+      <p class="note" data-n="1"><b><span class="n">1</span>Revel</b>Groq → OpenRouter → Gemini cascade, MCP at <code>/api/mcp</code>, x402 settlement on X Layer. <a href="https://github.com/BlindspotLab-Limited/revel">repo</a></p>
+      <p class="note" data-n="2"><b><span class="n">2</span>StackBrief</b>7-package TypeScript monorepo, schema v2, no network calls. <a href="https://www.npmjs.com/package/@blindspotlab/stackbrief">npm</a></p>
+      <p class="note" data-n="3"><b><span class="n">3</span>Admon</b>Chain 143. EIP-712 server-authorised mints. <a href="https://monadscan.com/address/0xb6aedBF17a11928A63773F88a9CfD3E252F43a63">Monadscan</a></p>
+      <p class="note" data-n="4"><b><span class="n">4</span>Arcapush</b>35 Prisma models, first-party event loop, CLI on npm. Private repo.</p>
+    </aside>
+  </section>
+
+  <section class="ledger reveal" aria-label="Verified numbers">
+    <div><strong>31</strong><span>documented builds</span><small>blindspotlab/data/projects.ts</small></div>
+    <div><strong>3</strong><span>npm packages under @blindspotlab</span><small>data/developer-tools.ts</small></div>
+    <div><strong>2</strong><span>mainnet contracts, Monad</span><small>admon/README.md</small></div>
+    <div><strong>4</strong><span>chains integrated</span><small>Monad · Base · X Layer · Polygon</small></div>
+  </section>
+
+  <section class="case" id="case" aria-labelledby="c2">
+    <div class="case-head reveal"><span class="mono">Case file 02 / 04</span><span class="mono">Developer tooling · Open source</span></div>
+    <div class="doc">
+      <div class="main">
+        <h2 id="c2" class="reveal">StackBrief <i>— the architectural brief before a code change.</i></h2>
+        <dl class="facts reveal">
+          <div><dt class="mono">Problem</dt><dd>Before an edit, a developer or coding agent has to rebuild the system in their head. READMEs drift, and the architecture is spread across routes, services and manifests.</dd></div>
+          <div><dt class="mono">Constraints</dt><dd>No account, API key or network. Must run on Node 16.7+. It's static analysis, so it has to say what it can't prove.</dd></div>
+          <div><dt class="mono">Built</dt><dd>A scanner that writes a deterministic <code>stackbrief.json</code>, a typed knowledge layer, and a brief renderer that cites file and line for every claim.</dd></div>
+          <div><dt class="mono">Stack</dt><dd><ul class="stack"><li>TypeScript</li><li>Node.js CLI</li><li>7 packages</li><li>Schema v2</li><li class="layer">Agent layer: portable pre-change skill</li></ul></dd></div>
+        </dl>
+      </div>
+      <aside class="margin" aria-hidden="true"></aside>
+    </div>
+
+    <div class="demo reveal" role="region" aria-label="StackBrief live output explorer">
+      <div class="demo-bar"><span><span class="dot" aria-hidden="true"></span>stackbrief brief --file</span><span>mojeebdev/outship @ 71f4335</span></div>
+      <div class="demo-body">
+        <div class="files">
+          <p class="mono">Pick a file to brief</p>
+          <ul id="files"></ul>
+        </div>
+        <div class="out" id="out" aria-live="polite" tabindex="0"></div>
+      </div>
+      <p class="demo-foot">This isn't a mockup. It's the real output of <code>@blindspotlab/stackbrief@1.1.2</code> run on <a href="https://github.com/mojeebdev/outship">mojeebdev/outship</a> on 3 Oct 2026. Citations in <span style="color:var(--mark)">red</span> are file:line evidence.</p>
+    </div>
+    <div class="links reveal">
+      <a class="link" href="https://stackbrief.peerfix.dev">Live site ↗</a>
+      <a class="link" href="https://github.com/mojeebdev/stackbrief">Repository ↗</a>
+      <a class="link" href="https://www.npmjs.com/package/@blindspotlab/stackbrief">npm ↗</a>
+    </div>
+  </section>
+  </main>
+
+  <footer class="mono">Direction A, Docket · preview build · hello@mojeeb.xyz</footer>
+</div>
+
+<script>
+const DATA = {"repo":"mojeebdev/outship","commit":"71f4335","tool":"@blindspotlab/stackbrief@1.1.2","generated":"2026-10-03","briefs":{"src/app/api/github/webhooks/route.ts":"StackBrief: src/app/api/github/webhooks/route.ts\nStarting point\n- src/app/api/github/webhooks/route.ts (src/app/api/github/webhooks/route.ts)\n\nRelevant architecture\nRoutes:\n  - POST /api/github/webhooks (src/app/api/github/webhooks/route.ts:87)\nServices:\n  - outship HTTP service (src/app/api/github/webhooks/route.ts:87)\nDatabases:\n  - Prisma (package.json)\n\nLikely impact\nTraced local files:\n  - src/lib/db.ts (src/lib/db.ts)\n  - src/lib/github-webhook.ts (src/lib/github-webhook.ts)\n  - src/lib/score.ts (src/lib/score.ts)\n\nObserved constraints\n- This change is on an exposed route: POST /api/github/webhooks. (src/app/api/github/webhooks/route.ts:87)\n- The traced path belongs to service boundary: outship HTTP service. (src/app/api/github/webhooks/route.ts:87)\n- The traced path includes database integration: Prisma. (package.json)\n\nUnknowns\n- No directly connected test file was detected; this is not proof of missing coverage. (src/app/api/github/webhooks/route.ts)\n- This is a static brief; verify runtime configuration, feature flags, and production traffic separately. (src/app/api/github/webhooks/route.ts)\n\nEvidence\n- package.json\n- src/app/api/github/webhooks/route.ts\n- src/app/api/github/webhooks/route.ts:87\n\n","src/app/api/ships/[shipId]/attest/route.ts":"StackBrief: src/app/api/ships/[shipId]/attest/route.ts\nStarting point\n- src/app/api/ships/[shipId]/attest/route.ts (src/app/api/ships/[shipId]/attest/route.ts)\n\nRelevant architecture\nRoutes:\n  - POST /api/ships/[shipId]/attest (src/app/api/ships/[shipId]/attest/route.ts:7)\nServices:\n  - outship HTTP service (src/app/api/ships/[shipId]/attest/route.ts:7)\nDatabases:\n  - Prisma (package.json)\n\nLikely impact\nTraced local files:\n  - src/lib/auth/current-builder.ts (src/lib/auth/current-builder.ts)\n  - src/lib/auth/session.ts (src/lib/auth/session.ts)\n  - src/lib/db.ts (src/lib/db.ts)\n\nObserved constraints\n- This change is on an exposed route: POST /api/ships/[shipId]/attest. (src/app/api/ships/[shipId]/attest/route.ts:7)\n- The traced path belongs to service boundary: outship HTTP service. (src/app/api/ships/[shipId]/attest/route.ts:7)\n- The traced path includes database integration: Prisma. (package.json)\n\nUnknowns\n- No directly connected test file was detected; this is not proof of missing coverage. (src/app/api/ships/[shipId]/attest/route.ts)\n- This is a static brief; verify runtime configuration, feature flags, and production traffic separately. (src/app/api/ships/[shipId]/attest/route.ts)\n\nEvidence\n- package.json\n- src/app/api/ships/[shipId]/attest/route.ts\n- src/app/api/ships/[shipId]/attest/route.ts:7\n\n","src/app/api/auth/github/callback/route.ts":"StackBrief: src/app/api/auth/github/callback/route.ts\nStarting point\n- src/app/api/auth/github/callback/route.ts (src/app/api/auth/github/callback/route.ts)\n\nRelevant architecture\nRoutes:\n  - GET /api/auth/github/callback (src/app/api/auth/github/callback/route.ts:8)\nServices:\n  - outship HTTP service (src/app/api/auth/github/callback/route.ts:8)\nDatabases:\n  - Prisma (package.json)\nExternal APIs:\n  - Github via src/app/api/auth/github/callback/route.ts (src/app/api/auth/github/callback/route.ts:27)\n\nLikely impact\nTraced local files:\n  - src/lib/auth/session.ts (src/lib/auth/session.ts)\n  - src/lib/db.ts (src/lib/db.ts)\n\nObserved constraints\n- This change is on an exposed route: GET /api/auth/github/callback. (src/app/api/auth/github/callback/route.ts:8)\n- The traced path belongs to service boundary: outship HTTP service. (src/app/api/auth/github/callback/route.ts:8)\n- The traced path includes database integration: Prisma. (package.json)\n- The traced path includes external API integration: Github. (src/app/api/auth/github/callback/route.ts:27)\n\nUnknowns\n- No directly connected test file was detected; this is not proof of missing coverage. (src/app/api/auth/github/callback/route.ts)\n- This is a static brief; verify runtime configuration, feature flags, and production traffic separately. (src/app/api/auth/github/callback/route.ts)\n\nEvidence\n- package.json\n- src/app/api/auth/github/callback/route.ts\n- src/app/api/auth/github/callback/route.ts:27\n- src/app/api/auth/github/callback/route.ts:48\n- src/app/api/auth/github/callback/route.ts:8\n\n","src/app/api/subscribe/route.ts":"StackBrief: src/app/api/subscribe/route.ts\nStarting point\n- src/app/api/subscribe/route.ts (src/app/api/subscribe/route.ts)\n\nRelevant architecture\nRoutes:\n  - POST /api/subscribe (src/app/api/subscribe/route.ts:6)\nServices:\n  - outship HTTP service (src/app/api/subscribe/route.ts:6)\nDatabases:\n  - Prisma (package.json)\n\nLikely impact\nTraced local files:\n  - src/lib/db.ts (src/lib/db.ts)\n\nObserved constraints\n- This change is on an exposed route: POST /api/subscribe. (src/app/api/subscribe/route.ts:6)\n- The traced path belongs to service boundary: outship HTTP service. (src/app/api/subscribe/route.ts:6)\n- The traced path includes database integration: Prisma. (package.json)\n\nUnknowns\n- No directly connected test file was detected; this is not proof of missing coverage. (src/app/api/subscribe/route.ts)\n- This is a static brief; verify runtime configuration, feature flags, and production traffic separately. (src/app/api/subscribe/route.ts)\n\nEvidence\n- package.json\n- src/app/api/subscribe/route.ts\n- src/app/api/subscribe/route.ts:6\n\n","src/app/api/leaderboard/route.ts":"StackBrief: src/app/api/leaderboard/route.ts\nStarting point\n- src/app/api/leaderboard/route.ts (src/app/api/leaderboard/route.ts)\n\nRelevant architecture\nRoutes:\n  - GET /api/leaderboard (src/app/api/leaderboard/route.ts:4)\nServices:\n  - outship HTTP service (src/app/api/leaderboard/route.ts:4)\nDatabases:\n  - Prisma (package.json)\n\nLikely impact\nTraced local files:\n  - src/lib/db.ts (src/lib/db.ts)\n\nObserved constraints\n- This change is on an exposed route: GET /api/leaderboard. (src/app/api/leaderboard/route.ts:4)\n- The traced path belongs to service boundary: outship HTTP service. (src/app/api/leaderboard/route.ts:4)\n- The traced path includes database integration: Prisma. (package.json)\n\nUnknowns\n- No directly connected test file was detected; this is not proof of missing coverage. (src/app/api/leaderboard/route.ts)\n- This is a static brief; verify runtime configuration, feature flags, and production traffic separately. (src/app/api/leaderboard/route.ts)\n\nEvidence\n- package.json\n- src/app/api/leaderboard/route.ts\n- src/app/api/leaderboard/route.ts:4\n\n"}};
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const wide = matchMedia("(min-width:1000px)");
+
+  // Hero: citations resolve, then highlight claims in sequence
+  requestAnimationFrame(() => document.body.classList.add("ready"));
+  const claims = [...document.querySelectorAll(".claim")];
+  const notes = [...document.querySelectorAll(".note")];
+  const light = (n, on) => {
+    claims.forEach(c => c.classList.toggle("on", on && c.dataset.n === n));
+    notes.forEach(c => c.classList.toggle("lit", on && c.dataset.n === n));
+  };
+  if (!reduce) {
+    let i = 0;
+    const seq = setInterval(() => { light(String(++i), true); if (i > 4) { clearInterval(seq); light("", false); } }, 650);
+  }
+  document.querySelectorAll("sup.cite button").forEach(b => {
+    const n = b.dataset.n;
+    b.addEventListener("mouseenter", () => wide.matches && light(n, true));
+    b.addEventListener("mouseleave", () => wide.matches && light(n, false));
+    b.addEventListener("focus", () => light(n, true));
+    b.addEventListener("blur", () => light(n, false));
+    b.addEventListener("click", () => {
+      const open = b.getAttribute("aria-expanded") !== "true";
+      b.setAttribute("aria-expanded", open);
+      document.getElementById("in-" + n).classList.toggle("open", open);
+      light(n, open);
+    });
+  });
+
+  // Scroll reveals
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -10% 0px" });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  // StackBrief explorer: real CLI output, rendered line by line
+  const files = Object.keys(DATA.briefs);
+  const list = document.getElementById("files"), out = document.getElementById("out");
+  const esc = s => s.replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+  const fmt = line => {
+    let h = esc(line);
+    if (/^(StackBrief:|Starting point|Relevant architecture|Likely impact|Observed constraints|Unknowns|Evidence)/.test(line)) return `<span class="h">${h}</span>`;
+    h = h.replace(/\(([^()]+?(?::\d+)?)\)$/, (m, p) => `<span class="${/:\d+$/.test(p) ? "c" : "dim"}">(${p})</span>`);
+    return h;
+  };
+  let timer;
+  const show = f => {
+    clearInterval(timer);
+    list.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.f === f));
+    const lines = DATA.briefs[f].trimEnd().split("\n");
+    out.innerHTML = `<span class="ln in dim">$ npx @blindspotlab/stackbrief brief --file ${esc(f)}</span>` + lines.map(l => `<span class="ln">${fmt(l) || "&nbsp;"}</span>`).join("");
+    const spans = [...out.querySelectorAll(".ln:not(.in)")];
+    if (reduce) { spans.forEach(s => s.classList.add("in")); return; }
+    let i = 0;
+    timer = setInterval(() => { if (i >= spans.length) return clearInterval(timer); spans[i++].classList.add("in"); }, 28);
+  };
+  files.forEach((f, i) => {
+    const li = document.createElement("li"), b = document.createElement("button");
+    b.type = "button"; b.dataset.f = f; b.textContent = f.replace("src/app/api/", "api/"); b.title = f;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => show(f));
+    li.append(b); list.append(li);
+  });
+  show(files[0]);
+})();
+</script>
+</body>
+</html>

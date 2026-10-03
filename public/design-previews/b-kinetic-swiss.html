@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B · Kinetic Swiss: Mojeeb Titilayo</title>
+<meta name="description" content="Design direction B: Kinetic Swiss. One variable family, a strict module grid, type that moves with the scroll.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAFAF7; --fg:#0A0A0A; --mid:#6B6B66; --line:rgba(10,10,10,.12); --blue:#1E2BFF; --on-blue:#FFFFFF;
+  --f:"Archivo", "Arial Narrow", Arial, sans-serif; --ease:cubic-bezier(.65,0,.2,1);
+  --g:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --bg:#0B0B0D; --fg:#F2F2EE; --mid:#8D8D88; --line:rgba(242,242,238,.12); --blue:#4F5BFF; }
+}
+:root[data-theme="dark"]{ --bg:#0B0B0D; --fg:#F2F2EE; --mid:#8D8D88; --line:rgba(242,242,238,.12); --blue:#4F5BFF; }
+@media (min-width:720px){:root{--g:24px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f);font-variation-settings:"wdth" 100;font-size:17px;line-height:1.5;overflow-x:hidden}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.skip{position:absolute;left:16px;top:-60px;background:var(--blue);color:var(--on-blue);padding:8px 12px;z-index:20;font-weight:600}
+.skip:focus{top:12px}
+.lab{font-variation-settings:"wdth" 62;font-weight:600;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+
+/* 8-col module grid, visible hairlines */
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:var(--g);padding:0 16px;max-width:1440px;margin:0 auto;position:relative}
+@media (min-width:900px){.grid{grid-template-columns:repeat(8,minmax(0,1fr));padding:0 40px}}
+.cols{position:fixed;inset:0;pointer-events:none;z-index:0;display:grid;grid-template-columns:repeat(4,1fr);column-gap:var(--g);padding:0 16px;max-width:1440px;margin:0 auto}
+@media (min-width:900px){.cols{grid-template-columns:repeat(8,1fr);padding:0 40px}}
+.cols i{border-left:1px solid var(--line);border-right:1px solid var(--line)}
+main,header,footer{position:relative;z-index:1}
+
+header.grid{padding-top:16px;padding-bottom:16px;align-items:baseline}
+header .who{grid-column:1/3}
+header .role{display:none}
+@media (min-width:900px){header .role{display:block;grid-column:3/6}}
+header .mail{grid-column:3/5;justify-self:end;text-decoration:none}
+@media (min-width:900px){header .mail{grid-column:6/9}}
+header .mail:hover{color:var(--blue)}
+
+/* hero */
+.hero{min-height:calc(100svh - 54px);padding-top:clamp(24px,6vh,72px);padding-bottom:40px;align-content:space-between;row-gap:48px;overflow:hidden}
+.poster{grid-column:1/-1}
+.poster h1{font-weight:800;line-height:.86;letter-spacing:-.01em;text-transform:uppercase;font-size:clamp(2.7rem,10.2vw,10.6rem)}
+.poster .ln{display:block;white-space:nowrap;will-change:transform}
+.poster .w1{font-variation-settings:"wdth" 112}
+.poster .w2{font-variation-settings:"wdth" 62;color:var(--blue)}
+.poster .w3{font-variation-settings:"wdth" 100;font-weight:300}
+.poster .w4{font-variation-settings:"wdth" 118}
+.shutter{position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);column-gap:var(--g);padding:0 16px;pointer-events:none}
+@media (min-width:900px){.shutter{grid-template-columns:repeat(8,1fr);padding:0 40px}}
+.shutter i{background:var(--blue);transform-origin:top;transform:scaleY(1);transition:transform .9s var(--ease)}
+.open .shutter i{transform:scaleY(0)}
+.intro{grid-column:1/-1}
+@media (min-width:900px){.intro{grid-column:5/9}}
+.intro p{font-size:clamp(1.1rem,1.7vw,1.45rem);line-height:1.35;font-variation-settings:"wdth" 92}
+.intro .ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.btn{display:inline-flex;align-items:center;gap:12px;min-height:52px;padding:0 22px;background:var(--blue);color:var(--on-blue);text-decoration:none;font-weight:700;font-variation-settings:"wdth" 80;font-size:16px;letter-spacing:.02em;text-transform:uppercase;position:relative;overflow:hidden}
+.btn::after{content:"";position:absolute;inset:0;background:var(--fg);transform:translateY(101%);transition:transform .35s var(--ease)}
+.btn:hover::after,.btn:focus-visible::after{transform:none}
+.btn span{position:relative;z-index:1}
+.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 2px var(--fg)}
+.btn.ghost::after{background:var(--fg)}
+.btn.ghost:hover span,.btn.ghost:focus-visible span{color:var(--bg)}
+.proof{grid-column:1/-1;display:grid;grid-template-columns:repeat(2,1fr);column-gap:var(--g);row-gap:20px;border-top:2px solid var(--fg);padding-top:14px}
+@media (min-width:900px){.proof{grid-template-columns:repeat(4,1fr)}}
+.proof b{display:block;font-weight:800;font-variation-settings:"wdth" 62;font-size:clamp(2.6rem,5vw,4.4rem);line-height:.9}
+.proof span{display:block;font-size:14px;color:var(--mid);margin-top:6px;max-width:22ch}
+
+/* case */
+section.case{padding-top:120px;padding-bottom:140px;row-gap:28px}
+.case-n{grid-column:1/-1;display:flex;justify-content:space-between;border-top:2px solid var(--fg);padding-top:12px}
+.case h2{grid-column:1/-1;font-weight:800;text-transform:uppercase;line-height:.88;font-size:clamp(3rem,9vw,8rem);font-variation-settings:"wdth" 125}
+.case h2 small{display:block;font-size:.26em;line-height:1.15;font-weight:500;text-transform:none;font-variation-settings:"wdth" 90;color:var(--mid);margin-top:14px;max-width:30ch}
+.spec{grid-column:1/-1;display:grid;grid-template-columns:1fr;border-top:1px solid var(--fg)}
+@media (min-width:900px){.spec{grid-column:1/5}}
+.spec div{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.spec dd{font-size:15.5px;line-height:1.45}
+.layers{grid-column:1/-1;align-self:start}
+@media (min-width:900px){.layers{grid-column:5/9}}
+.layers h3{margin-bottom:10px}
+.bar{display:flex;height:56px;gap:2px;margin-bottom:6px}
+.bar button{all:unset;box-sizing:border-box;cursor:pointer;flex:1;display:flex;align-items:flex-end;padding:8px;font-variation-settings:"wdth" 62;font-weight:700;font-size:12px;letter-spacing:.05em;text-transform:uppercase;background:var(--line);position:relative;min-width:0;overflow:hidden;white-space:nowrap}
+.bar button[aria-pressed="true"]{background:var(--blue);color:var(--on-blue)}
+.bar button::after{content:"";position:absolute;left:0;right:0;bottom:-6px;height:3px;background:var(--fg);transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+.bar button[aria-pressed="true"]::after{transform:scaleX(1)}
+.bar button:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+.layer-detail{margin-top:12px;min-height:84px;font-size:15px;line-height:1.45;border-left:3px solid var(--blue);padding-left:12px}
+
+/* failover simulator */
+.sim{grid-column:1/-1;margin-top:40px;border:2px solid var(--fg)}
+.sim-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 14px;border-bottom:2px solid var(--fg)}
+.sim-ctl{display:flex;flex-wrap:wrap;gap:8px;padding:14px;border-bottom:1px solid var(--line)}
+.sim-ctl button{all:unset;box-sizing:border-box;cursor:pointer;min-height:44px;padding:0 14px;display:inline-flex;align-items:center;font-weight:700;font-variation-settings:"wdth" 75;font-size:14px;text-transform:uppercase;letter-spacing:.03em;box-shadow:inset 0 0 0 2px var(--fg);transition:background .15s,color .15s}
+.sim-ctl button:hover{background:var(--fg);color:var(--bg)}
+.sim-ctl button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.sim-ctl button:disabled{opacity:.4;cursor:default;background:none;color:var(--fg)}
+.track{position:relative;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:28px 14px 22px;overflow:hidden}
+.node{position:relative;border:2px solid var(--fg);padding:10px 8px 12px;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;}
+.node .t{font-weight:800;font-variation-settings:"wdth" 62;font-size:clamp(15px,2vw,22px);text-transform:uppercase;line-height:1}
+.node .m{font-size:11.5px;line-height:1.3;color:var(--mid);word-break:break-word}
+.node.ok{background:var(--blue);color:var(--on-blue);border-color:var(--blue)}
+.node.ok .m{color:var(--on-blue)}
+.node.fail{border-style:dashed;opacity:.55}
+.node.fail .t{text-decoration:line-through}
+.node .st{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-variation-settings:"wdth" 62;min-height:1.2em}
+.pulse{position:absolute;top:14px;left:14px;width:12px;height:12px;background:var(--blue);transform:translateX(0);transition:transform .55s var(--ease);opacity:0}
+.running .pulse{opacity:1}
+.log{padding:12px 14px;border-top:1px solid var(--line);font-size:13.5px;line-height:1.5;min-height:66px;font-variation-settings:"wdth" 85}
+.sim-foot{padding:10px 14px;border-top:2px solid var(--fg);font-size:13px;color:var(--mid)}
+@media (max-width:640px){.track{grid-template-columns:1fr;gap:6px}.node{min-height:0;flex-direction:row;align-items:center;gap:10px}.node .m{display:none}.pulse{display:none}}
+.links{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+
+.rv{opacity:0;transform:translateY(30px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+footer.grid{padding-top:20px;padding-bottom:40px;border-top:2px solid var(--fg)}
+footer p{grid-column:1/-1}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  .shutter{display:none}
+  .rv{opacity:1;transform:none}
+  .poster .ln{transform:none!important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="cols" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+
+<header class="grid">
+  <span class="who lab">Mojeeb Titilayo</span>
+  <span class="role lab">Product engineer · BlindspotLab · Lagos</span>
+  <a class="mail lab" href="mailto:hello@mojeeb.xyz">hello@mojeeb.xyz</a>
+</header>
+
+<main id="main">
+<section class="hero grid" id="hero" aria-labelledby="h">
+  <div class="shutter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="poster">
+    <h1 id="h" aria-label="AI products and onchain systems, shipped.">
+      <span class="ln w1" data-k="-1" aria-hidden="true">AI products</span>
+      <span class="ln w2" data-k="1" aria-hidden="true">&amp; onchain</span>
+      <span class="ln w3" data-k="-.6" aria-hidden="true">systems,</span>
+      <span class="ln w4" data-k=".8" aria-hidden="true">shipped.</span>
+    </h1>
+  </div>
+  <div class="intro">
+    <p>I design and build AI products, agent infrastructure and smart-contract systems for founders and protocol teams, from scope and prompts to contracts and a live URL.</p>
+    <div class="ctas">
+      <a class="btn" href="mailto:hello@mojeeb.xyz?subject=Project%20enquiry"><span>Start a project</span><span aria-hidden="true">→</span></a>
+      <a class="btn ghost" href="#case"><span>See the work</span></a>
+    </div>
+  </div>
+  <div class="proof" aria-label="Verified numbers">
+    <div><b>31</b><span>documented builds in the public archive</span></div>
+    <div><b>3</b><span>npm packages published under @blindspotlab</span></div>
+    <div><b>2</b><span>contracts live on Monad Mainnet</span></div>
+    <div><b>573</b><span>commits on Arcapush since Feb 2026</span></div>
+  </div>
+</section>
+
+<section class="case grid" id="case" aria-labelledby="c1">
+  <div class="case-n rv"><span class="lab">01 / 04 · AI product · Agent infra</span><span class="lab">2026</span></div>
+  <h2 id="c1" class="rv">Revel<small>An AI product strategist. Paste a URL; get a scored Reveal Index, a Blueprint and an Action Queue.</small></h2>
+
+  <dl class="spec rv">
+    <div><dt class="lab">Problem</dt><dd>Builders can't see why a product page isn't converting. Generic AI reviews say "improve your messaging" without quoting the page.</dd></div>
+    <div><dt class="lab">Constraints</dt><dd>Free-tier model quotas, long-running audits (300 s max), and agent-marketplace callers that pay per call.</dd></div>
+    <div><dt class="lab">Built</dt><dd>A custom tool-use agent loop that fetches the site, has site-grounding prompts that quote real copy, and Zod quality gates on every report. It also exposes an MCP server, x402-paid tools and a Partner API.</dd></div>
+    <div><dt class="lab">Outcome</dt><dd>Live at tryrevel.xyz. Listed on the OKX AI marketplace as agent #4750. <span style="color:var(--blue)">TODO(mojeeb): usage figure</span></dd></div>
+  </dl>
+
+  <div class="layers rv">
+    <h3 class="lab">Stack, by layer</h3>
+    <div class="bar" role="group" aria-label="Stack layers">
+      <button type="button" aria-pressed="true" data-l="prompt">Prompt</button>
+      <button type="button" aria-pressed="false" data-l="model">Model</button>
+      <button type="button" aria-pressed="false" data-l="agent">Agent</button>
+      <button type="button" aria-pressed="false" data-l="pay">Payments</button>
+      <button type="button" aria-pressed="false" data-l="infra">Infra</button>
+    </div>
+    <p class="layer-detail" id="ld" aria-live="polite"></p>
+  </div>
+
+  <div class="sim rv" id="sim" role="region" aria-label="Revel provider failover simulation">
+    <div class="sim-top"><span class="lab">Failover cascade</span><span class="lab">services/agentic-analysis.ts</span></div>
+    <div class="sim-ctl">
+      <button type="button" data-s="ok">Run audit</button>
+      <button type="button" data-s="quota">Groq quota exhausted</button>
+      <button type="button" data-s="incomplete">Incomplete report</button>
+    </div>
+    <div class="track" id="track">
+      <span class="pulse" id="pulse" aria-hidden="true"></span>
+      <div class="node" data-i="0"><span class="t">Groq</span><span class="m">llama-3.3-70b-versatile → 3.1-8b-instant</span><span class="st"></span></div>
+      <div class="node" data-i="1"><span class="t">OpenRouter</span><span class="m">env-pinned, grounded JSON</span><span class="st"></span></div>
+      <div class="node" data-i="2"><span class="t">Gemini</span><span class="m">2.5-flash → flash-lite</span><span class="st"></span></div>
+      <div class="node" data-i="3"><span class="t">Zod gate</span><span class="m">schema + site-grounding check</span><span class="st"></span></div>
+      <div class="node" data-i="4"><span class="t">Report</span><span class="m">Reveal Index · Blueprint · Action Queue</span><span class="st"></span></div>
+    </div>
+    <p class="log" id="log" aria-live="polite">Pick a scenario to see how a request moves through the cascade.</p>
+    <p class="sim-foot">This replays the routing rules in Revel's source (Groq → OpenRouter → Gemini on recoverable failure). It doesn't make a live model call.</p>
+  </div>
+
+  <div class="links rv">
+    <a class="btn" href="https://tryrevel.xyz"><span>Live product ↗</span></a>
+    <a class="btn ghost" href="https://github.com/BlindspotLab-Limited/revel"><span>Repository ↗</span></a>
+  </div>
+</section>
+</main>
+
+<footer class="grid"><p class="lab">Direction B, Kinetic Swiss · preview build</p></footer>
+
+<script>
+(() => {
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Signature: shutter retracts, then poster lines drift with scroll (transform only)
+  requestAnimationFrame(() => setTimeout(() => document.getElementById("hero").classList.add("open"), 120));
+  if (!reduce) {
+    const lines = [...document.querySelectorAll(".poster .ln")];
+    let y = 0, ticking = false;
+    const apply = () => { lines.forEach(l => { l.style.transform = `translate3d(${(y * l.dataset.k * .35).toFixed(1)}px,0,0)`; }); ticking = false; };
+    addEventListener("scroll", () => { y = Math.min(scrollY, innerHeight * 1.2); if (!ticking) { ticking = true; requestAnimationFrame(apply); } }, { passive: true });
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { rootMargin: "0px 0px -8% 0px" });
+  document.querySelectorAll(".rv").forEach(el => io.observe(el));
+
+  // Layers: prompt engineering is a named, first-class layer
+  const L = {
+    prompt: "Prompt engineering, by Mojeeb Titilayo; iterated with Claude and Grok Build CLI. Site-grounding prompts make the model quote page copy, and generic \"review this area\" fixes are banned.",
+    model: "Groq llama-3.3-70b-versatile (primary) → llama-3.1-8b-instant → OpenRouter (env-pinned) → Gemini 2.5 Flash → Flash Lite.",
+    agent: "Custom single-agent tool loop, not LangChain. Tools: fetch_url, discover_internal_links, submit_analysis_report. Cheerio page extraction.",
+    pay: "MCP streamable HTTP at /api/mcp. x402 paywall only on billable tools, settled in USDT0 on X Layer (eip155:196). Partner API keys.",
+    infra: "Next.js 16, React 19, Supabase Postgres, Prisma 7, NextAuth v5, Resend, Vercel long-running functions."
+  };
+  const ld = document.getElementById("ld");
+  document.querySelectorAll(".bar button").forEach(b => b.addEventListener("click", () => {
+    document.querySelectorAll(".bar button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    ld.textContent = L[b.dataset.l];
+  }));
+  ld.textContent = L.prompt;
+
+  // Failover simulator
+  const nodes = [...document.querySelectorAll(".node")], pulse = document.getElementById("pulse"), track = document.getElementById("track"), log = document.getElementById("log");
+  const btns = [...document.querySelectorAll(".sim-ctl button")];
+  const scen = {
+    ok: { path: [["ok", "answered"], [null], [null], ["ok", "passed"], ["ok", "delivered"]], msg: "Groq answered first. The report passed the Zod gate and was delivered." },
+    quota: { path: [["fail", "429 quota"], ["ok", "answered"], [null], ["ok", "passed"], ["ok", "delivered"]], msg: "Groq returned a quota error, so the request fell through to OpenRouter. The user only sees a generic gateway message; provider detail stays in server logs." },
+    incomplete: { path: [["fail", "incomplete"], ["fail", "incomplete"], ["ok", "answered"], ["ok", "passed"], ["ok", "delivered"]], msg: "Two providers returned incomplete reports, which count as recoverable. Gemini completed it, and nothing unvalidated reached the user." }
+  };
+  const step = reduce ? 0 : 520;
+  const pos = i => { const n = nodes[i], t = track.getBoundingClientRect(), r = n.getBoundingClientRect(); return r.left - t.left + r.width / 2 - 6 - 14; };
+  btns.forEach(b => b.addEventListener("click", async () => {
+    const s = scen[b.dataset.s];
+    btns.forEach(x => x.disabled = true);
+    nodes.forEach(n => { n.className = "node"; n.querySelector(".st").textContent = ""; });
+    track.classList.add("running"); log.textContent = "Running…";
+    for (let i = 0; i < nodes.length; i++) {
+      const [state, label] = s.path[i];
+      if (!state) { nodes[i].querySelector(".st").textContent = "skipped"; continue; }
+      pulse.style.transform = `translateX(${pos(i)}px)`;
+      await new Promise(r => setTimeout(r, step));
+      nodes[i].classList.add(state); nodes[i].querySelector(".st").textContent = label;
+    }
+    log.textContent = s.msg; track.classList.remove("running");
+    btns.forEach(x => x.disabled = false);
+  }));
+})();
+</script>
+</body>
+</html>
