@@ -1,0 +1,33 @@
+name: Profile stats access check
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/profile-stats-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify public profile GraphQL access
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api graphql -f query='query { user(login: "mojeebdev") { login repositories(privacy: PUBLIC, ownerAffiliations: OWNER) { totalCount } contributionsCollection { contributionCalendar { totalContributions weeks { contributionDays { date contributionCount color } } } } } }' > "$RUNNER_TEMP/profile-stats.json"
+          python3 - "$RUNNER_TEMP/profile-stats.json" <<'PY'
+          import json, sys
+          data = json.load(open(sys.argv[1]))
+          if data.get("errors"):
+              raise SystemExit("GitHub GraphQL rejected the stats query.")
+          user = data["data"]["user"]
+          if not user:
+              raise SystemExit("GitHub user unavailable.")
+          print(json.dumps(user))
+          PY
