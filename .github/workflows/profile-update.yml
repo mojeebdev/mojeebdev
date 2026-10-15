@@ -1,0 +1,91 @@
+name: Refresh terminal profile
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 8 * * 1'
+  push:
+    branches: [main, profile-terminal-upgrade]
+    paths:
+      - 'profile/generate.py'
+      - 'profile/dots.json'
+      - '.github/workflows/profile-update.yml'
+permissions:
+  contents: write
+concurrency:
+  group: profile-update-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Generate with real GitHub data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 profile/generate.py
+      - name: Validate SVG safety and structure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for name in ["light.svg", "dark.svg", "snake.svg"]:
+              path = Path("profile") / name
+              root = ET.parse(path).getroot()
+              for element in root.iter():
+                  assert element.tag.rsplit("}", 1)[-1] not in {"script", "foreignObject", "image"}
+                  assert not any(k.lower().startswith("on") for k in element.attrib)
+              assert "@keyframes" in path.read_text()
+              print(f"Validated {name}")
+          PY
+      - name: Verify animations and capture browser previews
+        if: github.ref_name == 'profile-terminal-upgrade'
+        run: |
+          python3 -m pip install playwright==1.55.0
+          python3 - <<'PYTEST'
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          root = Path("profile").resolve()
+          (root / "previews").mkdir(exist_ok=True)
+          with sync_playwright() as p:
+              browser = p.chromium.launch(executable_path="/usr/bin/google-chrome", args=["--no-sandbox"])
+              page = browser.new_page(viewport={"width":1080,"height":1040}, device_scale_factor=1)
+              for theme in ["dark", "light"]:
+                  page.goto((root / (theme + ".svg")).as_uri())
+                  page.wait_for_timeout(4000)
+                  assert page.locator(".dot").first.evaluate("e => +getComputedStyle(e).opacity") > .9
+                  assert page.locator(".reveal").last.evaluate("e => +getComputedStyle(e).opacity") > .9
+                  assert page.locator("text").evaluate_all("els => els.every(e => {const b=e.getBBox(); return b.x>=0 && b.x+b.width<=1080 && b.y>=0 && b.y+b.height<=1040;})")
+                  page.screenshot(path=str(root / "previews" / (theme + ".png")))
+                  page.emulate_media(reduced_motion="reduce")
+                  assert page.locator(".dot").first.evaluate("e => getComputedStyle(e).animationName") == "none"
+                  page.emulate_media(reduced_motion="no-preference")
+              page.set_viewport_size({"width":1080,"height":238})
+              page.goto((root / "snake.svg").as_uri())
+              page.wait_for_timeout(1000)
+              first = page.locator(".snake").last.evaluate("e => getComputedStyle(e).transform")
+              page.wait_for_timeout(1000)
+              assert first != page.locator(".snake").last.evaluate("e => getComputedStyle(e).transform")
+              page.screenshot(path=str(root / "previews" / "snake.png"))
+              page.emulate_media(reduced_motion="reduce")
+              assert page.locator(".snake").first.evaluate("e => getComputedStyle(e).display") == "none"
+              browser.close()
+          print("Passed portrait assembly, text bounds, snake motion and reduced-motion checks.")
+          PYTEST
+      - name: Commit changed output
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROFILE_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- profile/light.svg profile/dark.svg profile/snake.svg profile/stats.json
+          if [ -d profile/previews ]; then git add -- profile/previews; fi
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh terminal profile from GitHub"
+            gh auth setup-git
+            git push origin "HEAD:$PROFILE_BRANCH"
+          fi
