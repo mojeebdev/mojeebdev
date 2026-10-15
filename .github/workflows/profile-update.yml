@@ -1,0 +1,64 @@
+name: Refresh terminal profile
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 8 * * 1'
+  push:
+    branches: [main, profile-terminal-upgrade]
+    paths:
+      - 'profile/generate.py'
+      - 'profile/dots.json'
+      - '.github/workflows/profile-update.yml'
+permissions:
+  contents: write
+concurrency:
+  group: profile-update-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Generate with real GitHub data
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 profile/generate.py
+      - name: Validate SVG safety and structure
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import xml.etree.ElementTree as ET
+          for name in ["light.svg", "dark.svg", "snake.svg"]:
+              path = Path("profile") / name
+              root = ET.parse(path).getroot()
+              for element in root.iter():
+                  assert element.tag.rsplit("}", 1)[-1] not in {"script", "foreignObject", "image"}
+                  assert not any(k.lower().startswith("on") for k in element.attrib)
+              assert "@keyframes" in path.read_text()
+              print(f"Validated {name}")
+          PY
+      - name: Save browser previews on review branch
+        if: github.ref_name == 'profile-terminal-upgrade'
+        run: |
+          mkdir -p profile/previews
+          for theme in dark light; do
+            google-chrome --headless --no-sandbox --disable-gpu --hide-scrollbars --force-device-scale-factor=1 --window-size=1080,1040 --virtual-time-budget=4500 --screenshot="profile/previews/$theme.png" "file://$PWD/profile/$theme.svg" 2>/dev/null
+          done
+      - name: Commit changed output
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROFILE_BRANCH: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- profile/light.svg profile/dark.svg profile/snake.svg profile/stats.json
+          if [ -d profile/previews ]; then git add -- profile/previews; fi
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh terminal profile from GitHub"
+            gh auth setup-git
+            git push origin "HEAD:$PROFILE_BRANCH"
+          fi
