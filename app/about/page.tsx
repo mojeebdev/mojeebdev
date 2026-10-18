@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PortraitFull } from "@/components/ui/Portrait";
 import JsonLd from "@/components/ui/JsonLd";
+import SocialLinks from "@/components/ui/SocialLinks";
 import { certificates, daeto, milestones, principles } from "@/content/about";
-import { contact, person, studio } from "@/content/site";
+import { person, studio } from "@/content/site";
 import { breadcrumbs } from "@/lib/jsonLd";
 import "./about.css";
 
@@ -80,7 +81,7 @@ export default function AboutPage() {
         <div className="info-row">
           <dt>Elsewhere</dt>
           <dd>
-            <p><a href={contact.github}>GitHub</a> · <a href={contact.x}>X</a> · <a href={contact.linkedin}>LinkedIn</a> · <a href={`mailto:${contact.personalEmail}`}>{contact.personalEmail}</a></p>
+            <SocialLinks className="social-links social-links--inline" />
           </dd>
         </div>
       </dl>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import CopyButton from "@/components/ui/CopyButton";
+import Icon from "@/components/ui/Icon";
 import JsonLd from "@/components/ui/JsonLd";
 import { contact, studio } from "@/content/site";
 import { breadcrumbs } from "@/lib/jsonLd";
@@ -54,9 +55,9 @@ export default function ContactPage() {
       <section className="section" aria-labelledby="else-title">
         <div className="section-head"><p className="label">Elsewhere</p><h2 id="else-title" className="h2">Find me</h2></div>
         <ul role="list" className="insights">
-          <li><div><span className="muted">GitHub</span><a href={contact.github}>github.com/{contact.githubHandle}</a></div></li>
-          <li><div><span className="muted">X</span><a href={contact.x}>{contact.xHandle}</a></div></li>
-          <li><div><span className="muted">LinkedIn</span><a href={contact.linkedin}>in/tmojeeb</a></div></li>
+          <li><div><span className="muted find-label"><Icon name="github" size={15} />GitHub</span><a href={contact.github} rel="me">github.com/{contact.githubHandle}</a></div></li>
+          <li><div><span className="muted find-label"><Icon name="x" size={15} />X</span><a href={contact.x} rel="me">{contact.xHandle}</a></div></li>
+          <li><div><span className="muted find-label"><Icon name="linkedin" size={15} />LinkedIn</span><a href={contact.linkedin} rel="me">in/tmojeeb</a></div></li>
           <li><div><span className="muted">Studio</span><a href={studio.url}>blindspotlab.xyz</a></div></li>
         </ul>
         <p className="meta" style={{ marginTop: 20 }}>Prefer to leave a public note instead? <Link href="/guestbook" className="text-link">Sign the guestbook</Link>.</p>

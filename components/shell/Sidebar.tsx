@@ -2,7 +2,8 @@ import Link from "next/link";
 import NavList from "./NavList";
 import ThemeToggle from "./ThemeToggle";
 import MobileNav from "./MobileNav";
-import { contact, person } from "@/content/site";
+import SocialLinks from "@/components/ui/SocialLinks";
+import { person } from "@/content/site";
 
 export default function Sidebar() {
   return (
@@ -18,12 +19,7 @@ export default function Sidebar() {
             <p className="sidebar__help">Product engineer’s public log. Built in Lagos, {new Date().getFullYear()}.</p>
           </nav>
           <div className="sidebar__foot">
-            <ul role="list" className="sidebar__social">
-              <li><a href={contact.github} rel="me">GitHub</a></li>
-              <li><a href={contact.x} rel="me">X</a></li>
-              <li><a href={contact.linkedin} rel="me">LinkedIn</a></li>
-              <li><a href={`mailto:${contact.personalEmail}`}>Email</a></li>
-            </ul>
+            <SocialLinks className="sidebar__social" />
             <ThemeToggle />
           </div>
         </div>

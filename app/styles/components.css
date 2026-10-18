@@ -1,6 +1,6 @@
 /* ---------- Hero (reference A) ---------- */
 .hero { display: grid; justify-items: center; text-align: center; gap: 18px; padding: 24px 0 48px; }
-@media (min-width: 1024px) { .hero { padding-top: 40px; } }
+
 .portrait-circle { position: relative; display: block; flex: none; overflow: hidden; border-radius: 50%; background: #c9c9c9; box-shadow: 0 0 0 1px var(--line); }
 .hero__portrait { width: clamp(132px, 30vw, 200px) !important; height: clamp(132px, 30vw, 200px) !important; }
 .hero__id { display: grid; gap: 4px; margin-top: 6px; }
@@ -19,6 +19,15 @@
 .hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
 .hero__meta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; color: var(--ink-3); font-size: 0.875rem; }
 @media (max-width: 479px) { .hero__ctas { display: grid; width: 100%; } }
+
+/* Desktop: keep identity, headline, CTAs, location and availability above the fold even on a 1366×768 screen
+   (≈ 650 px of browser viewport). The portrait scales with viewport height; type sizes are unchanged. */
+@media (min-width: 1024px) {
+  .hero { gap: 14px; padding: 0 0 40px; }
+  .hero__portrait { width: clamp(136px, 22vh, 200px) !important; height: clamp(136px, 22vh, 200px) !important; }
+  .hero__headline { margin-top: 8px; }
+  .hero__ctas { margin-top: 4px; }
+}
 
 /* ---------- Metric strip (reference A) ---------- */
 .metrics { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding-bottom: 48px; }
@@ -168,3 +177,16 @@
 .flagship__points strong { color: var(--ink); font-weight: 500; }
 .flagship__actions { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (min-width: 900px) { .flagship__actions { flex-direction: column; } }
+
+/* ---------- Icons + social links ---------- */
+.icon { flex: none; display: inline-block; vertical-align: -0.125em; }
+.btn--icon { gap: 8px; }
+.btn--icon .icon--external { opacity: 0.7; transition: transform var(--t-ui) var(--ease); }
+.btn--icon:hover .icon--external { transform: translate(2px, -2px); }
+.social-link { display: inline-flex; align-items: center; gap: 7px; min-height: 32px; text-decoration: none; }
+.social-link .icon { opacity: 0.85; transition: opacity var(--t-ui) var(--ease); }
+.social-link:hover .icon, .social-link:focus-visible .icon { opacity: 1; }
+.social-links { display: flex; flex-wrap: wrap; gap: 4px 18px; padding: 0; margin: 0; list-style: none; }
+.social-links--inline .social-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+.social-links--inline .social-link:hover { color: var(--blue); }
+.find-label { display: inline-flex; align-items: center; gap: 7px; }
