@@ -17,7 +17,11 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: { formats: ["image/avif", "image/webp"], minimumCacheTTL: 60 * 60 * 24 * 30 },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    // "/" is listed explicitly: vinext (Cloudflare build) doesn't match the root against "/:path*".
+    return [
+      { source: "/", headers: securityHeaders },
+      { source: "/:path*", headers: securityHeaders },
+    ];
   },
   async redirects() {
     return [

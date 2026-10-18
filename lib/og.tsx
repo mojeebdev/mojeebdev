@@ -1,30 +1,31 @@
-import { readFile } from "node:fs/promises";
-import path from "node:path";
 import { ImageResponse } from "next/og";
 import { portrait } from "@/content/site";
+import { ogFontRegular, ogFontSemibold, ogPhoto, ogPortraitSrc } from "./og-assets.generated";
 
 export const ogSize = { width: 1200, height: 630 };
 
-async function assets() {
-  const root = process.cwd();
-  const [regular, semibold, photo] = await Promise.all([
-    readFile(path.join(root, "app/fonts/og/hanken-grotesk-latin-400-normal.woff")),
-    readFile(path.join(root, "app/fonts/og/hanken-grotesk-latin-600-normal.woff")),
-    readFile(path.join(root, "public", portrait.src)),
-  ]);
-  const mime = portrait.src.endsWith(".jpg") ? "image/jpeg" : "image/png";
-  return { regular, semibold, photo: `data:${mime};base64,${photo.toString("base64")}` };
+/**
+ * Fonts and the avatar are inlined at build time (scripts/og-assets.mjs) because Cloudflare Workers have no
+ * filesystem. If the portrait changes without regenerating, fail the build loudly rather than ship a stale face.
+ */
+if (ogPortraitSrc !== portrait.src) throw new Error(`OG avatar is stale (${ogPortraitSrc} ≠ ${portrait.src}). Run: npm run og:assets`);
+
+const bytes = (b64: string) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0)).buffer;
+const fonts = { regular: bytes(ogFontRegular), semibold: bytes(ogFontSemibold) };
+
+function assets() {
+  return { ...fonts, photo: ogPhoto };
 }
 
 /** Shared Open Graph card: identity on the left, page subject on the right. */
 export async function renderOg({ eyebrow, title, body, chips = [] }: { eyebrow: string; title: string; body?: string; chips?: string[] }) {
-  const a = await assets();
+  const a = assets();
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 64, background: "#FAFAF8", color: "#16171A", fontFamily: "Hanken" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
           {/* eslint-disable-next-line @next/next/no-img-element -- Satori (next/og) renders plain <img> */}
-          <img src={a.photo} width={88} height={88} style={{ borderRadius: 999, objectFit: "cover", objectPosition: portrait.circle.focal, border: "1px solid #E4E5E8" }} alt="" />
+          <img src={a.photo} width={88} height={88} style={{ borderRadius: 999, objectFit: "cover", border: "1px solid #E4E5E8" }} alt="" />
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.6 }}>Mojeeb Titilayo</div>
             <div style={{ fontSize: 22, color: "#6B707A" }}>Product Engineer + Strategist · Founder of BlindspotLab · Creator of Arcapush</div>

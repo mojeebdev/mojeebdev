@@ -1,0 +1,101 @@
+/**
+ * Cloudflare Workers configuration for mojeeb.xyz (vinext build of the Next.js app).
+ *
+ * `npm run build:vinext` reads this file and writes the deployable config to dist/server/wrangler.json, with
+ * `main` and `assets` resolved to the generated Worker and client assets. Deploy that output, not this file
+ * directly: `npm run deploy` (see docs/cloudflare-migration.md).
+ *
+ * NOT YET ACTIVE: no custom domain and no D1 database are attached here on purpose. They are added during the
+ * cutover, after the resources exist and with real identifiers. See the commented blocks below.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "mojeeb-xyz",
+  // Matches the workerd runtime bundled with the pinned wrangler (1.20261012.x). Bump deliberately, then re-test.
+  "compatibility_date": "2026-10-12",
+  // Required by vinext's server runtime (AsyncLocalStorage) and next/og. Also populates process.env from vars/secrets.
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Framework-provided Worker entry: vinext's fetch handler (App Router, RSC, route handlers, ISR, image route).
+  "main": "vinext/server/fetch-handler",
+
+  // Static assets built by vinext. Content-hashed /_next/static/* is served directly (immutable caching via the
+  // generated _headers file); everything else runs the Worker first so redirects, headers and routing apply.
+  "assets": {
+    "directory": "dist/client",
+    "html_handling": "none",
+    "not_found_handling": "none",
+    "binding": "ASSETS",
+    "run_worker_first": ["/*", "!/_next/static/*", "!/*/_next/static/*"]
+  },
+
+  // next/image optimisation through Cloudflare Images (resize + AVIF/WebP). No resource to create.
+  "images": { "binding": "IMAGES" },
+
+  // Guestbook abuse limit shared across isolates: 5 submissions per minute per hashed IP. `namespace_id` is a
+  // number you choose (unique within the account); it is not a provisioned resource ID.
+  "ratelimits": [
+    { "name": "GUESTBOOK_LIMITER", "namespace_id": "4801", "simple": { "limit": 5, "period": 60 } }
+  ],
+
+  "vars": {
+    // "true" publishes clean entries without review. Spam heuristics still apply.
+    "GUESTBOOK_AUTO_APPROVE": "false"
+    // Add once the Cloudflare Access application for /guestbook/admin exists (values are not secret):
+    // "ACCESS_TEAM_DOMAIN": "<your-team>.cloudflareaccess.com",
+    // "ACCESS_AUD": "<Application Audience (AUD) tag>"
+  },
+  // Secrets (never committed; set with `npx wrangler secret put <NAME>` or in the dashboard):
+  //   GUESTBOOK_IP_SALT       required for the guestbook: long random string (salts IP hashes, signs form tokens)
+  //   GUESTBOOK_ADMIN_TOKEN   optional: token sign-in for moderation if Cloudflare Access is not used (24+ chars)
+
+  /*
+   * D1 (added after `npx wrangler d1 create mojeeb-guestbook`, using the database_id it prints).
+   * Do not add this block without a real database_id: Wrangler would auto-provision a new database on deploy.
+   *
+   * "d1_databases": [
+   *   { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "<ACTUAL GENERATED UUID>", "migrations_dir": "migrations" }
+   * ],
+   */
+
+  /*
+   * Custom domains (cutover only, after the workers.dev deployment is verified). Apex is canonical; www redirects
+   * to it (see docs/cloudflare-migration.md §Cutover for the redirect rule).
+   *
+   * "routes": [
+   *   { "pattern": "mojeeb.xyz", "custom_domain": true },
+   *   { "pattern": "www.mojeeb.xyz", "custom_domain": true }
+   * ],
+   */
+
+  // Temporary URLs for verification before the domain moves: mojeeb-xyz.<account>.workers.dev and per-version previews.
+  "workers_dev": true,
+  "preview_urls": true,
+
+  // Workers Logs + traces. Application code logs structured events without visitor personal data (lib/server/log.ts).
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+    "logs": { "enabled": true, "invocation_logs": true }
+  },
+  "upload_source_maps": true,
+
+  "env": {
+    /*
+     * Local guestbook testing only (`npm run dev:d1`). Uses a local SQLite file under .wrangler/; never deployed.
+     * The id is a fixed local placeholder, not a Cloudflare resource.
+     */
+    "local": {
+      "name": "mojeeb-xyz-local",
+      "workers_dev": false,
+      "images": { "binding": "IMAGES" },
+      "ratelimits": [
+        { "name": "GUESTBOOK_LIMITER", "namespace_id": "4802", "simple": { "limit": 5, "period": 60 } }
+      ],
+      "vars": { "GUESTBOOK_AUTO_APPROVE": "false" },
+      "d1_databases": [
+        { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "00000000-0000-4000-8000-000000000000", "migrations_dir": "migrations" }
+      ]
+    }
+  }
+}
