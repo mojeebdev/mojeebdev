@@ -29,7 +29,7 @@ export const flagshipPackages = [
     repo: "https://github.com/mojeebdev/arcapush-cli",
     site: "https://arcapush.com/docs",
     install: "npx --yes @blindspotlab/arcapush@latest",
-    logo: "/logos/arcapush-logo.png",
+    logo: "/logos/arcapush-mark.svg",
     caseStudy: "/work/arcapush",
   },
 ];

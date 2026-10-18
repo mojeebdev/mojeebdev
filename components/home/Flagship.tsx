@@ -7,7 +7,7 @@ export default function Flagship({ index }: { index: string }) {
   return (
     <Section id="arcapush" index={index} label="Flagship product" title="Arcapush" dek="Created by me in February 2026 and run as a BlindspotLab product: a discovery and distribution registry where builders get products, AI agents and hackathon builds found, with a public record and analytics for every listing.">
       <div className="flagship">
-        <Image src="/logos/arcapush-logo.png" alt="" width={56} height={56} className="flagship__logo" />
+        <Image src="/logos/arcapush-mark.svg" alt="" width={56} height={56} className="flagship__logo" />
         <ul role="list" className="flagship__points">
           <li><strong>Discover → visit → track → distribute.</strong> Every outbound visit passes a first-party redirect, so founders see the attention their listing actually delivered.</li>
           <li><strong>Terminal and agent friendly.</strong> The Arcapush CLI and its MCP workflow let builders submit straight from a repository.</li>
