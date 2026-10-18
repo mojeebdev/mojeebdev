@@ -1,0 +1,19 @@
+.about-head { display: grid; gap: 32px; padding-bottom: 48px; align-items: end; }
+@media (min-width: 900px) { .about-head { grid-template-columns: minmax(0, 1fr) 340px; gap: 48px; } }
+.about-head__copy { display: grid; gap: 16px; }
+.portrait-full { position: relative; display: block; width: 100%; max-width: 380px; overflow: hidden; border-radius: 20px; background: #c9c9c9; }
+.timeline { display: grid; gap: 18px; }
+.timeline li { display: grid; gap: 4px; }
+@media (min-width: 600px) { .timeline li { grid-template-columns: 84px 1fr; gap: 16px; } }
+.timeline__date { font-size: 0.8125rem; color: var(--ink-3); padding-top: 2px; }
+.timeline__title { font-weight: 500; color: var(--ink); }
+.principles { display: grid; gap: 22px; }
+@media (min-width: 720px) { .principles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.principles > div { display: grid; gap: 6px; }
+.daeto { display: grid; gap: 14px; margin-top: 14px; }
+.daeto li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; }
+.daeto__letter { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid var(--line-strong); border-radius: 12px; font-weight: 600; }
+.certs { display: grid; gap: 6px; margin-top: 10px; }
+@media (min-width: 720px) { .certs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.certs a { color: var(--ink-2); text-decoration: none; }
+.certs a:hover { color: var(--blue); }

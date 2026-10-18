@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">StyleGraft mark</title>
+  <desc id="desc">A pixel-cut letter S joined through a coral graft seam.</desc>
+  <rect width="512" height="512" rx="76" fill="#18271f"/>
+  <path d="M104 96h304v96H216v32h192v192H104v-96h192v-32H104z" fill="#f6e56a"/>
+  <path d="M104 224h304v64H104z" fill="#f36d4d"/>
+  <path d="M184 224h144v64H184z" fill="#f4f0e7"/>
+</svg>

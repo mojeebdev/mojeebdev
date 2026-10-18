@@ -1,0 +1,86 @@
+import "server-only";
+
+/**
+ * npm registry + downloads API, fetched server-side and cached for 6 hours.
+ * Approach adapted from blindspotlab/lib/npm-stats.ts: allowlisted packages, timeouts, nullable metrics on failure.
+ */
+export const PACKAGES = ["@blindspotlab/stackbrief", "@blindspotlab/stylegraft", "@blindspotlab/arcapush", "@blindspotlab/didcore"] as const;
+export type PackageName = (typeof PACKAGES)[number];
+
+export type PackageStats = {
+  name: PackageName;
+  version: string | null;
+  versionDate: string | null;
+  firstPublished: string | null;
+  versions: number | null;
+  license: string | null;
+  last7: number | null;
+  last30: number | null;
+  total: number | null;
+  /** publish dates of every version — used by the shipping log */
+  releases: { version: string; date: string }[];
+  fetchedAt: string;
+  ok: boolean;
+};
+
+const REVALIDATE = 60 * 60 * 6;
+const TIMEOUT = 6000;
+
+async function getJson<T>(url: string): Promise<T | null> {
+  try {
+    const res = await fetch(url, {
+      next: { revalidate: REVALIDATE, tags: ["npm"] },
+      signal: AbortSignal.timeout(TIMEOUT),
+      headers: { accept: "application/json" },
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+type RegistryDoc = { "dist-tags"?: { latest?: string }; time?: Record<string, string>; versions?: Record<string, unknown>; license?: string };
+type Point = { downloads: number };
+type Range = { downloads: { day: string; downloads: number }[] };
+
+export async function getPackageStats(name: PackageName): Promise<PackageStats> {
+  const enc = name.replace("/", "%2F");
+  const [doc, week, month] = await Promise.all([
+    getJson<RegistryDoc>(`https://registry.npmjs.org/${enc}`),
+    getJson<Point>(`https://api.npmjs.org/downloads/point/last-week/${name}`),
+    getJson<Point>(`https://api.npmjs.org/downloads/point/last-month/${name}`),
+  ]);
+  const created = doc?.time?.created ?? null;
+  let total: number | null = null;
+  if (created) {
+    // Range API allows up to 18 months; every package was first published in 2026.
+    const start = created.slice(0, 10);
+    const end = new Date().toISOString().slice(0, 10);
+    const range = await getJson<Range>(`https://api.npmjs.org/downloads/range/${start}:${end}/${name}`);
+    total = range ? range.downloads.reduce((s, d) => s + d.downloads, 0) : null;
+  }
+  const version = doc?.["dist-tags"]?.latest ?? null;
+  const releases = Object.entries(doc?.time ?? {})
+    .filter(([k]) => k !== "created" && k !== "modified")
+    .map(([v, date]) => ({ version: v, date }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  return {
+    name,
+    version,
+    versionDate: version ? doc?.time?.[version] ?? null : null,
+    firstPublished: created,
+    versions: doc?.versions ? Object.keys(doc.versions).length : null,
+    license: typeof doc?.license === "string" ? doc.license : null,
+    last7: week?.downloads ?? null,
+    last30: month?.downloads ?? null,
+    total,
+    releases,
+    fetchedAt: new Date().toISOString(),
+    ok: Boolean(doc && week && month),
+  };
+}
+
+export async function getAllPackageStats() {
+  return Promise.all(PACKAGES.map(getPackageStats));
+}
