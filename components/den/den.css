@@ -1,0 +1,55 @@
+/* Enter the Den. Hidden unless the pre-paint boot script sets html.den-pending. */
+.den { display: none; }
+html.den-pending { overflow: hidden; }
+html.den-pending .den {
+  position: fixed; inset: 0; z-index: 300; display: grid; grid-template-rows: 1fr auto auto; justify-items: center;
+  padding: 24px 16px 40px; color: var(--ink);
+  background: var(--bg);
+  -webkit-mask: radial-gradient(circle at var(--paw-x, 50%) var(--paw-y, 50%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+          mask: radial-gradient(circle at var(--paw-x, 50%) var(--paw-y, 50%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+  --hole: 0px;
+  animation: den-in 360ms var(--ease) both;
+}
+@property --hole { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@keyframes den-in { from { opacity: 0; } to { opacity: 1; } }
+.den.is-revealing { transition: --hole 760ms cubic-bezier(0.7, 0, 0.2, 1); --hole: 160vmax; }
+.den.is-leaving { opacity: 0; transition: opacity 200ms var(--ease); }
+
+.den__gl { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 600ms var(--ease); pointer-events: none; }
+.den.has-gl .den__gl { opacity: 1; }
+.den__floor { position: absolute; left: 0; right: 0; bottom: 0; height: 42%; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--ink) 4%, transparent)); pointer-events: none; }
+.den.has-gl .den__floor { opacity: 0; }
+
+.den__stage { position: relative; align-self: end; width: min(68vw, 300px); aspect-ratio: 1; margin-bottom: 8px; }
+.den__shadow { position: absolute; left: 14%; right: 14%; bottom: 2%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / 0.16), transparent); transition: transform 500ms var(--ease); }
+.den.has-gl .den__shadow { opacity: 0; }
+.den__cat { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 40%; background: none; cursor: pointer; color: var(--ink); transition: transform 520ms cubic-bezier(0.3, 1.4, 0.5, 1); }
+.den__cat .leopard { width: 100%; height: 100%; }
+.den__cat .lp-ground { display: none; }
+.den__cat:focus-visible { outline: 2px dashed var(--blue); outline-offset: 6px; }
+.den__cat:disabled { cursor: default; }
+
+.den[data-stage="enter"] .den__cat, .den[data-stage="enter"] .den__shadow { animation: den-walk 1.45s cubic-bezier(0.2, 0.6, 0.2, 1) both; }
+@keyframes den-walk { from { transform: translateX(-62vw); } to { transform: translateX(0); } }
+.den[data-stage="dodge"] .den__cat { transform: translate(34%, -12%) rotate(8deg); }
+.den[data-stage="dodge"] .den__shadow { transform: translateX(34%) scale(0.8); }
+.den[data-stage="reach"] .den__cat { transform: translateX(0); }
+.den[data-stage="unlock"] .den__cat { transform: scale(1.04); }
+
+.den__print { position: absolute; left: 79%; top: 41%; width: 44px; height: 44px; transform: translate(-50%, -50%) scale(0); opacity: 0; pointer-events: none; }
+.den__print svg { width: 100%; height: 100%; fill: var(--ink); }
+.den[data-stage="unlock"] .den__print { animation: den-print 520ms var(--ease) 80ms forwards; }
+@keyframes den-print { 0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; } 50% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.6); opacity: 0; } }
+
+.den__copy { display: grid; gap: 6px; text-align: center; min-height: 64px; }
+.den__hint { font-weight: 300; font-size: clamp(1.25rem, 3vw, 1.65rem); letter-spacing: -0.02em; }
+.den__help { font-size: 0.8125rem; color: var(--ink-3); }
+.den__skip { position: absolute; top: 16px; right: 16px; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 0.875rem; cursor: pointer; }
+.den__skip:hover { border-color: var(--line-strong); }
+.den__brand { position: absolute; left: 20px; top: 28px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 479px) { .den__brand { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .den[data-stage] .den__cat, .den[data-stage] .den__shadow { animation: none !important; transform: none !important; }
+  .den.is-revealing { transition: none; }
+}

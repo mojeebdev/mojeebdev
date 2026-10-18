@@ -7,6 +7,7 @@ import "@/components/mascot/mascot.css";
 import Sidebar from "@/components/shell/Sidebar";
 import Footer from "@/components/shell/Footer";
 import Reveal from "@/components/ui/Reveal";
+import DenEasterEgg from "@/components/mascot/DenEasterEgg";
 import JsonLd from "@/components/ui/JsonLd";
 import { hanken, instrument, plexMono } from "@/lib/fonts";
 import { siteGraphJsonLd } from "@/lib/jsonLd";
@@ -68,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
         <Reveal />
+        <DenEasterEgg />
       </body>
     </html>
   );

@@ -140,31 +140,31 @@ export default function Leopard({ pose = "sit", expression = "happy", size = 200
         <path d="M78 212 C64 178 76 132 120 130 C164 132 176 178 162 212 Z" className="lp-fur lp-line" />
         <path d="M97 138 C103 168 108 194 120 204 C132 194 137 168 143 138 C132 148 108 148 97 138 Z" className="lp-light" />
         <Spots dots={[[88, 168, 5, 4], [151, 166, 5, 4], [84, 187, 4.4, 3.6], [156, 186, 4.4, 3.6], [94, 152, 3.4], [146, 150, 3.4], [71, 198, 3.4], [169, 198, 3.4], [92, 204, 2.6], [148, 204, 2.6]]} />
-        {/* raised arm (reach / celebrate) */}
-        <g className="lp-arm lp-arm--r">
-          <path d="M146 150 C160 140 168 126 172 112" className="lp-arm-o" />
-          <path d="M146 150 C160 140 168 126 172 112" className="lp-arm-f" />
-          <circle cx="174" cy="104" r="15" className="lp-light lp-line" />
-          <g className="lp-beans">
-            <ellipse cx="174" cy="108" rx="6" ry="4.6" />
-            <circle cx="165.5" cy="99.5" r="2.6" /><circle cx="171" cy="95" r="2.6" /><circle cx="177.5" cy="95" r="2.6" /><circle cx="183" cy="99.5" r="2.6" />
-          </g>
-        </g>
-        <g className="lp-arm lp-arm--l">
-          <path d="M94 150 C80 140 72 126 68 112" className="lp-arm-o" />
-          <path d="M94 150 C80 140 72 126 68 112" className="lp-arm-f" />
-          <circle cx="66" cy="104" r="15" className="lp-light lp-line" />
-          <g className="lp-beans">
-            <ellipse cx="66" cy="108" rx="6" ry="4.6" />
-            <circle cx="57" cy="99.5" r="2.6" /><circle cx="63" cy="95" r="2.6" /><circle cx="69.5" cy="95" r="2.6" /><circle cx="75" cy="99.5" r="2.6" />
-          </g>
-        </g>
         <g className="lp-feet">
           <g className="lp-foot lp-foot--l"><LeopardPaw x={103} y={211} /></g>
           <g className="lp-foot lp-foot--r"><LeopardPaw x={137} y={211} /></g>
         </g>
       </g>
       <LeopardHead />
+      {/* raised arm (reach / celebrate) */}
+        <g className="lp-arm lp-arm--r">
+          <path d="M150 152 C166 144 178 128 186 108" className="lp-arm-o" />
+          <path d="M150 152 C166 144 178 128 186 108" className="lp-arm-f" />
+          <circle cx="190" cy="98" r="15" className="lp-light lp-line" />
+          <g className="lp-beans">
+            <ellipse cx="190" cy="102" rx="6" ry="4.6" />
+            <circle cx="181.5" cy="93.5" r="2.6" /><circle cx="187" cy="89" r="2.6" /><circle cx="193.5" cy="89" r="2.6" /><circle cx="199" cy="93.5" r="2.6" />
+          </g>
+        </g>
+        <g className="lp-arm lp-arm--l">
+          <path d="M90 152 C74 144 62 128 54 108" className="lp-arm-o" />
+          <path d="M90 152 C74 144 62 128 54 108" className="lp-arm-f" />
+          <circle cx="50" cy="98" r="15" className="lp-light lp-line" />
+          <g className="lp-beans">
+            <ellipse cx="50" cy="102" rx="6" ry="4.6" />
+            <circle cx="41" cy="93.5" r="2.6" /><circle cx="47" cy="89" r="2.6" /><circle cx="53.5" cy="89" r="2.6" /><circle cx="59" cy="93.5" r="2.6" />
+          </g>
+        </g>
     </svg>
   );
 }
