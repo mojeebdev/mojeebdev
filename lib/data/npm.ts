@@ -42,18 +42,46 @@ async function limited<T>(task: () => Promise<T>): Promise<T> {
   finally { active--; waiting.shift()?.(); }
 }
 
-async function getJson<T>(url: string): Promise<T | null> {
-  try {
+type EdgeCache = { match(key: string): Promise<Response | undefined>; put(key: string, res: Response): Promise<void> };
+/** Cloudflare's Cache API (caches.default) when running on Workers; undefined under Node. No-op on *.workers.dev. */
+const edgeCache = (): EdgeCache | undefined => (globalThis as unknown as { caches?: { default?: EdgeCache } }).caches?.default;
+
+async function fetchJson<T>(url: string): Promise<T | null> {
+  return limited(async () => {
+    const res = await fetch(url, { next: { revalidate: REVALIDATE, tags: ["npm"] }, signal: AbortSignal.timeout(TIMEOUT), headers: HEADERS });
+    if (!res.ok) {
+      logEvent("warn", "data.npm_failed", { host: new URL(url).host, status: res.status });
+      if (res.status === 429 || res.status >= 500) throw new Error(`npm ${res.status}`); // retryable
+      return null;
+    }
     // The body is read inside the slot too: the connection stays open until it has been consumed.
-    return await limited(async () => {
-      const res = await fetch(url, { next: { revalidate: REVALIDATE, tags: ["npm"] }, signal: AbortSignal.timeout(TIMEOUT), headers: HEADERS });
-      if (!res.ok) { logEvent("warn", "data.npm_failed", { host: new URL(url).host, status: res.status }); return null; }
-      return (await res.json()) as T;
-    });
-  } catch (err) {
-    logEvent("warn", "data.npm_failed", { host: new URL(url).host, ...errorFields(err) });
-    return null;
+    return (await res.json()) as T;
+  });
+}
+
+/**
+ * npm's downloads API fails intermittently from Workers (timeouts / rate limits on shared egress), so: serve from the
+ * edge cache when possible, retry a failed call once, and cache successes for the revalidation window.
+ */
+async function getJson<T>(url: string): Promise<T | null> {
+  const cache = edgeCache();
+  try {
+    const hit = await cache?.match(url);
+    if (hit) return (await hit.json()) as T;
+  } catch {}
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      const data = await fetchJson<T>(url);
+      if (data !== null && cache) {
+        try { await cache.put(url, new Response(JSON.stringify(data), { headers: { "content-type": "application/json", "cache-control": `public, max-age=${REVALIDATE}` } })); } catch {}
+      }
+      return data;
+    } catch (err) {
+      if (attempt === 2) { logEvent("warn", "data.npm_failed", { host: new URL(url).host, attempt, ...errorFields(err) }); return null; }
+      await new Promise((r) => setTimeout(r, 400));
+    }
   }
+  return null;
 }
 
 type RegistryDoc = { "dist-tags"?: { latest?: string }; time?: Record<string, string>; versions?: Record<string, unknown>; license?: string };

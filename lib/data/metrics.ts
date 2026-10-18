@@ -23,9 +23,11 @@ export const workMilestones: Metric[] = [
 
 const FLAGSHIP = ["@blindspotlab/stackbrief", "@blindspotlab/stylegraft", "@blindspotlab/arcapush"];
 
-function openSourceMetrics(pkgs: PackageStats[]): Metric[] {
+export function openSourceMetrics(pkgs: PackageStats[]): Metric[] {
   const tools = pkgs.filter((p) => FLAGSHIP.includes(p.name));
-  const okAll = tools.filter((p) => p.total !== null), ok30 = tools.filter((p) => p.last30 !== null);
+  // Combined figures are shown only when every flagship package reported: a partial sum labelled "all time" would mislead.
+  const okAll = tools.every((p) => p.total !== null) ? tools : [];
+  const ok30 = tools.every((p) => p.last30 !== null) ? tools : [];
   const sumAll = okAll.reduce((s, p) => s + (p.total ?? 0), 0), sum30 = ok30.reduce((s, p) => s + (p.last30 ?? 0), 0);
   const fetchedAt = pkgs[0]?.fetchedAt ?? null;
   const names = (list: PackageStats[], f: (p: PackageStats) => number | null) => list.map((p) => `${p.name.split("/")[1]} ${formatCount(f(p) ?? 0)}`).join(", ");
