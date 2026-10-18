@@ -105,7 +105,7 @@ export default function Heatmap({ days, source, asOf, compact = false }: { days:
           viewBox={`0 0 ${width} ${height + 20}`}
           width={width}
           height={height + 20}
-          role="grid"
+          role="group"
           aria-label={`Public GitHub contributions, ${days[0].date} to ${days[days.length - 1].date}. Use arrow keys to move, Enter to start a range, Shift with arrows to extend it, Escape to clear.`}
           onKeyDown={onKey}
           onMouseLeave={() => setHover(null)}
@@ -119,9 +119,9 @@ export default function Heatmap({ days, source, asOf, compact = false }: { days:
                 x={col * STEP} y={row * STEP} width={CELL} height={CELL} rx={3.5}
                 className={`hm-cell l${lvl(d.count)} ${inSel(i) ? "is-sel" : ""}`}
                 tabIndex={i === focus ? 0 : -1}
-                role="gridcell"
+                role="button"
                 aria-label={`${d.count} contributions on ${fmtDate(d.date)}`}
-                aria-selected={inSel(i)}
+                aria-pressed={inSel(i)}
                 onMouseEnter={() => setHover(i)}
                 onFocus={() => setFocus(i)}
                 onClick={(e) => { setFocus(i); pick(i, e.shiftKey); }}
@@ -135,7 +135,7 @@ export default function Heatmap({ days, source, asOf, compact = false }: { days:
               x={c * STEP} y={0} width={CELL} height={height - GAP} rx={3.5}
               className={`hm-cell l${wlvl(w.total)} ${w.idx.some(inSel) ? "is-sel" : ""}`}
               tabIndex={w.idx.includes(focus) ? 0 : -1}
-              role="gridcell"
+              role="button"
               aria-label={`${w.total} contributions in the week of ${fmtDate(w.start)}`}
               onMouseEnter={() => setHover(w.idx[0])}
               onFocus={() => setFocus(w.idx[0])}
@@ -148,7 +148,7 @@ export default function Heatmap({ days, source, asOf, compact = false }: { days:
               <path className="hm-line" d={cumulative.map((v, i) => `${i ? "L" : "M"}${(i / (days.length - 1)) * width} ${height - (v / max) * (height - 4)}`).join(" ")} />
               {sel && <rect className="hm-band" x={(sel[0] / (days.length - 1)) * width} y={0} width={Math.max(2, ((sel[1] - sel[0]) / (days.length - 1)) * width)} height={height} />}
               <rect
-                x={0} y={0} width={width} height={height} fill="transparent" tabIndex={0} role="gridcell"
+                x={0} y={0} width={width} height={height} fill="transparent" tabIndex={0} role="button"
                 ref={(el) => { cellRefs.current[focus] = el; }}
                 aria-label={`Cumulative: ${cumulative[focus]} contributions by ${fmtDate(days[focus].date)}`}
                 onMouseMove={(e) => { const r = (e.currentTarget as SVGRectElement).getBoundingClientRect(); setHover(Math.round(((e.clientX - r.left) / r.width) * (days.length - 1))); }}

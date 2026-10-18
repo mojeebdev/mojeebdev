@@ -30,7 +30,7 @@ export default function PackageCard({ meta, stats, leader }: { meta: Meta; stats
         <div><dt>Last 7 days</dt><dd className="mono">{fmt(stats.last7)}</dd></div>
         <div><dt>Last 30 days</dt><dd className="mono">{fmt(stats.last30)}</dd></div>
       </dl>
-      <div className="code-line"><code>{meta.install}</code><CopyButton text={meta.install} /></div>
+      <div className="code-line"><code tabIndex={0} aria-label={`Install command: ${meta.install}`}>{meta.install}</code><CopyButton text={meta.install} /></div>
       <footer className="pkg__foot">
         <a href={meta.repo} className="arrow-link">Source <span aria-hidden="true">↗</span></a>
         <a href={`https://www.npmjs.com/package/${meta.pkg}`} className="arrow-link">npm <span aria-hidden="true">↗</span></a>

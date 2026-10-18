@@ -199,7 +199,7 @@ export default function Constellation() {
         {node ? (
           <div className="constellation__detail" aria-live="polite">
             <p className="label">{GROUPS.find((g) => g.g === node.g)?.label ?? "File"}</p>
-            <h3 className="constellation__file mono">{node.id}</h3>
+            <h2 className="constellation__file mono">{node.id}</h2>
             {node.r && <ul role="list" className="constellation__routes">{node.r.map((r) => <li key={r} className="chip chip--blue">{r}</li>)}</ul>}
             <p className="constellation__blast">Changing this file can affect <strong>{radius.size}</strong> {radius.size === 1 ? "file" : "files"} through the import graph.</p>
             <div className="constellation__cols">

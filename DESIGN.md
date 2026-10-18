@@ -54,7 +54,7 @@ generated_by: "StyleGraft method (skills/stylegraft, design-md-schema), applied 
 | `--surface-2` | `#F2F3F4` | `#1C1F23` | Wells, code, hover |
 | `--ink` | `#16171A` | `#ECEDEF` | Primary text (≈17:1 / 16:1) |
 | `--ink-2` | `#4A4E56` | `#A9AEB6` | Secondary text (≈8:1 / 8:1) |
-| `--ink-3` | `#6B707A` | `#868B94` | Meta text, ≥14 px only (≈4.9:1 / 5.2:1) |
+| `--ink-3` | `#5F646D` | `#868B94` | Meta text (≈5.8:1 on bg, ≥4.9:1 on surface-2 / 5.2:1) |
 | `--line` | `#E4E5E8` | `#25282D` | Hairlines |
 | `--line-strong` | `#CDD0D5` | `#363A40` | Control borders |
 | `--blue` | `#1F66E0` | `#6EA8FF` | Accent, links, focus (≈5.4:1 / 7.6:1); azure family taken from reference B *(selected for contrast)* |

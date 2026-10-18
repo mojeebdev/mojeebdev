@@ -49,10 +49,10 @@ export default function Archive({ projects }: { projects: Project[] }) {
               {p.logo ? <Image src={p.logo} alt="" width={28} height={28} /> : <span>{p.name.slice(0, 1)}</span>}
             </span>
             <div className="archive__main">
-              <h3 className="archive__name">
+              <h2 className="archive__name">
                 {p.caseStudy ? <Link href={`/work/${p.slug}`}>{p.name}</Link> : p.url ? <a href={p.url}>{p.name}</a> : p.name}
                 {p.caseStudy && <span className="chip chip--blue">Case study</span>}
-              </h3>
+              </h2>
               <p className="archive__summary">{p.summary}</p>
               {p.note && <p className="meta archive__note">{p.note}</p>}
               {p.stack && <p className="archive__stack meta">{p.stack.join(" · ")}</p>}

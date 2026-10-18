@@ -6,7 +6,7 @@
 .hero__id { display: grid; gap: 4px; margin-top: 6px; }
 .hero__name { font-weight: 600; font-size: clamp(2rem, 4.2vw, 2.75rem); line-height: 1.1; letter-spacing: -0.025em; }
 .hero__role { color: var(--ink-2); font-size: 1.0625rem; }
-.hero__handle { color: var(--ink-3); text-decoration: none; }
+.hero__handle { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line-strong); }
 .hero__handle:hover { color: var(--blue); }
 .hero__studio { color: var(--ink-3); font-size: 0.9375rem; }
 .hero__studio a { color: var(--ink-2); }
@@ -20,7 +20,7 @@
 @media (max-width: 479px) { .hero__ctas { display: grid; width: 100%; } }
 
 /* ---------- Metric strip (reference A) ---------- */
-.metrics { display: grid; gap: 12px; padding-bottom: 48px; }
+.metrics { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding-bottom: 48px; }
 .metric-strip { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 24px; background: var(--surface); }
 @media (min-width: 720px) { .metric-strip { grid-template-columns: repeat(var(--cols, 5), minmax(0, 1fr)); } }
 .metric-strip--quiet { --cols: 4; background: transparent; margin-top: 12px; }
@@ -47,7 +47,7 @@
 .metrics__fr summary:hover { color: var(--ink); }
 
 /* ---------- Packages ---------- */
-.pkg-grid { display: grid; gap: 16px; }
+.pkg-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 @media (min-width: 900px) { .pkg-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .pkg { display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-panel); background: var(--surface); }
 .pkg[data-leader] { border-color: color-mix(in srgb, var(--blue) 40%, var(--line)); }
@@ -66,7 +66,7 @@
 .pkg__stamp { flex-basis: 100%; font-size: 0.75rem; }
 
 /* ---------- Work cards (showcase panel) ---------- */
-.work-grid { display: grid; gap: 16px; }
+.work-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 @media (min-width: 760px) { .work-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .work-card { position: relative; }
 .work-card__link { display: flex; flex-direction: column; height: 100%; border-radius: 20px; background: var(--surface-2); text-decoration: none; overflow: hidden; transition: transform var(--t-reveal) var(--ease); }

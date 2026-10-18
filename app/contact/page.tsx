@@ -34,13 +34,13 @@ export default function ContactPage() {
           <p className="label">Personal</p>
           <p className="h3"><a href={`mailto:${contact.personalEmail}?subject=Project%20enquiry`}>{contact.personalEmail}</a></p>
           <p className="muted">Collaborations, roles, open-source questions, or just hello.</p>
-          <div className="code-line"><code>{contact.personalEmail}</code><CopyButton text={contact.personalEmail} /></div>
+          <div className="code-line"><code tabIndex={0}>{contact.personalEmail}</code><CopyButton text={contact.personalEmail} /></div>
         </div>
         <div className="panel" style={{ padding: 24, display: "grid", gap: 12 }}>
           <p className="label">Studio engagements</p>
           <p className="h3"><a href={`mailto:${contact.workEmail}?subject=BlindspotLab%20project`}>{contact.workEmail}</a></p>
           <p className="muted">Fixed-scope product builds through <a className="text-link" href={studio.url}>{studio.name}</a> ({studio.legalName}).</p>
-          <div className="code-line"><code>{contact.workEmail}</code><CopyButton text={contact.workEmail} /></div>
+          <div className="code-line"><code tabIndex={0}>{contact.workEmail}</code><CopyButton text={contact.workEmail} /></div>
         </div>
       </div>
 

@@ -24,7 +24,7 @@ export default function WorkPage() {
         </p>
       </header>
       <div className="work-grid">
-        {caseStudies.map((c) => <WorkCard key={c.slug} study={c} />)}
+        {caseStudies.map((c) => <WorkCard key={c.slug} study={c} level={2} />)}
       </div>
     </>
   );
