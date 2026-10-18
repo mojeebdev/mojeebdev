@@ -5,12 +5,13 @@
  * `main` and `assets` resolved to the generated Worker and client assets. Deploy that output, not this file
  * directly: `npm run deploy` (see docs/cloudflare-migration.md).
  *
- * NOT YET ACTIVE: no custom domain and no D1 database are attached here on purpose. They are added during the
- * cutover, after the resources exist and with real identifiers. See the commented blocks below.
+ * NOT YET ACTIVE: no custom domain is attached here on purpose; it is added during the cutover (commented block below).
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "mojeeb-xyz",
+  // Mojeeb.eth@gmail.com's Account (not a secret; pins CLI and Workers Builds to the right account)
+  "account_id": "1c44f0a287a8d8b44aa136f42ae9e64b",
   // Matches the workerd runtime bundled with the pinned wrangler (1.20261012.x). Bump deliberately, then re-test.
   "compatibility_date": "2026-10-12",
   // Required by vinext's server runtime (AsyncLocalStorage) and next/og. Also populates process.env from vars/secrets.
@@ -49,14 +50,11 @@
   //   GUESTBOOK_IP_SALT       required for the guestbook: long random string (salts IP hashes, signs form tokens)
   //   GUESTBOOK_ADMIN_TOKEN   optional: token sign-in for moderation if Cloudflare Access is not used (24+ chars)
 
-  /*
-   * D1 (added after `npx wrangler d1 create mojeeb-guestbook`, using the database_id it prints).
-   * Do not add this block without a real database_id: Wrangler would auto-provision a new database on deploy.
-   *
-   * "d1_databases": [
-   *   { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "<ACTUAL GENERATED UUID>", "migrations_dir": "migrations" }
-   * ],
-   */
+  // D1 database `mojeeb-guestbook` (created 18 Oct 2026, region WEUR). Local commands (`--local`, `npm run preview`)
+  // use a SQLite file under .wrangler/; only `--remote` touches the real database.
+  "d1_databases": [
+    { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "2e23fc7f-db68-4044-b226-283e1e2cc07f", "migrations_dir": "migrations" }
+  ],
 
   /*
    * Custom domains (cutover only, after the workers.dev deployment is verified). Apex is canonical; www redirects
@@ -78,24 +76,5 @@
     "head_sampling_rate": 1,
     "logs": { "enabled": true, "invocation_logs": true }
   },
-  "upload_source_maps": true,
-
-  "env": {
-    /*
-     * Local guestbook testing only (`npm run dev:d1`). Uses a local SQLite file under .wrangler/; never deployed.
-     * The id is a fixed local placeholder, not a Cloudflare resource.
-     */
-    "local": {
-      "name": "mojeeb-xyz-local",
-      "workers_dev": false,
-      "images": { "binding": "IMAGES" },
-      "ratelimits": [
-        { "name": "GUESTBOOK_LIMITER", "namespace_id": "4802", "simple": { "limit": 5, "period": 60 } }
-      ],
-      "vars": { "GUESTBOOK_AUTO_APPROVE": "false" },
-      "d1_databases": [
-        { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "00000000-0000-4000-8000-000000000000", "migrations_dir": "migrations" }
-      ]
-    }
-  }
+  "upload_source_maps": true
 }

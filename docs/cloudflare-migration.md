@@ -2,7 +2,7 @@
 
 Prepared 18 Oct 2026 on branch `ccr-18b85d6d-ow5shw`, after PR #5 (the portfolio rebuild) merged into `main` as `89e60c3`.
 
-**State of play:** everything that can live in the repository is done and verified locally in the Workers runtime (workerd via Wrangler). **No cloud resource has been created**: no Worker, no D1 database, no secret. No DNS record or domain has changed, and nothing has been deployed. The live site keeps running on Vercel, unchanged, until you complete the cutover below.
+**State of play:** everything that can live in the repository is done and verified locally in the Workers runtime (workerd via Wrangler). **Update (D1 created):** the D1 database `mojeeb-guestbook` (`2e23fc7f-db68-4044-b226-283e1e2cc07f`, WEUR) now exists and is bound as `DB` in `wrangler.jsonc`, with `account_id` pinned. Its schema is **not yet applied remotely**. There is still no Worker and no secret. No DNS record or domain has changed, and nothing has been deployed. The live site keeps running on Vercel, unchanged, until you complete the cutover below.
 
 ## Contents
 
@@ -160,13 +160,12 @@ Remaining `npm audit` findings (no fix available upstream): `braces` / `micromat
 | --- | --- |
 | `dev` / `build` / `start` | Next.js, unchanged. Vercel keeps using `build` until cutover. |
 | `dev:vinext` | Vite dev server on :3001, with the RSC environment running in workerd. |
-| `dev:d1` | The same, using the `local` Wrangler env (local D1). |
 | `build:vinext` | Production Workers build into `dist/` (`dist/server/wrangler.json` is the deployable config). |
-| `preview` / `preview:d1` | Build, then serve the real Worker locally with `wrangler dev` (:8787). |
+| `preview` | Build, then serve the real Worker locally with `wrangler dev` (:8787), using a local copy of D1. |
 | `deploy` | `vinext-cloudflare deploy --config dist/server/wrangler.json` (build plus Wrangler deploy). Only after setup. |
 | `deploy:check` | Dry run: validates setup without building or deploying. |
 | `cf-typegen` | Regenerates `worker-configuration.d.ts` from `wrangler.jsonc`. |
-| `db:migrate:local` | Applies D1 migrations locally (once the real binding is in `wrangler.jsonc`). |
+| `db:migrate:local` | Applies D1 migrations to the local copy. |
 | `test`, `typecheck`, `lint`, `og:assets` | Vitest; `next typegen && tsc --noEmit` (vinext rewrites `.next/types/routes.d.ts` during its build, so Next's route types are regenerated first); ESLint; regenerating the OG assets after a portrait change. |
 
 ## 6. Cloudflare configuration
@@ -185,9 +184,9 @@ Remaining `npm audit` findings (no fix available upstream): `braces` / `micromat
 | `vars` | `GUESTBOOK_AUTO_APPROVE: "false"`; Access vars commented until known | |
 | `observability` | logs and invocation logs on, 100% sampling | Workers Logs |
 | `workers_dev`, `preview_urls` | true | temporary URLs for verification before the domain moves |
-| D1 | **commented out** | Wrangler auto-provisions a database on deploy if a D1 binding has no id. It stays out until you paste the real `database_id`. |
+| `d1_databases` | `DB` → `mojeeb-guestbook` (`2e23fc7f-…`), `migrations_dir: migrations` | real database created 18 Oct 2026 |
+| `account_id` | `1c44f0a2…` | pins the CLI and Workers Builds to your account |
 | `routes` (custom domains) | **commented out** | added at cutover only |
-| `env.local` | local-only D1 (fixed placeholder id naming the local SQLite file), never deployed | lets `dev:d1` / `preview:d1` test the guestbook now |
 
 Secret names (never committed): `GUESTBOOK_IP_SALT` (required for the guestbook) and `GUESTBOOK_ADMIN_TOKEN` (optional moderation fallback). Vars once Cloudflare Access exists: `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`.
 
@@ -424,12 +423,12 @@ Run on 18 Oct 2026 in this container. "workerd" = the `npm run build:vinext` out
 - [x] QA (§16)
 
 **Awaiting Worker creation (you)**
-- [ ] `wrangler login` / `whoami` → send me the account ID
+- [x] `wrangler login` / `whoami` (account `1c44f0a287a8d8b44aa136f42ae9e64b`)
 - [ ] Add the zone (no nameserver change), first deploy to workers.dev
 
 **Awaiting D1 creation (you, then me)**
-- [ ] `wrangler d1 create mojeeb-guestbook` → send me the `database_id`
-- [ ] I add the real binding in a follow-up PR
+- [x] `wrangler d1 create mojeeb-guestbook` (`2e23fc7f-db68-4044-b226-283e1e2cc07f`, WEUR)
+- [x] Real binding added to `wrangler.jsonc`
 - [ ] Local migration → ⛔ remote migration after your approval
 
 **Awaiting secrets and bindings (you)**
