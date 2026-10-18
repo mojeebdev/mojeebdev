@@ -24,3 +24,7 @@ dist
 .next
 out
 tsconfig.tsbuildinfo
+# Environment
+.env
+.env.*
+!.env.example
