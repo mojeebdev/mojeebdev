@@ -9,5 +9,5 @@ export function generateStaticParams() { return caseStudies.map((c) => ({ slug: 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const c = getCaseStudy(slug)!;
-  return renderOg({ eyebrow: `Case study ${c.number}`, title: c.title, body: c.dek, chips: [c.kindLabel.split(" · ")[0], c.statusLabel, c.period] });
+  return renderOg({ eyebrow: `Case study ${c.number}`, title: c.title, body: c.dek, chips: [c.kindLabel.split(" · ")[0], c.statusLabel], cta: "Read the case study" });
 }

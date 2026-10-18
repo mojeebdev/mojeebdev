@@ -17,8 +17,11 @@ function assets() {
   return { ...fonts, photo: ogPhoto };
 }
 
-/** Shared Open Graph card: identity on the left, page subject on the right. */
-export async function renderOg({ eyebrow, title, body, chips = [] }: { eyebrow: string; title: string; body?: string; chips?: string[] }) {
+/**
+ * Shared Open Graph card: identity at the top, page subject in the middle, and a solid call to action in the footer
+ * (`cta` defaults to "Explore my work"; the card always names the destination domain).
+ */
+export async function renderOg({ eyebrow, title, body, chips = [], cta = "Explore my work" }: { eyebrow: string; title: string; body?: string; chips?: string[]; cta?: string }) {
   const a = assets();
   return new ImageResponse(
     (
@@ -40,7 +43,11 @@ export async function renderOg({ eyebrow, title, body, chips = [] }: { eyebrow: 
           <div style={{ display: "flex", gap: 10 }}>
             {chips.map((c) => <div key={c} style={{ fontSize: 20, padding: "6px 14px", border: "1px solid #CDD0D5", borderRadius: 999, color: "#4A4E56" }}>{c}</div>)}
           </div>
-          <div style={{ fontSize: 22, color: "#6B707A" }}>mojeeb.xyz</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "14px 22px 14px 26px", borderRadius: 999, background: "#16171A", color: "#FFFFFF", boxShadow: "0 6px 18px rgba(22, 23, 26, 0.18)" }}>
+            <div style={{ fontSize: 24, fontWeight: 600, letterSpacing: -0.3 }}>{cta}</div>
+            <div style={{ fontSize: 20, color: "#AEB3BC" }}>mojeeb.xyz</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: 999, background: "#1F66E0", fontSize: 22, fontWeight: 600 }}>→</div>
+          </div>
         </div>
       </div>
     ),
