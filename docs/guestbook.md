@@ -66,11 +66,11 @@ With these set, the Worker verifies the `Cf-Access-Jwt-Assertion` JWT on every m
 
 ```bash
 cp .dev.vars.example .dev.vars          # fill in GUESTBOOK_IP_SALT (and GUESTBOOK_ADMIN_TOKEN to test moderation)
-npm run preview:d1                       # builds with the `local` Wrangler env and serves it in workerd on :8787
-npx wrangler d1 migrations apply mojeeb-guestbook --local --config dist/server/wrangler.json
+npx wrangler d1 migrations apply mojeeb-guestbook --local
+npm run preview                          # builds and serves the Worker in workerd on :8787, against the local D1 copy
 ```
 
-The `local` environment in `wrangler.jsonc` uses a fixed placeholder database id that only names the local SQLite file under `.wrangler/`. It is never deployed. `npm test` runs the store and API tests against Node's built-in SQLite with the real migration applied.
+`--local` and `npm run preview` use a SQLite copy under `.wrangler/`; only `--remote` touches the real database. `npm test` runs the store and API tests against Node's built-in SQLite with the real migration applied.
 
 ## Activation
 
