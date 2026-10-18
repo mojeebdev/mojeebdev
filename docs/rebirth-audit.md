@@ -2,14 +2,16 @@
 
 Audited 2026-10-18. This document updates `docs/phase-1-audit.md` (2026-10-03) for the "Rebirth" brief. Every fact has a source. Anything not verified is marked **UNVERIFIED** or `TODO(mojeeb)`.
 
-## 0. Inputs that were not available
+## 0. Inputs and how they were handled
 
 | Input | Status | What I did |
 |---|---|---|
-| Three reference screenshots (A, B, C) | **Not attached** to the task and not in any repo | Designed from the written descriptions in the brief. `DESIGN.md` records the observed-versus-inferred split and confidence. |
-| Original leopard mascot asset | **Not found.** I searched every attached repo and the filesystem for `leopard`, `mascot`, `*.glb`, `*.gltf` | Built a lightweight original placeholder from Three.js primitives, marked `PLACEHOLDER` in code. The loader picks up `/public/mascot/leopard.glb` automatically once supplied. |
-| Live product screenshots | Chromium in the build sandbox can't complete TLS through the egress proxy | Case studies use technical diagrams drawn from source and existing OG images. `TODO(mojeeb)`: supply product screenshots. |
-| Guestbook database credentials | None in this session | Built a Supabase REST adapter with server-only env vars and an SQL migration. The guestbook shows a clear "not configured" state until the env vars are set. |
+| Three reference screenshots (A, B, C) | Received mid-build (in chat) | `DESIGN.md` records the observed reference read and the preserve/adapt/exclude decisions. |
+| Leopard character sheet | Received in chat; **not available as a file** | Redrawn faithfully as a layered SVG rig (`components/mascot/Leopard.tsx`) using the sheet's palette, outlines, rosettes, cream bib and ringed tail. **v1 redraw, pending approval.** Source artwork can replace it. |
+| Official portrait (cream cap, crossed arms) | Shown in chat; **not available as a file** | The pipeline is ready in `content/site.ts`: circular focal point and zoom, the full composition for `/about`, and AVIF/WebP through `next/image`. Commit the original as `public/portrait/mojeeb-official.jpg` and set `USE_OFFICIAL_PORTRAIT = true`. Until then the 2026-10-15 profile avatar is used. |
+| Live product screenshots | Chromium in the build sandbox can't complete TLS through the egress proxy | Case studies use technical diagrams drawn from source, plus OG art. `TODO(mojeeb)`: product screenshots. |
+| Guestbook database | No credentials in this session | Supabase REST adapter, SQL migration (`supabase/guestbook.sql`) and setup guide (`docs/guestbook.md`). Production shows "not connected" until env vars are set. |
+| Live mojeeb.xyz landing page | Captured 2026-10-18 | `docs/before/`. It states "Available for selected work", which is reused as the subtle availability line. |
 
 ## 1. Repository baseline
 
@@ -58,7 +60,7 @@ Audited 2026-10-18. This document updates `docs/phase-1-audit.md` (2026-10-03) f
 - Contact (profile README, 2026-10-15): hello@mojeeb.xyz, mojeeb@blindspotlab.xyz, github.com/mojeebdev, x.com/MojeebMotion, linkedin.com/in/tmojeeb, blindspotlab.xyz.
   - Devpost and YouTube appeared only on the old site and aren't in the current profile, so they're dropped pending confirmation.
 - Building Arcapush since **February 2026**: first commit `2026-02-16`, 573+ commits, last push 2026-10-01 at the time of the first audit.
-- Availability: **not confirmed** anywhere, so it is not displayed. `TODO(mojeeb)`.
+- Availability: the live site (2026-10-18) states "Available for selected work", so the line is reused subtly in the hero. `TODO(mojeeb)`: confirm it is still current.
 
 ### npm packages (registry and downloads API, fetched 2026-10-18)
 
@@ -74,7 +76,7 @@ Audited 2026-10-18. This document updates `docs/phase-1-audit.md` (2026-10-03) f
 - **didcore** is an onboarding wrapper around the third-party `zunmax/technocore-did-starter`. It belongs in the tools archive as a wrapper, not as a flagship or an original tool.
 - The old site's "500+ StackBrief downloads" claim is superseded by live numbers.
 
-### Arcapush public metrics (`https://arcapush.com/api/hero-metrics`, live, with definitions)
+### Arcapush public metrics (`https://arcapush.com/api/hero-metrics`, live, with definitions and `refreshedAt`)
 Snapshot 2026-10-18:
 - 333 builds indexed (326 products, 5 agents, 2 hackathon)
 - 184 builders
@@ -122,12 +124,42 @@ AITAX framing: Mojeeb's role was engineering. Brand, mascot and token belong to 
 - Fonts: Hanken Grotesk (OFL), Instrument Serif italic accents (OFL), and IBM Plex Mono for data (OFL). All self-hosted.
 - One Three.js scene, the intro only, dynamically imported and never on other routes.
 
-## 6. Open TODO(mojeeb)
-1. Supply the leopard mascot (GLB preferred; SVG/PNG accepted).
-2. Supply the three reference screenshots so `DESIGN.md` can be re-checked against them.
+## 6. Mid-build changes requested and applied
+- **All-time npm downloads** lead each package card. The site-wide npm figure is all-time downloads of the three tools. 30-day and 7-day figures remain alongside.
+- **Intro refinement:** greet ("Say hi to the leopard.") → high five ("High five? Tap the paw.", wink, open smile, raised paw, tilt and bounce, generous paw hit area) → burst and reveal in about 1.5 s. The intro is marked seen as soon as it shows; Enter/Space act on the current step, Esc skips, and there is a double-tap guard.
+- **Founder and creator identity:** the hero reads "Founder of BlindspotLab. Creator of Arcapush." and then "Also behind StackBrief, StyleGraft, and the Arcapush CLI." (npm links). Arcapush leads the social proof and gets a flagship section ahead of the npm tools.
+
+### Metric verification (2026-10-18)
+
+| Metric | Shown as | Source |
+|---|---|---|
+| Builds indexed: 333 | Live | Arcapush public API (supersedes the founder figure of 300+) |
+| Builders: 184 | Live | Arcapush public API |
+| Platform visits since 19 Aug 2026: about 5.36K | Live, labelled with its start date | Arcapush public API |
+| Outbound attention (clicks to builds) since 15 Aug 2026: 2,602 | Live, labelled with its start date | Arcapush public API |
+| 22K+ all-time platform visits | Founder-reported, dated Oct 2026 | **Not publicly verifiable**; the window predates public recording |
+| 22K+ listing visits | Founder-reported, dated Oct 2026 | **Not publicly verifiable**; no public endpoint |
+| 9K+ attention delivered | Founder-reported, dated Oct 2026 | **Not publicly verifiable**; a longer window than the public counter |
+| 40+ projects | Founder-reported | 56 documented in the archive |
+
+These figures are never summed together, and outbound attention is never labelled as unique visitors.
+
+## 7. QA results (production build, 2026-10-18)
+- `eslint .` clean (eslint-config-next 16 flat config). `tsc --noEmit` clean. `next build` passes (32 routes).
+- **axe-core** (WCAG 2.0/2.1 A/AA plus best practice): no violations on 14 pages in light mode, or on 5 key pages in dark mode.
+- No horizontal overflow at 390 px or 1440 px on any page.
+- **Weight:**
+  - Homepage JS: 186 KB gzipped (was 179 KB). CSS: 11.0 KB gzipped (was 12.5 KB).
+  - Three.js: a 134 KB gzipped chunk loaded only by the intro, after first paint.
+  - Fonts self-hosted; the portrait has `priority` for LCP.
+- Redirects return 308 for every old URL. Security headers are set. Generated OG images are 1200×630.
+
+## 8. Open TODO(mojeeb)
+1. Approve the SVG leopard redraw, or supply the original character artwork as files (SVG/PNG layers).
+2. Commit the official portrait as `public/portrait/mojeeb-official.jpg` and flip `USE_OFFICIAL_PORTRAIT`.
 3. Provision Supabase and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GUESTBOOK_ADMIN_TOKEN` and `GUESTBOOK_IP_SALT` in Vercel, then run `supabase/guestbook.sql`.
 4. Source and window for the founder-reported Arcapush figures (22K / 22K / 9K).
-5. Availability status, and whether to display it.
+5. Confirm "Available for selected work" (taken from the live site) is still current.
 6. Confirm LinkedIn, Devpost and YouTube.
 7. Product screenshots for the case studies.
 8. Revel usage figures, if any can be published.
