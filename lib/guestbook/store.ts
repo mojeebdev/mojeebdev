@@ -1,91 +1,120 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
-import { REACTIONS, type GuestbookEntry, type PublicEntry, type ReactionKind } from "./schema";
+import type { D1Database } from "@/lib/server/types";
+import { REACTIONS, type GuestbookEntry, type ModerationAction, type PublicEntry, type ReactionKind, type Status } from "./schema";
 
 /**
- * Persistence. Production: Supabase over its REST API with the service-role key (server only, never bundled).
- * Development without credentials: an in-memory store, so the UI can be exercised locally.
- * Production without credentials: null, and the UI shows a clear "not configured" state.
+ * Guestbook persistence on Cloudflare D1. Every query is a prepared statement with bound parameters.
+ * Column names follow the D1 schema (migrations/0001_guestbook.sql); the UI keeps its shorter field names.
  */
-export type GuestbookStore = {
-  kind: "supabase" | "memory";
-  listApproved(limit: number): Promise<PublicEntry[]>;
-  listForModeration(): Promise<GuestbookEntry[]>;
-  create(e: { name: string; message: string; link: string | null; status: GuestbookEntry["status"]; ipHash: string }): Promise<{ id: string }>;
-  recentByIp(ipHash: string, minutes: number): Promise<number>;
-  setStatus(id: string, status: GuestbookEntry["status"]): Promise<void>;
-  remove(id: string): Promise<void>;
-  react(id: string, kind: ReactionKind): Promise<void>;
+
+type Row = {
+  id: string;
+  display_name: string;
+  message: string;
+  website_url: string | null;
+  moderation_status: Status;
+  reaction_wave: number;
+  reaction_heart: number;
+  reaction_paw: number;
+  created_at: string;
+  updated_at: string;
 };
 
-const PUBLIC_COLS = "id,created_at,name,message,link,reactions";
+const COLS = "id, display_name, message, website_url, moderation_status, reaction_wave, reaction_heart, reaction_paw, created_at, updated_at";
+const NOW = "strftime('%Y-%m-%dT%H:%M:%fZ', 'now')";
+const REACTION_COLUMN: Record<ReactionKind, string> = { wave: "reaction_wave", heart: "reaction_heart", paw: "reaction_paw" };
 
-function supabaseStore(url: string, key: string): GuestbookStore {
-  const base = `${url.replace(/\/$/, "")}/rest/v1`;
-  const headers = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
-  const call = async (path: string, init: RequestInit = {}) => {
-    const res = await fetch(`${base}${path}`, { ...init, headers: { ...headers, ...(init.headers ?? {}) }, cache: "no-store", signal: AbortSignal.timeout(8000) });
-    if (!res.ok) throw new Error(`Supabase ${res.status}`);
-    return res;
-  };
-  return {
-    kind: "supabase",
-    async listApproved(limit) {
-      const res = await call(`/guestbook_entries?select=${PUBLIC_COLS}&status=eq.approved&order=created_at.desc&limit=${limit}`);
-      return res.json();
-    },
-    async listForModeration() {
-      const res = await call(`/guestbook_entries?select=id,created_at,name,message,link,status,reactions&order=created_at.desc&limit=200`);
-      return res.json();
-    },
-    async create(e) {
-      const res = await call(`/guestbook_entries?select=id`, { method: "POST", headers: { Prefer: "return=representation" }, body: JSON.stringify({ name: e.name, message: e.message, link: e.link, status: e.status, ip_hash: e.ipHash }) });
-      const [row] = await res.json();
-      return { id: row.id };
-    },
-    async recentByIp(ipHash, minutes) {
-      const since = new Date(Date.now() - minutes * 60_000).toISOString();
-      const res = await call(`/guestbook_entries?select=id&ip_hash=eq.${ipHash}&created_at=gte.${encodeURIComponent(since)}`, { method: "HEAD", headers: { Prefer: "count=exact" } });
-      return Number(res.headers.get("content-range")?.split("/")[1] ?? 0);
-    },
-    async setStatus(id, status) {
-      await call(`/guestbook_entries?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify({ status }) });
-    },
-    async remove(id) {
-      await call(`/guestbook_entries?id=eq.${encodeURIComponent(id)}`, { method: "DELETE" });
-    },
-    async react(id, kind) {
-      await call(`/rpc/guestbook_react`, { method: "POST", body: JSON.stringify({ entry_id: id, kind }) });
-    },
-  };
+const toPublic = (r: Row): PublicEntry => ({
+  id: r.id,
+  created_at: r.created_at,
+  name: r.display_name,
+  message: r.message,
+  link: r.website_url,
+  reactions: { wave: r.reaction_wave, heart: r.reaction_heart, paw: r.reaction_paw },
+});
+const toEntry = (r: Row): GuestbookEntry => ({ ...toPublic(r), status: r.moderation_status, updated_at: r.updated_at });
+
+/** Opaque keyset cursor: the (created_at, id) of the last entry on the previous page. */
+export const encodeCursor = (e: { created_at: string; id: string }) => btoa(`${e.created_at}|${e.id}`).replace(/=+$/, "");
+export function decodeCursor(cursor: string | null | undefined): { created_at: string; id: string } | null {
+  if (!cursor || cursor.length > 120) return null;
+  try {
+    const [created_at, id] = atob(cursor).split("|");
+    return /^\d{4}-\d\d-\d\dT[\d:.]+Z$/.test(created_at) && /^[0-9a-f-]{36}$/i.test(id) ? { created_at, id } : null;
+  } catch {
+    return null;
+  }
 }
 
-type MemRow = GuestbookEntry & { ip_hash: string };
-function memoryStore(): GuestbookStore {
-  const g = globalThis as unknown as { __guestbook?: MemRow[] };
-  const rows = (g.__guestbook ??= []);
-  const pub = ({ id, created_at, name, message, link, reactions }: MemRow): PublicEntry => ({ id, created_at, name, message, link, reactions });
+export type Page = { entries: PublicEntry[]; nextCursor: string | null };
+
+export function guestbookStore(db: D1Database) {
   return {
-    kind: "memory",
-    async listApproved(limit) { return rows.filter((r) => r.status === "approved").slice(0, limit).map(pub); },
-    async listForModeration() { return rows.map((r) => ({ id: r.id, created_at: r.created_at, name: r.name, message: r.message, link: r.link, status: r.status, reactions: r.reactions })); },
-    async create(e) {
-      const id = randomUUID();
-      rows.unshift({ id, created_at: new Date().toISOString(), name: e.name, message: e.message, link: e.link, status: e.status, reactions: Object.fromEntries(REACTIONS.map((k) => [k, 0])) as Record<ReactionKind, number>, ip_hash: e.ipHash });
+    async listApproved(limit: number, cursor?: string | null): Promise<Page> {
+      const after = decodeCursor(cursor);
+      const size = Math.max(1, Math.min(50, limit));
+      const stmt = after
+        ? db.prepare(`SELECT ${COLS} FROM guestbook_entries WHERE moderation_status = 'approved' AND (created_at, id) < (?, ?) ORDER BY created_at DESC, id DESC LIMIT ?`).bind(after.created_at, after.id, size + 1)
+        : db.prepare(`SELECT ${COLS} FROM guestbook_entries WHERE moderation_status = 'approved' ORDER BY created_at DESC, id DESC LIMIT ?`).bind(size + 1);
+      const { results } = await stmt.all<Row>();
+      const page = results.slice(0, size).map(toPublic);
+      return { entries: page, nextCursor: results.length > size ? encodeCursor(page[page.length - 1]) : null };
+    },
+
+    async countApproved(): Promise<number> {
+      const row = await db.prepare(`SELECT COUNT(*) AS n FROM guestbook_entries WHERE moderation_status = 'approved'`).first<{ n: number }>();
+      return row?.n ?? 0;
+    },
+
+    async listForModeration(status: Status | "all", limit = 200): Promise<GuestbookEntry[]> {
+      const stmt = status === "all"
+        ? db.prepare(`SELECT ${COLS} FROM guestbook_entries ORDER BY created_at DESC, id DESC LIMIT ?`).bind(limit)
+        : db.prepare(`SELECT ${COLS} FROM guestbook_entries WHERE moderation_status = ? ORDER BY created_at DESC, id DESC LIMIT ?`).bind(status, limit);
+      return (await stmt.all<Row>()).results.map(toEntry);
+    },
+
+    async counts(): Promise<Record<Status, number>> {
+      const { results } = await db.prepare(`SELECT moderation_status AS s, COUNT(*) AS n FROM guestbook_entries GROUP BY moderation_status`).all<{ s: Status; n: number }>();
+      const out: Record<Status, number> = { pending: 0, approved: 0, spam: 0 };
+      for (const r of results) out[r.s] = r.n;
+      return out;
+    },
+
+    async create(e: { name: string; message: string; link: string | null; status: Status; ipHash: string }): Promise<{ id: string }> {
+      const id = crypto.randomUUID();
+      await db
+        .prepare(`INSERT INTO guestbook_entries (id, display_name, message, website_url, moderation_status, ip_hash) VALUES (?, ?, ?, ?, ?, ?)`)
+        .bind(id, e.name, e.message, e.link, e.status, e.ipHash)
+        .run();
       return { id };
     },
-    async recentByIp(ipHash, minutes) { const since = Date.now() - minutes * 60_000; return rows.filter((r) => r.ip_hash === ipHash && Date.parse(r.created_at) >= since).length; },
-    async setStatus(id, status) { const r = rows.find((x) => x.id === id); if (r) r.status = status; },
-    async remove(id) { const i = rows.findIndex((x) => x.id === id); if (i >= 0) rows.splice(i, 1); },
-    async react(id, kind) { const r = rows.find((x) => x.id === id && x.status === "approved"); if (r) r.reactions[kind] = (r.reactions[kind] ?? 0) + 1; },
+
+    async recentByIp(ipHash: string, minutes: number): Promise<number> {
+      const since = new Date(Date.now() - minutes * 60_000).toISOString();
+      const row = await db.prepare(`SELECT COUNT(*) AS n FROM guestbook_entries WHERE ip_hash = ? AND created_at >= ?`).bind(ipHash, since).first<{ n: number }>();
+      return row?.n ?? 0;
+    },
+
+    /** Applies a moderation action and records it in the audit log, atomically. Returns false if the entry is gone. */
+    async moderate(id: string, action: ModerationAction, actor: string): Promise<boolean> {
+      const current = await db.prepare(`SELECT moderation_status FROM guestbook_entries WHERE id = ?`).bind(id).first<{ moderation_status: Status }>();
+      if (!current) return false;
+      const log = db.prepare(`INSERT INTO guestbook_moderation_log (entry_id, action, from_status, actor) VALUES (?, ?, ?, ?)`).bind(id, action, current.moderation_status, actor);
+      const change = action === "delete"
+        ? db.prepare(`DELETE FROM guestbook_entries WHERE id = ?`).bind(id)
+        : db.prepare(`UPDATE guestbook_entries SET moderation_status = ?, updated_at = ${NOW} WHERE id = ?`).bind(action === "approve" ? "approved" : action, id);
+      await db.batch([change, log]);
+      return true;
+    },
+
+    /** Reactions only count on approved entries. */
+    async react(id: string, kind: ReactionKind): Promise<boolean> {
+      if (!REACTIONS.includes(kind)) return false;
+      const col = REACTION_COLUMN[kind];
+      const res = await db.prepare(`UPDATE guestbook_entries SET ${col} = ${col} + 1 WHERE id = ? AND moderation_status = 'approved'`).bind(id).run();
+      return (res.meta.changes ?? 0) > 0;
+    },
   };
 }
 
-export function getStore(): GuestbookStore | null {
-  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (url && key) return supabaseStore(url, key);
-  if (process.env.NODE_ENV !== "production" || process.env.GUESTBOOK_MEMORY_STORE === "1") return memoryStore();
-  return null;
-}
-
-export const autoApprove = () => process.env.GUESTBOOK_AUTO_APPROVE === "true";
+export type GuestbookStore = ReturnType<typeof guestbookStore>;

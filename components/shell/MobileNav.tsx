@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import NavList from "./NavList";
 import ThemeToggle from "./ThemeToggle";
-import { contact, person } from "@/content/site";
+import SocialLinks from "@/components/ui/SocialLinks";
+import { person } from "@/content/site";
 
 export default function MobileNav() {
   const pathname = usePathname();
@@ -47,9 +48,7 @@ export default function MobileNav() {
           <NavList className="sheet__nav" onNavigate={() => setOpen(false)} />
         </nav>
         <div className="sheet__foot">
-          <a href={`mailto:${contact.personalEmail}`}>{contact.personalEmail}</a>
-          <a href={contact.github}>GitHub</a>
-          <a href={contact.x}>X</a>
+          <SocialLinks className="sheet__social" />
           <ThemeToggle />
         </div>
       </div>

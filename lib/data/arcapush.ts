@@ -1,4 +1,5 @@
 import "server-only";
+import { errorFields, logEvent } from "@/lib/server/log";
 import type { Metric } from "./types";
 import { formatCount } from "./types";
 
@@ -24,7 +25,10 @@ export async function getArcapushMetrics(): Promise<Metric[]> {
   try {
     const res = await fetch(SOURCE_URL, { next: { revalidate: 1800, tags: ["arcapush"] }, signal: AbortSignal.timeout(6000) });
     if (res.ok) data = await res.json();
-  } catch {}
+    else logEvent("warn", "data.arcapush_failed", { status: res.status });
+  } catch (err) {
+    logEvent("warn", "data.arcapush_failed", errorFields(err));
+  }
   const asOf = data ? data.refreshedAt ?? new Date().toISOString() : null;
   return SHAPE.map(({ key, label, window }) => {
     const m = data?.metrics.find((x) => x.key === key);

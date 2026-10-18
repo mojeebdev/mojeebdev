@@ -1,71 +1,81 @@
 "use client";
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
-import type { GuestbookEntry } from "@/lib/guestbook/schema";
+import type { GuestbookEntry, ModerationAction, Status } from "@/lib/guestbook/schema";
 
-type Filter = "pending" | "approved" | "spam" | "all";
+type Filter = Status | "all";
+type Auth = "access" | "token" | "none";
+type View =
+  | { phase: "loading" }
+  | { phase: "signin"; auth: Auth }
+  | { phase: "ready"; entries: GuestbookEntry[]; counts: Record<Status, number>; moderator: string; auth: Auth }
+  | { phase: "error"; message: string };
 
 export default function GuestbookAdmin() {
-  const [authed, setAuthed] = useState<boolean | null>(null);
-  const [entries, setEntries] = useState<GuestbookEntry[]>([]);
+  const [view, setView] = useState<View>({ phase: "loading" });
   const [filter, setFilter] = useState<Filter>("pending");
-  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [token, setToken] = useState("");
-
   const [version, setVersion] = useState(0);
-  const load = useCallback(() => setVersion((v) => v + 1), []);
+  const reload = useCallback(() => setVersion((v) => v + 1), []);
+
   useEffect(() => {
     let alive = true;
-    fetch("/api/guestbook/admin", { cache: "no-store" })
+    fetch(`/api/guestbook/admin?status=${filter}`, { cache: "no-store" })
       .then(async (res) => {
+        const data = await res.json().catch(() => ({}));
         if (!alive) return;
-        if (res.status === 401) { setAuthed(false); return; }
-        const data = await res.json();
-        if (!res.ok) { setError(data.error ?? "Couldn't load entries."); setAuthed(true); return; }
-        setEntries(data.entries); setAuthed(true); setError(null);
+        if (res.status === 401) setView({ phase: "signin", auth: data.auth ?? "none" });
+        else if (!res.ok) setView({ phase: "error", message: data.error ?? "Couldn't load entries." });
+        else setView({ phase: "ready", entries: data.entries, counts: data.counts, moderator: data.moderator, auth: data.auth });
       })
-      .catch(() => alive && setError("Couldn't load entries."));
+      .catch(() => alive && setView({ phase: "error", message: "Couldn't reach the server." }));
     return () => { alive = false; };
-  }, [version]);
+  }, [filter, version]);
 
-  const login = async (e: FormEvent) => {
+  const signIn = async (e: FormEvent) => {
     e.preventDefault();
     const res = await fetch("/api/guestbook/admin/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ token }) });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) { setError(data.error ?? "Sign-in failed."); return; }
-    setToken(""); load();
+    if (!res.ok) { setNotice(data.error ?? "Sign-in failed."); return; }
+    setToken(""); setNotice(null); reload();
   };
-  const act = async (id: string, action: "approve" | "pending" | "spam" | "delete") => {
+  const act = async (id: string, action: ModerationAction) => {
     if (action === "delete" && !confirm("Delete this entry permanently?")) return;
     const res = await fetch("/api/guestbook/admin", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, action }) });
-    if (!res.ok) { setError("Action failed."); return; }
-    load();
+    setNotice(res.ok ? null : "That action failed. Reload and try again.");
+    reload();
   };
 
-  if (authed === null) return <p className="muted">Checking access…</p>;
-  if (!authed) {
+  if (view.phase === "loading") return <p className="muted" role="status">Checking access…</p>;
+  if (view.phase === "error") return <p className="gb-err" role="alert">{view.message}</p>;
+  if (view.phase === "signin") {
+    if (view.auth === "access") return <p className="gb-notice">Moderation is protected by Cloudflare Access. <a className="text-link" href="/guestbook/admin">Reload this page</a> to sign in.</p>;
+    if (view.auth === "none") return <p className="gb-notice">Moderation isn’t configured yet. Set up Cloudflare Access for this path, or add the <code>GUESTBOOK_ADMIN_TOKEN</code> secret (see docs/guestbook.md).</p>;
     return (
-      <form className="gb-form gb-panel" onSubmit={login} style={{ maxWidth: 420 }}>
+      <form className="gb-form gb-panel" onSubmit={signIn} style={{ maxWidth: 420 }}>
         <div className="gb-field"><label htmlFor="admin-token">Admin token</label><input id="admin-token" type="password" autoComplete="current-password" value={token} onChange={(e) => setToken(e.target.value)} required /></div>
         <button type="submit" className="btn btn--primary">Sign in</button>
-        {error && <p className="gb-err" role="alert">{error}</p>}
+        {notice && <p className="gb-err" role="alert">{notice}</p>}
       </form>
     );
   }
-  const shown = entries.filter((e) => filter === "all" || e.status === filter);
+
+  const total = view.counts.pending + view.counts.approved + view.counts.spam;
   return (
     <div className="gb-admin">
-      <div className="archive__chips" role="group" aria-label="Filter">
+      <p className="meta">Signed in as {view.moderator === "admin-token" ? "admin (token)" : view.moderator}.</p>
+      <div className="archive__chips" role="group" aria-label="Filter by status">
         {(["pending", "approved", "spam", "all"] as Filter[]).map((f) => (
-          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>{f} ({f === "all" ? entries.length : entries.filter((e) => e.status === f).length})</button>
+          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>{f} ({f === "all" ? total : view.counts[f]})</button>
         ))}
-        <button type="button" onClick={async () => { await fetch("/api/guestbook/admin/session", { method: "DELETE" }); setAuthed(false); }}>Sign out</button>
+        {view.auth === "token" && <button type="button" onClick={async () => { await fetch("/api/guestbook/admin/session", { method: "DELETE" }); reload(); }}>Sign out</button>}
       </div>
-      {error && <p className="gb-err" role="alert">{error}</p>}
+      {notice && <p className="gb-err" role="alert">{notice}</p>}
       <ul role="list" className="gb-list">
-        {shown.map((e) => (
+        {view.entries.map((e) => (
           <li key={e.id} className="gb-entry">
-            <div className="gb-entry__head"><span className="gb-entry__name">{e.name}</span><span className={`chip`}>{e.status}</span><time className="meta">{new Date(e.created_at).toLocaleString("en-GB")}</time></div>
+            <div className="gb-entry__head"><span className="gb-entry__name">{e.name}</span><span className="chip">{e.status}</span><time className="meta" dateTime={e.created_at}>{new Date(e.created_at).toLocaleString("en-GB")}</time></div>
             <p className="gb-entry__msg">{e.message}</p>
             {e.link && <p className="meta">{e.link}</p>}
             <div className="gb-admin__actions">
@@ -77,7 +87,7 @@ export default function GuestbookAdmin() {
           </li>
         ))}
       </ul>
-      {!shown.length && <p className="muted">Nothing here.</p>}
+      {!view.entries.length && <p className="muted">Nothing here.</p>}
     </div>
   );
 }

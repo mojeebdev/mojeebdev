@@ -1,4 +1,5 @@
 import "server-only";
+import { errorFields, logEvent } from "@/lib/server/log";
 
 /**
  * npm registry + downloads API, fetched server-side and cached for 6 hours.
@@ -33,9 +34,10 @@ async function getJson<T>(url: string): Promise<T | null> {
       signal: AbortSignal.timeout(TIMEOUT),
       headers: { accept: "application/json" },
     });
-    if (!res.ok) return null;
+    if (!res.ok) { logEvent("warn", "data.npm_failed", { host: new URL(url).host, status: res.status }); return null; }
     return (await res.json()) as T;
-  } catch {
+  } catch (err) {
+    logEvent("warn", "data.npm_failed", { host: new URL(url).host, ...errorFields(err) });
     return null;
   }
 }

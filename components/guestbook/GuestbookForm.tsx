@@ -6,7 +6,7 @@ import { LIMITS, validate, type FieldErrors } from "@/lib/guestbook/schema";
 
 type State = { phase: "idle" | "sending" | "done" | "error"; message?: string; status?: string };
 
-export default function GuestbookForm({ configured }: { configured: boolean }) {
+export default function GuestbookForm({ active }: { active: boolean }) {
   const [values, setValues] = useState({ name: "", message: "", link: "" });
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [serverErrors, setServerErrors] = useState<FieldErrors>({});
@@ -14,8 +14,8 @@ export default function GuestbookForm({ configured }: { configured: boolean }) {
   const [token, setToken] = useState<string | null>(null);
   const id = useId();
 
-  const loadToken = () => fetch("/api/guestbook/token", { cache: "no-store" }).then((r) => r.json()).then((d) => setToken(d.token)).catch(() => setToken(null));
-  useEffect(() => { if (configured) loadToken(); }, [configured]);
+  const loadToken = () => fetch("/api/guestbook/token", { cache: "no-store" }).then((r) => r.json()).then((d) => setToken(d.token ?? null)).catch(() => setToken(null));
+  useEffect(() => { if (active) loadToken(); }, [active]);
 
   const v = validate(values);
   const errors: FieldErrors = { ...(v.ok ? {} : v.errors), ...serverErrors };
@@ -39,8 +39,8 @@ export default function GuestbookForm({ configured }: { configured: boolean }) {
     }
   };
 
-  if (!configured) {
-    return <p className="gb-notice">The guestbook is being connected to its database. Signing opens shortly. In the meantime, say hello at <a className="text-link" href="mailto:hello@mojeeb.xyz">hello@mojeeb.xyz</a>.</p>;
+  if (!active) {
+    return <p className="gb-notice" role="status">The guestbook is moving to its new home and isn’t taking notes just yet. Signing opens shortly. In the meantime, say hello at <a className="text-link" href="mailto:hello@mojeeb.xyz">hello@mojeeb.xyz</a>.</p>;
   }
 
   if (state.phase === "done") {

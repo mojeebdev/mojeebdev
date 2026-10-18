@@ -32,3 +32,4 @@
 .gb-preview .gb-list { width: 100%; }
 .gb-admin { display: grid; gap: 16px; }
 .gb-admin__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.gb-more { display: grid; gap: 8px; justify-items: start; margin-top: var(--s-5); }

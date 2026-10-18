@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Icon from "@/components/ui/Icon";
 import { PortraitCircle } from "@/components/ui/Portrait";
 import { alsoBehind, contact, creatorOfProduct, founderOf, person } from "@/content/site";
 
@@ -30,7 +31,11 @@ export default function Hero() {
       <div className="hero__ctas">
         <Link href="/work" className="btn btn--primary">Explore my work</Link>
         <Link href="/contact" className="btn">Work with me</Link>
-        <a href={contact.github} className="btn btn--ghost">GitHub <span aria-hidden="true">↗</span></a>
+        <a href={contact.github} className="btn btn--ghost btn--icon">
+          <Icon name="github" size={16} />
+          <span>GitHub</span>
+          <Icon name="external" size={14} className="icon--external" />
+        </a>
       </div>
       <p className="hero__meta">
         <span>{person.location}</span>
