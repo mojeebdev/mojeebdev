@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" role="img" aria-label="MatchMind icon">
+  <rect width="512" height="512" rx="112" fill="#08090A"/>
+  <rect x="24" y="24" width="464" height="464" rx="96" fill="#0D3B2E"/>
+  <rect x="24" y="24" width="464" height="464" rx="96" stroke="rgba(201,168,76,0.3)" stroke-width="4"/>
+  <!-- Tactical grid -->
+  <circle cx="176" cy="176" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="256" cy="176" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="336" cy="176" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="176" cy="256" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="256" cy="256" r="12" fill="#C9A84C"/>
+  <circle cx="336" cy="256" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="176" cy="336" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="256" cy="336" r="8" fill="rgba(201,168,76,0.35)"/>
+  <circle cx="336" cy="336" r="8" fill="rgba(201,168,76,0.35)"/>
+  <!-- Football arc -->
+  <path d="M196 340c30-48 90-48 120 0" stroke="#C9A84C" stroke-width="10" stroke-linecap="round" fill="none"/>
+  <!-- M letterforms subtle -->
+  <text x="256" y="430" text-anchor="middle" font-family="Georgia, serif" font-size="72" font-weight="700" fill="#F0EDE6">MM</text>
+</svg>

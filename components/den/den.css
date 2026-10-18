@@ -1,0 +1,78 @@
+/* Enter the Den. Hidden unless the pre-paint boot script sets html.den-pending. */
+.den { display: none; }
+html.den-pending { overflow: hidden; }
+html.den-pending .den {
+  position: fixed; inset: 0; z-index: 300; display: grid; grid-template-rows: 1fr auto auto; justify-items: center;
+  padding: 24px 16px 40px; color: var(--ink);
+  background: var(--bg);
+  -webkit-mask: radial-gradient(circle at var(--paw-x, 50%) var(--paw-y, 50%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+          mask: radial-gradient(circle at var(--paw-x, 50%) var(--paw-y, 50%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+  --hole: 0px;
+  animation: den-in 360ms var(--ease) both;
+}
+@property --hole { syntax: "<length>"; inherits: false; initial-value: 0px; }
+@keyframes den-in { from { opacity: 0; } to { opacity: 1; } }
+.den.is-revealing { transition: --hole 760ms cubic-bezier(0.7, 0, 0.2, 1); --hole: 160vmax; }
+.den.is-leaving { opacity: 0; transition: opacity 200ms var(--ease); }
+
+.den__gl { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 600ms var(--ease); pointer-events: none; }
+.den.has-gl .den__gl { opacity: 1; }
+.den__floor { position: absolute; left: 0; right: 0; bottom: 0; height: 42%; background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--ink) 4%, transparent)); pointer-events: none; }
+.den.has-gl .den__floor { opacity: 0; }
+
+.den__stage { position: relative; align-self: end; width: min(68vw, 300px); aspect-ratio: 1; margin-bottom: 8px; }
+.den__shadow { position: absolute; left: 14%; right: 14%; bottom: 2%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgb(0 0 0 / 0.16), transparent); transition: transform 500ms var(--ease); }
+.den.has-gl .den__shadow { opacity: 0; }
+.den__cat { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 40%; background: none; cursor: pointer; color: var(--ink); transition: transform 520ms cubic-bezier(0.3, 1.4, 0.5, 1); }
+.den__cat .leopard { width: 100%; height: 100%; }
+.den__cat .lp-ground { display: none; }
+.den__cat:focus-visible, .den__paw-hit:focus-visible { outline: none; }
+.den.is-kbd .den__cat:focus-visible { outline: 2px dashed var(--blue); outline-offset: 6px; }
+.den__cat:disabled { cursor: default; }
+
+/* Step 1: greet. The leopard settles in place; idle blinking, breathing and head movement come from the rig. */
+.den[data-stage="greet"] .den__cat { animation: den-settle 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes den-settle { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+
+/* Step 2: reach. A playful bounce and head tilt as the paw comes up. */
+.den[data-stage="reach"] .den__cat { animation: den-bounce 460ms cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes den-bounce { 0% { transform: translateY(0); } 40% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+.den[data-stage="reach"] .leopard .lp-head { animation: den-tilt 600ms ease-out both; }
+@keyframes den-tilt { 0% { transform: rotate(0); } 60% { transform: rotate(-9deg); } 100% { transform: rotate(-6deg); } }
+
+/* The raised paw is the primary target, with a generous invisible hit area (paw sits at 79% / 41% of the rig). */
+.den__paw-hit { position: absolute; left: 79%; top: 41%; width: max(88px, 36%); aspect-ratio: 1; transform: translate(-50%, -50%); border: 0; border-radius: 50%; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.den.is-kbd .den__paw-hit:focus-visible { outline: 2px dashed var(--blue); outline-offset: -10px; }
+.den__paw-hit[aria-disabled="true"] { cursor: default; }
+.den[data-stage="reach"] .den__paw-hit::after { content: ""; position: absolute; inset: 24%; border-radius: 50%; border: 1.5px solid color-mix(in srgb, var(--ink) 18%, transparent); animation: den-ping 1.6s ease-out 500ms infinite; }
+@keyframes den-ping { 0% { transform: scale(0.7); opacity: 0.9; } 100% { transform: scale(1.35); opacity: 0; } }
+
+/* Step 3: high five. The paw pushes forward, a small burst of paws and stars, a happy hop, then the reveal. */
+.den[data-stage="five"] .den__cat { transform: scale(1.03); transition: transform 240ms var(--ease); }
+.den[data-stage="five"] .leopard .lp-arm--r { animation: den-five 300ms cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+@keyframes den-five { 0% { transform: rotate(0) scale(1); } 45% { transform: rotate(-10deg) scale(1.16); } 100% { transform: rotate(-4deg) scale(1.05); } }
+.den__burst { position: absolute; left: 79%; top: 41%; width: 0; height: 0; pointer-events: none; }
+.den__burst svg { position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; max-width: none; fill: var(--ink); opacity: 0; animation: den-burst 760ms cubic-bezier(0.2, 0.7, 0.2, 1) 60ms forwards; }
+.den__burst svg:nth-child(even) { fill: #f5c66b; stroke: #111; stroke-width: 2.5; stroke-linejoin: round; width: 20px; height: 20px; left: -10px; top: -10px; }
+@keyframes den-burst {
+  0% { opacity: 0; transform: rotate(var(--a)) translateX(10px) rotate(calc(-1 * var(--a))) scale(0.4); }
+  20% { opacity: 1; }
+  70% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) rotate(calc(-1 * var(--a))) scale(1); }
+}
+
+.den__copy { display: grid; gap: 6px; text-align: center; min-height: 64px; }
+.den__hint { font-weight: 300; font-size: clamp(1.25rem, 3vw, 1.65rem); letter-spacing: -0.02em; }
+.den__help { font-size: 0.8125rem; color: var(--ink-3); }
+.den__skip { position: absolute; top: 16px; right: 16px; display: inline-flex; gap: 8px; align-items: center; min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink); font-size: 0.875rem; cursor: pointer; }
+.den__skip:hover { border-color: var(--line-strong); }
+.den__brand { position: absolute; left: 20px; top: 28px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+@media (max-width: 479px) { .den__brand { display: none; } }
+
+/* Reduced motion (only reachable via ?intro=1): same steps, no movement; the reveal becomes a quick fade. */
+@media (prefers-reduced-motion: reduce) {
+  .den[data-stage] .den__cat, .den[data-stage] .den__shadow, .den .leopard * { animation: none !important; }
+  .den[data-stage] .den__cat { transform: none !important; }
+  .den__burst, .den__paw-hit::after { display: none; }
+  .den.is-revealing { transition: opacity 200ms linear; opacity: 0; --hole: 0px; }
+}

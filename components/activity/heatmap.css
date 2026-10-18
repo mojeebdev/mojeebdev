@@ -1,0 +1,32 @@
+.heatmap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+.heatmap__bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+.heatmap__readout { color: var(--ink-2); font-size: 0.9375rem; min-height: 1.6em; }
+.heatmap__readout strong { color: var(--ink); font-weight: 600; }
+.heatmap__tabs { display: flex; gap: 2px; }
+.heatmap__tabs button { min-height: 36px; padding: 0 10px; border: 0; border-radius: var(--r-control); background: none; color: var(--ink-3); font-size: 1rem; cursor: pointer; }
+.heatmap__tabs button:hover { color: var(--ink-2); }
+.heatmap__tabs button[aria-selected="true"] { color: var(--ink); }
+.heatmap__scroll { overflow-x: auto; padding: 4px 2px 2px; scrollbar-width: thin; }
+.heatmap__svg { display: block; width: 100%; min-width: 760px; height: auto; overflow: visible; }
+.hm-cell { fill: var(--heat-0); cursor: pointer; transition: opacity var(--t-ui) var(--ease); outline: none; }
+.hm-cell.l1, .hm-key.l1 { fill: var(--heat-1); background: var(--heat-1); }
+.hm-cell.l2, .hm-key.l2 { fill: var(--heat-2); background: var(--heat-2); }
+.hm-cell.l3, .hm-key.l3 { fill: var(--heat-3); background: var(--heat-3); }
+.hm-cell.l4, .hm-key.l4 { fill: var(--heat-4); background: var(--heat-4); }
+.hm-key.l0 { background: var(--heat-0); }
+.hm-cell:hover { opacity: 0.75; }
+.hm-cell:focus-visible { stroke: var(--ink); stroke-width: 2px; }
+.hm-cell.is-sel { stroke: var(--ink); stroke-width: 1.5px; }
+.hm-month { font-size: 11px; fill: var(--ink-3); font-family: var(--font-sans); }
+.hm-area { fill: var(--heat-1); opacity: 0.6; }
+.hm-line { fill: none; stroke: var(--heat-4); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.hm-dot { fill: var(--heat-4); stroke: var(--bg); stroke-width: 2; }
+.hm-band { fill: var(--blue); opacity: 0.12; }
+.heatmap__foot { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; align-items: center; }
+.heatmap__legend { display: flex; align-items: center; gap: 4px; font-size: 0.75rem; color: var(--ink-3); }
+.heatmap__legend span:first-child { margin-right: 4px; }
+.heatmap__legend span:last-child { margin-left: 4px; }
+.hm-key { display: inline-block; width: 11px; height: 11px; border-radius: 3px; }
+.heatmap__sel { font-size: 0.875rem; color: var(--ink-2); }
+.heatmap__src { font-size: 0.8125rem; }
+.text-btn { border: 0; background: none; padding: 0 2px; color: var(--blue); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: inherit; min-height: 24px; }

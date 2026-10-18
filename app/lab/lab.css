@@ -1,0 +1,11 @@
+.paw-trail { position: relative; height: 0; pointer-events: none; }
+.paw-trail svg { position: absolute; width: 22px; height: 22px; max-width: none; fill: var(--ink); opacity: 0; transform: rotate(90deg); animation: paw-step 1.6s var(--ease) forwards; }
+@keyframes paw-step { 0% { opacity: 0; transform: rotate(90deg) scale(0.6); } 15% { opacity: 0.55; transform: rotate(90deg) scale(1); } 70% { opacity: 0.35; } 100% { opacity: 0; } }
+.lab-grid { display: grid; gap: 16px; }
+@media (min-width: 760px) { .lab-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lab-card { display: grid; gap: 10px; align-content: start; padding: 24px; border-radius: 20px; background: var(--surface-2); text-decoration: none; min-height: 220px; transition: transform var(--t-reveal) var(--ease); }
+.lab-card:hover { transform: translateY(-2px); }
+.lab-card:hover .h3 { color: var(--blue); }
+.lab-card__meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.lab-card--feature { border: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); background: var(--surface); }
+@media (min-width: 760px) { .lab-card--feature { grid-column: 1 / -1; } }

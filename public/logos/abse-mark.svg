@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Abse mark</title>
+  <desc id="desc">A pale green A slash monogram inside a dark square.</desc>
+  <rect width="512" height="512" rx="72" fill="#090b0b"/>
+  <rect x="28" y="28" width="456" height="456" rx="52" fill="none" stroke="#59605d" stroke-width="12"/>
+  <path d="M146 356 236 148h43l88 208h-48l-20-51H213l-20 51h-47Zm84-94h52l-26-68-26 68Z" fill="#a4d08f"/>
+  <path d="M331 145h38L279 367h-38l90-222Z" fill="#ecece5" opacity="0.92"/>
+</svg>

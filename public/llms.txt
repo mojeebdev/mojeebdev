@@ -1,68 +1,34 @@
-# Mojeeb Titilayo - mojeeb.xyz
-# Machine-readable portfolio context for AI systems and search crawlers.
-# Last updated: 2026-07-29
+# Mojeeb Titilayo · mojeeb.xyz
+# Machine-readable context for AI systems and search crawlers. Updated 2026-10-18.
 
 ## Identity
-
 - Name: Mojeeb Titilayo
-- Role: AI Product Engineer, System Architect, AI and Web3 Strategist
+- Role: Product Engineer + Strategist
+- Founder of BlindspotLab. Creator of Arcapush.
+- BlindspotLab Limited (RC 9855946, incorporated in Nigeria on 14 September 2026): https://blindspotlab.xyz
+- Arcapush (created by Mojeeb Titilayo, February 2026): https://arcapush.com
 - Location: Lagos, Nigeria
-- Website: https://mojeeb.xyz
-- Email: hello@mojeeb.xyz
-- Studio: BlindspotLab - https://blindspotlab.xyz
-- Headshot and profile image: https://mojeeb.xyz/mojeeb_headshot.png
+- Email: hello@mojeeb.xyz (personal) · mojeeb@blindspotlab.xyz (studio)
+- GitHub: https://github.com/mojeebdev · X: https://x.com/MojeebMotion · LinkedIn: https://www.linkedin.com/in/tmojeeb
 
-## Canonical routes
+## Also behind (open-source developer tools)
+- StackBrief: open-source, local-first CLI for source-cited repository architecture briefs. npm @blindspotlab/stackbrief · https://github.com/mojeebdev/stackbrief
+- StyleGraft: open-source agent skill that turns visual references into product-specific DESIGN.md files. npm @blindspotlab/stylegraft · https://github.com/mojeebdev/StyleGraft
+- Arcapush CLI: terminal and MCP submission for Arcapush. npm @blindspotlab/arcapush · https://github.com/mojeebdev/arcapush-cli
 
-- Home: https://mojeeb.xyz/
-- Selected work: https://mojeeb.xyz/work
-- Projects and experiments: https://mojeeb.xyz/projects
-- About: https://mojeeb.xyz/about
-- Experience: https://mojeeb.xyz/experience
-- AI product engineering: https://mojeeb.xyz/ai
-- Approach: https://mojeeb.xyz/approach
-- Contact: https://mojeeb.xyz/contact
+## Building
+- Arcapush (since February 2026): a discovery and distribution registry for products, AI agents and hackathon builds. https://arcapush.com. Live public metrics with definitions: https://arcapush.com/api/hero-metrics
 
-## Positioning
+## Case studies
+- https://mojeeb.xyz/work/arcapush
+- https://mojeeb.xyz/work/stackbrief
+- https://mojeeb.xyz/work/stylegraft
+- https://mojeeb.xyz/work/revel (BlindspotLab studio product; MCP + x402)
+- https://mojeeb.xyz/work/admon (Monad Mainnet ERC-721 build records)
+- https://mojeeb.xyz/work/aitax (client engineering; pre-release, no contract deployed)
 
-Mojeeb turns rough ideas, useful information, and overlooked problems into clear, buildable products across AI, SaaS, developer tools, and Web3.
+## Pages
+- Profile: https://mojeeb.xyz/ · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
 
-Confirmed portfolio claim: built and shipped 40+ products, tools, experiments, and platforms across 70 repositories. The portfolio distinguishes active products from paused work, hackathon builds, experiments, cultural builds, and inactive archives.
-
-## Selected work
-
-- BlindspotLab - https://blindspotlab.xyz - Productized build studio; founded by Mojeeb.
-- Arcapush - https://arcapush.com - High-signal discovery platform for serious solo builders; 146 indexed products as of July 28, 2026.
-- StackBrief - https://stackbrief.peerfix.dev - Open-source, local-first CLI for source-cited repository analysis; 500+ downloads as of July 2026.
-- Revel - https://tryrevel.xyz - Website and product audit SaaS with an MCP-powered interactive agent capability.
-- SiteHook - https://sitehook.run - SaaS for freelancers, studios, agencies, and solo builders; evolved from an internal BlindspotLab tool.
-- Capself - https://capself.co - Personal Development Operating System with four Paystack subscription tiers.
-- Whate - https://whate.app - Meal-discovery and meal-planning product with 10,516 meals in the July 2026 snapshot.
-- Admon - https://admon.peerfix.dev - Web3 builder-identity and GitHub-credential product.
-
-NAGIMU and CommitCar are confirmed parts of Mojeeb's build history, but the current build index does not confirm public URLs for them. No public URLs should be inferred.
-
-## Product practice
-
-- Product strategy and positioning
-- AI product engineering and system architecture
-- AI agents, MCP integrations, RAG, developer tooling, CLI design, and static analysis
-- SaaS architecture, subscription systems, Paystack billing, and dataset-driven products
-- Solidity, Base, smart contracts, onchain identity, NFT systems, and credential systems
-- Product design, design systems, information architecture, and hackathon execution
-
-## Core stack
-
-Next.js, TypeScript, Supabase, Firebase, Prisma, PostgreSQL, MySQL, MongoDB, Solidity, Base, OpenAI, Claude API, Gemini, OpenRouter, RAG, and prompt engineering.
-
-## Social
-
-- X: https://x.com/MojeebMotion
-- LinkedIn: https://www.linkedin.com/in/tmojeeb
-- GitHub: https://github.com/mojeebdev
-- Devpost: https://devpost.com/mojeebdev
-- YouTube: https://youtube.com/@tmojeeb
-
-## Citation
-
-Mojeeb Titilayo, AI Product Engineer and System Architect - https://mojeeb.xyz
+## Notes on figures
+Every number on the site states its source, definition, window and timestamp. Founder-reported figures (for example "40+ projects shipped") are labelled as such and never combined with live counters.

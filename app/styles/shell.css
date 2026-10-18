@@ -1,0 +1,49 @@
+/* ---------- Desktop sidebar (reference C, adapted) ---------- */
+.sidebar { display: none; }
+@media (min-width: 1024px) {
+  .sidebar { display: block; position: relative; border-right: 1px solid var(--line); }
+  .sidebar__inner { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; gap: 40px; padding: 32px 24px 24px 28px; }
+}
+.sidebar__id { display: grid; gap: 2px; text-decoration: none; }
+.sidebar__name { font-weight: 500; font-size: 0.9375rem; letter-spacing: -0.01em; }
+.sidebar__role { font-size: 0.8125rem; color: var(--ink-3); }
+.sidebar__nav ul { display: grid; gap: 2px; }
+.sidebar__nav a, .sheet__nav a {
+  position: relative; display: flex; align-items: center; gap: 12px; min-height: 32px; padding: 0 10px;
+  margin-left: -10px; border-radius: var(--r-control); color: var(--ink-3); text-decoration: none; font-size: 0.875rem;
+  transition: color var(--t-ui) var(--ease), background var(--t-ui) var(--ease);
+}
+.sidebar__nav a:hover { color: var(--ink); background: var(--surface-2); }
+.sidebar__nav a[aria-current="page"] { color: var(--ink); }
+.sidebar__nav a[aria-current="page"]::before { content: "▸"; position: absolute; left: -8px; font-size: 0.6875rem; color: var(--ink); }
+.nav-index { display: none; }
+.sheet__nav .nav-index { display: inline; font-family: var(--font-mono); font-size: 0.6875rem; color: var(--ink-3); }
+.sidebar__help { font-size: 0.75rem; line-height: 1.5; color: var(--ink-3); max-width: 22ch; margin-top: 10px; }
+.sidebar__foot { margin-top: auto; display: grid; gap: 16px; }
+.sidebar__social { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8125rem; }
+.sidebar__social a { color: var(--ink-3); text-decoration: none; }
+.sidebar__social a:hover { color: var(--ink); }
+.theme-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--ink-2); font-size: 0.8125rem; cursor: pointer; width: max-content; }
+.theme-toggle:hover { color: var(--ink); border-color: var(--line-strong); }
+.theme-toggle__dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%); }
+.theme-toggle__dot[data-mode="light"] { background: transparent; }
+.theme-toggle__dot[data-mode="dark"] { background: currentColor; }
+
+/* ---------- Mobile top bar + sheet ---------- */
+.topbar { position: fixed; z-index: 50; inset: 0 0 auto; height: 60px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 16px; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+@media (min-width: 1024px) { .topbar { display: none; } }
+.topbar__name { font-weight: 500; text-decoration: none; letter-spacing: -0.01em; }
+.topbar__menu { display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 0; background: none; cursor: pointer; font-size: 0.9375rem; }
+.topbar__glyph { display: grid; gap: 5px; width: 18px; }
+.topbar__glyph i { display: block; height: 1.5px; background: currentColor; transition: transform var(--t-reveal) var(--ease); }
+.topbar__glyph[data-open] i:first-child { transform: translateY(3.25px) rotate(45deg); }
+.topbar__glyph[data-open] i:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+.sheet { position: fixed; inset: 60px 0 0; z-index: 49; display: flex; flex-direction: column; justify-content: space-between; padding: 24px 16px 32px; background: var(--bg); overflow-y: auto; }
+.sheet[hidden] { display: none; }
+.sheet[data-open] { animation: sheet-in 240ms var(--ease) both; }
+@keyframes sheet-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.sheet__nav { display: grid; }
+.sheet__nav a { min-height: 56px; margin: 0; padding: 0 4px; border-bottom: 1px solid var(--line); border-radius: 0; font-size: 1.5rem; font-weight: 300; letter-spacing: -0.02em; color: var(--ink); }
+.sheet__nav a[aria-current="page"] { color: var(--blue); }
+.sheet__nav .nav-index { width: 26px; }
+.sheet__foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding-top: 24px; font-size: 0.9375rem; color: var(--ink-2); }

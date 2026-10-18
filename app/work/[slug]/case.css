@@ -1,0 +1,29 @@
+.crumbs { margin-bottom: 20px; }
+.crumbs a { color: var(--ink-2); }
+.case__head { display: grid; gap: 14px; padding-bottom: 40px; border-bottom: 1px solid var(--line); }
+.case__dek { font-size: 1.1875rem; max-width: 56ch; }
+.case__facts, .case__links { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.case__layout { display: grid; gap: 32px; padding-top: 40px; }
+@media (min-width: 1280px) { .case__layout { grid-template-columns: 180px minmax(0, 1fr); gap: 48px; } }
+.case__toc { display: none; }
+@media (min-width: 1280px) { .case__toc { display: block; } .case__toc ol { position: sticky; top: 32px; display: grid; gap: 6px; font-size: 0.875rem; } .case__toc a { color: var(--ink-3); text-decoration: none; } .case__toc a:hover { color: var(--ink); } }
+.case__body { display: grid; gap: 44px; min-width: 0; }
+.case__sec { display: grid; gap: 12px; max-width: var(--measure); }
+.case__sec--wide { max-width: none; }
+.case__lede { font-size: 1.1875rem; line-height: 1.55; color: var(--ink); }
+.case__list { display: grid; gap: 10px; padding-left: 1.1em; }
+.case__list li::marker { color: var(--ink-3); }
+.case__list code, .case__sec code { font-family: var(--font-mono); font-size: 0.85em; padding: 1px 5px; border-radius: 4px; background: var(--surface-2); }
+.case__list--quiet { color: var(--ink-2); font-size: 0.9375rem; }
+.case__stack { display: grid; gap: 10px; }
+.case__stack div { display: grid; gap: 6px; }
+@media (min-width: 720px) { .case__stack div { grid-template-columns: 150px 1fr; } }
+.case__stack dt { color: var(--ink-3); font-size: 0.9375rem; }
+.case__stack dd { display: flex; flex-wrap: wrap; gap: 6px; }
+.case__decisions { display: grid; gap: 20px; }
+.case__decisions > div { display: grid; gap: 6px; padding-left: 16px; border-left: 2px solid var(--line); }
+.case__visual { padding: 24px; border-radius: 20px; background: var(--surface-2); overflow-x: auto; }
+.case__visual svg { min-width: 560px; }
+.case__metrics { margin-bottom: 8px; }
+.case__sources a { color: var(--ink-2); }
+.case__next { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }

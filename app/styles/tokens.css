@@ -1,0 +1,61 @@
+/* Design tokens — see DESIGN.md §4–§12. Theme switches on [data-theme] or the OS preference. */
+:root {
+  --bg: #fafaf8;
+  --surface: #ffffff;
+  --surface-2: #f2f3f4;
+  --ink: #16171a;
+  --ink-2: #4a4e56;
+  --ink-3: #5f646d;
+  --line: #e4e5e8;
+  --line-strong: #cdd0d5;
+  --blue: #1f66e0;
+  --blue-soft: rgb(31 102 224 / 0.08);
+  --heat-0: #eff1f3;
+  --heat-1: #cde3ff;
+  --heat-2: #7db8ff;
+  --heat-3: #2e86ff;
+  --heat-4: #0b4c9a;
+  --ok: #1f8a4c;
+  --warn: #a5630a;
+  --danger: #c0352b;
+  --shadow-float: 0 8px 24px rgb(0 0 0 / 0.08);
+
+  --font-sans: var(--font-hanken), "Helvetica Neue", Arial, sans-serif;
+  --font-serif: var(--font-instrument), Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+  --r-control: 6px;
+  --r-panel: 12px;
+  --sidebar-w: 240px;
+  --content-max: 960px;
+  --measure: 68ch;
+  --ease: cubic-bezier(0.2, 0.7, 0, 1);
+  --t-ui: 120ms;
+  --t-reveal: 240ms;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0e0f11; --surface: #15171a; --surface-2: #1c1f23;
+    --ink: #ecedef; --ink-2: #a9aeb6; --ink-3: #868b94;
+    --line: #25282d; --line-strong: #363a40;
+    --blue: #6ea8ff; --blue-soft: rgb(110 168 255 / 0.12);
+    --heat-0: #1a1d22; --heat-1: #12305c; --heat-2: #1b5bb8; --heat-3: #3d8dff; --heat-4: #a8d0ff;
+    --ok: #4cc283; --warn: #e2a54a; --danger: #ff7a6e;
+    --shadow-float: 0 8px 24px rgb(0 0 0 / 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0e0f11; --surface: #15171a; --surface-2: #1c1f23;
+  --ink: #ecedef; --ink-2: #a9aeb6; --ink-3: #868b94;
+  --line: #25282d; --line-strong: #363a40;
+  --blue: #6ea8ff; --blue-soft: rgb(110 168 255 / 0.12);
+  --heat-0: #1a1d22; --heat-1: #12305c; --heat-2: #1b5bb8; --heat-3: #3d8dff; --heat-4: #a8d0ff;
+  --ok: #4cc283; --warn: #e2a54a; --danger: #ff7a6e;
+  --shadow-float: 0 8px 24px rgb(0 0 0 / 0.4);
+  color-scheme: dark;
+}

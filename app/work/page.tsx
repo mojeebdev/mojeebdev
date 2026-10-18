@@ -1,35 +1,31 @@
 import type { Metadata } from "next";
-import JsonLd from "@/components/JsonLd";
-import { WorkRoute } from "@/components/RoutePage";
-import { workPageJsonLd } from "@/lib/jsonLd";
-import { BASE_URL } from "@/lib/site";
-
-const description = "Selected AI, SaaS, developer-tool and Web3 products showing Mojeeb Titilayo's product strategy, system architecture and engineering work.";
+import Link from "next/link";
+import WorkCard from "@/components/work/WorkCard";
+import JsonLd from "@/components/ui/JsonLd";
+import { caseStudies } from "@/content/caseStudies";
+import { breadcrumbs } from "@/lib/jsonLd";
 
 export const metadata: Metadata = {
-  title: "Selected Work",
-  description,
-  alternates: { canonical: `${BASE_URL}/work` },
-  openGraph: {
-    title: "Selected Work — Mojeeb Titilayo",
-    description,
-    url: `${BASE_URL}/work`,
-    type: "website",
-    images: [{ url: "/mojeeb-editorial-og.jpg", width: 1200, height: 630, alt: "Selected work by Mojeeb Titilayo" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Selected Work — Mojeeb Titilayo",
-    description,
-    images: ["/mojeeb-editorial-og.jpg"],
-  },
+  title: "Work",
+  description: "Case studies from Mojeeb Titilayo: Arcapush, StackBrief, StyleGraft, Revel, Admon and AITAX. Problem, role, engineering approach, decisions and verified outcomes.",
+  alternates: { canonical: "/work" },
 };
 
 export default function WorkPage() {
   return (
     <>
-      <JsonLd data={workPageJsonLd} />
-      <WorkRoute />
+      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "Work", path: "/work" }])} />
+      <header className="page-head">
+        <p className="label">Work</p>
+        <h1 className="h1">Selected work</h1>
+        <p className="dek">
+          Six case studies chosen for evidence, not volume. Each one states my exact role, the constraints, the decisions and what can be verified today.
+          The full archive of 50+ builds lives in <Link href="/projects" className="text-link">All projects</Link>.
+        </p>
+      </header>
+      <div className="work-grid">
+        {caseStudies.map((c) => <WorkCard key={c.slug} study={c} level={2} />)}
+      </div>
     </>
   );
 }
