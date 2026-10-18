@@ -157,7 +157,7 @@ These figures are never summed together, and outbound attention is never labelle
 ## 8. Open TODO(mojeeb)
 1. Approve the SVG leopard redraw, or supply the original character artwork as files (SVG/PNG layers).
 2. Commit the official portrait as `public/portrait/mojeeb-official.jpg` and flip `USE_OFFICIAL_PORTRAIT`.
-3. Provision Supabase and set `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `GUESTBOOK_ADMIN_TOKEN` and `GUESTBOOK_IP_SALT` in Vercel, then run `supabase/guestbook.sql`.
+3. Guestbook: superseded by Cloudflare D1. Activation steps are in `docs/cloudflare-migration.md` §10 and `docs/guestbook.md`.
 4. Source and window for the founder-reported Arcapush figures (22K / 22K / 9K).
 5. Confirm "Available for selected work" (taken from the live site) is still current.
 6. Confirm LinkedIn, Devpost and YouTube.
