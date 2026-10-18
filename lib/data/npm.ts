@@ -25,17 +25,31 @@ export type PackageStats = {
 };
 
 const REVALIDATE = 60 * 60 * 6;
-const TIMEOUT = 6000;
+const TIMEOUT = 8000;
+const HEADERS = { accept: "application/json", "user-agent": "mojeeb.xyz (+https://mojeeb.xyz)" };
+
+/**
+ * Cloudflare Workers allow 6 simultaneous outbound connections per request and queue the rest. A page needs ~16 npm
+ * calls, so run at most 4 at a time: each request's timeout then starts when it actually starts, not while queued.
+ */
+const MAX_CONCURRENT = 4;
+let active = 0;
+const waiting: (() => void)[] = [];
+async function limited<T>(task: () => Promise<T>): Promise<T> {
+  if (active >= MAX_CONCURRENT) await new Promise<void>((resolve) => waiting.push(resolve));
+  active++;
+  try { return await task(); }
+  finally { active--; waiting.shift()?.(); }
+}
 
 async function getJson<T>(url: string): Promise<T | null> {
   try {
-    const res = await fetch(url, {
-      next: { revalidate: REVALIDATE, tags: ["npm"] },
-      signal: AbortSignal.timeout(TIMEOUT),
-      headers: { accept: "application/json" },
+    // The body is read inside the slot too: the connection stays open until it has been consumed.
+    return await limited(async () => {
+      const res = await fetch(url, { next: { revalidate: REVALIDATE, tags: ["npm"] }, signal: AbortSignal.timeout(TIMEOUT), headers: HEADERS });
+      if (!res.ok) { logEvent("warn", "data.npm_failed", { host: new URL(url).host, status: res.status }); return null; }
+      return (await res.json()) as T;
     });
-    if (!res.ok) { logEvent("warn", "data.npm_failed", { host: new URL(url).host, status: res.status }); return null; }
-    return (await res.json()) as T;
   } catch (err) {
     logEvent("warn", "data.npm_failed", { host: new URL(url).host, ...errorFields(err) });
     return null;

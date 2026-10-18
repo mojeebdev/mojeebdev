@@ -1,4 +1,4 @@
-export type SourceType = "live-api" | "repository-snapshot" | "founder-reported";
+export type SourceType = "live-api" | "repository-snapshot" | "records";
 
 /** Every number shown on the site carries this provenance (DESIGN.md §10, metric cell). */
 export type Metric = {
