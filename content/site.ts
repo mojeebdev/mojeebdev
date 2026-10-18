@@ -15,16 +15,15 @@ export const person = {
 
 /**
  * Portrait.
- * OFFICIAL: the cream-cap, crossed-arms photograph supplied 2026-10-18 (1122×1402, grey background).
- *   It arrived in chat only. Commit the original file as public/portrait/mojeeb-official.jpg and set
- *   USE_OFFICIAL_PORTRAIT = true. next/image serves AVIF/WebP variants (next.config images.formats);
- *   the original is never retouched or regenerated.
+ * OFFICIAL: the cream-cap, crossed-arms photograph (1122×1402, grey background), committed by Mojeeb on
+ *   2026-10-18 as public/portrait/mojeeb-official.png. next/image serves resized AVIF/WebP variants; the
+ *   original is never retouched or regenerated. After changing the portrait, run `npm run og:assets`.
  * INTERIM: the 2026-10-15 profile avatar (460×460, grey background).
  */
-const USE_OFFICIAL_PORTRAIT = false;
+const USE_OFFICIAL_PORTRAIT = true;
 
 const official = {
-  src: "/portrait/mojeeb-official.jpg",
+  src: "/portrait/mojeeb-official.png",
   width: 1122,
   height: 1402,
   /** circular crop: centre on face, keep the cream cap inside the circle */
