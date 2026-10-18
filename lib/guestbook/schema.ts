@@ -6,7 +6,6 @@ export type ReactionKind = (typeof REACTIONS)[number];
 export type GuestbookInput = { name: string; message: string; link?: string };
 export type FieldErrors = Partial<Record<keyof GuestbookInput, string>>;
 
-// eslint-disable-next-line no-control-regex
 const CONTROL = /[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F​-‏‪-‮⁦-⁩]/g;
 const clean = (s: unknown) => (typeof s === "string" ? s.replace(CONTROL, "").replace(/\r\n?/g, "\n").trim() : "");
 

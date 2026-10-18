@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
+import { useStorageValue, writeStorage } from "@/lib/useExternal";
 import type { ReactionKind } from "@/lib/guestbook/schema";
 
 const LABELS: Record<ReactionKind, { glyph: string; label: string }> = {
@@ -11,13 +12,13 @@ const LABELS: Record<ReactionKind, { glyph: string; label: string }> = {
 
 export default function Reactions({ id, counts }: { id: string; counts: Record<ReactionKind, number> }) {
   const [local, setLocal] = useState(counts);
-  const [mine, setMine] = useState<Record<string, boolean>>({});
-  useEffect(() => { try { setMine(JSON.parse(localStorage.getItem(`gb:r:${id}`) || "{}")); } catch {} }, [id]);
+  const raw = useStorageValue(`gb:r:${id}`, "local", "{}");
+  const mine = useMemo<Record<string, boolean>>(() => { try { return JSON.parse(raw || "{}"); } catch { return {}; } }, [raw]);
   const react = async (kind: ReactionKind) => {
     if (mine[kind]) return;
     const next = { ...mine, [kind]: true };
-    setMine(next); setLocal({ ...local, [kind]: (local[kind] ?? 0) + 1 });
-    try { localStorage.setItem(`gb:r:${id}`, JSON.stringify(next)); } catch {}
+    setLocal({ ...local, [kind]: (local[kind] ?? 0) + 1 });
+    writeStorage(`gb:r:${id}`, JSON.stringify(next));
     await fetch("/api/guestbook/react", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, kind }) }).catch(() => {});
   };
   return (

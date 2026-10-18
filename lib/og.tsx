@@ -23,6 +23,7 @@ export async function renderOg({ eyebrow, title, body, chips = [] }: { eyebrow: 
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between", padding: 64, background: "#FAFAF8", color: "#16171A", fontFamily: "Hanken" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- Satori (next/og) renders plain <img> */}
           <img src={a.photo} width={88} height={88} style={{ borderRadius: 999, objectFit: "cover", objectPosition: portrait.circle.focal, border: "1px solid #E4E5E8" }} alt="" />
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.6 }}>Mojeeb Titilayo</div>

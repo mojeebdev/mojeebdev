@@ -40,11 +40,11 @@ export default function Heatmap({ days, source, asOf, compact = false }: { days:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [days]);
   const wlvl = useMemo(() => levels(weeks.map((w) => w.total)), [weeks]);
-  const cumulative = useMemo(() => { let s = 0; return days.map((d) => (s += d.count)); }, [days]);
+  const cumulative = useMemo(() => days.reduce<number[]>((acc, d, i) => { acc.push((i ? acc[i - 1] : 0) + d.count); return acc; }, []), [days]);
 
   useEffect(() => { if (scroller.current) scroller.current.scrollLeft = scroller.current.scrollWidth; }, [view]);
 
-  const sel = range ? [Math.min(...range), Math.max(...range)] as const : null;
+  const sel = useMemo(() => (range ? ([Math.min(...range), Math.max(...range)] as const) : null), [range]);
   const inSel = (i: number) => sel !== null && i >= sel[0] && i <= sel[1];
   const selStats = useMemo(() => {
     if (!sel) return null;

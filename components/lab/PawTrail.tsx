@@ -1,17 +1,19 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useMediaQuery, useStorageValue, writeStorage } from "@/lib/useExternal";
 
 /** Paw-print transition into the lab: a short trail crosses the top of the page once per session. */
 export default function PawTrail() {
-  const [show, setShow] = useState(false);
+  const reduce = useMediaQuery("(prefers-reduced-motion: reduce)", true);
+  const seen = useStorageValue("lab:paws", "session", "");
+  const [done, setDone] = useState(false);
+  const show = !reduce && seen === "" && !done;
   useEffect(() => {
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    try { if (sessionStorage.getItem("lab:paws")) return; sessionStorage.setItem("lab:paws", "1"); } catch {}
-    setShow(true);
-    const t = setTimeout(() => setShow(false), 2400);
+    if (!show) return;
+    const t = setTimeout(() => { setDone(true); writeStorage("lab:paws", "1", "session"); }, 2400);
     return () => clearTimeout(t);
-  }, []);
+  }, [show]);
   if (!show) return null;
   return (
     <div className="paw-trail" aria-hidden="true">

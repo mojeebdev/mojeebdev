@@ -10,7 +10,8 @@ import graph from "@/content/lab/outship-graph.json";
 import "./constellation.css";
 
 type G = "api" | "page" | "component" | "lib" | "script" | "other";
-type Node = { id: string; g: G; r?: string[]; x: number; y: number; vx: number; vy: number; deg: number; fixed?: boolean };
+type GraphNode = { id: string; g: G; r?: string[]; deg: number };
+type Node = GraphNode & { x: number; y: number; vx: number; vy: number; fixed?: boolean };
 type Edge = [string, string, number | null];
 
 const GROUPS: { g: G; label: string }[] = [
@@ -28,17 +29,15 @@ export default function Constellation() {
 
   const data = useMemo(() => {
     const edges = graph.edges as Edge[];
-    const nodes: Node[] = (graph.nodes as { id: string; g: G; r?: string[] }[]).map((n, i) => {
-      const a = (i / graph.nodes.length) * Math.PI * 2;
-      return { ...n, x: Math.cos(a) * 200, y: Math.sin(a) * 200, vx: 0, vy: 0, deg: 0 };
-    });
-    const byId = new Map(nodes.map((n) => [n.id, n]));
+    const deg = new Map<string, number>();
     const out = new Map<string, { to: string; line: number | null }[]>(), inc = new Map<string, { from: string; line: number | null }[]>();
     for (const [s, t, line] of edges) {
-      byId.get(s)!.deg++; byId.get(t)!.deg++;
-      (out.get(s) ?? out.set(s, []).get(s)!).push({ to: t, line });
-      (inc.get(t) ?? inc.set(t, []).get(t)!).push({ from: s, line });
+      deg.set(s, (deg.get(s) ?? 0) + 1); deg.set(t, (deg.get(t) ?? 0) + 1);
+      out.set(s, [...(out.get(s) ?? []), { to: t, line }]);
+      inc.set(t, [...(inc.get(t) ?? []), { from: s, line }]);
     }
+    const nodes: GraphNode[] = (graph.nodes as { id: string; g: G; r?: string[] }[]).map((n) => ({ ...n, deg: deg.get(n.id) ?? 0 }));
+    const byId = new Map(nodes.map((n) => [n.id, n]));
     return { nodes, edges, byId, out, inc };
   }, []);
 
@@ -55,6 +54,9 @@ export default function Constellation() {
   // Simulation + rendering
   useEffect(() => {
     const cv = canvas.current!, ctx = cv.getContext("2d")!;
+    // Mutable simulation state lives here, never in memoised values.
+    const sim: Node[] = data.nodes.map((n, i) => { const a = (i / data.nodes.length) * Math.PI * 2; return { ...n, x: Math.cos(a) * 200, y: Math.sin(a) * 200, vx: 0, vy: 0 }; });
+    const simById = new Map(sim.map((n) => [n.id, n]));
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     let w = 0, h = 0, dpr = 1, alpha = 1, raf = 0;
     let view = { k: 1, x: 0, y: 0 };
@@ -78,18 +80,18 @@ export default function Constellation() {
     };
 
     const step = () => {
-      const N = data.nodes;
+      const N = sim;
       for (let i = 0; i < N.length; i++) {
         const a = N[i];
         for (let j = i + 1; j < N.length; j++) {
-          const b = N[j]; let dx = a.x - b.x, dy = a.y - b.y; let d2 = dx * dx + dy * dy || 0.01;
+          const b = N[j]; let dx = a.x - b.x, dy = a.y - b.y; const d2 = dx * dx + dy * dy || 0.01;
           const f = (1600 / d2) * alpha; const d = Math.sqrt(d2); dx /= d; dy /= d;
           a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
         }
         a.vx -= a.x * 0.004 * alpha; a.vy -= a.y * 0.004 * alpha;
       }
       for (const [s, t] of data.edges) {
-        const a = data.byId.get(s)!, b = data.byId.get(t)!;
+        const a = simById.get(s)!, b = simById.get(t)!;
         const dx = b.x - a.x, dy = b.y - a.y, d = Math.sqrt(dx * dx + dy * dy) || 1;
         const f = ((d - 46) / d) * 0.06 * alpha;
         a.vx += dx * f; a.vy += dy * f; b.vx -= dx * f; b.vy -= dy * f;
@@ -107,7 +109,7 @@ export default function Constellation() {
       const neighbors = new Set<string>();
       if (focus) { (data.out.get(focus) ?? []).forEach((e) => neighbors.add(e.to)); (data.inc.get(focus) ?? []).forEach((e) => neighbors.add(e.from)); }
       for (const [s, t] of data.edges) {
-        const a = data.byId.get(s)!, b = data.byId.get(t)!;
+        const a = simById.get(s)!, b = simById.get(t)!;
         const lit = focus && (s === focus || t === focus);
         const hot = sel.blast && sel.id && (sel.radius.has(s) || s === sel.id) && (sel.radius.has(t) || t === sel.id);
         ctx.strokeStyle = lit ? colors.blue : hot ? colors.heat : colors.line;
@@ -116,7 +118,7 @@ export default function Constellation() {
         ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
       }
       ctx.globalAlpha = 1;
-      for (const n of data.nodes) {
+      for (const n of sim) {
         const r = 2.4 + Math.sqrt(n.deg) * 1.5;
         const isSel = n.id === sel.id, isFocus = n.id === focus, inBlast = sel.blast && sel.radius.has(n.id);
         ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
@@ -139,7 +141,7 @@ export default function Constellation() {
 
     // Pointer: hover, select, drag a node, drag to pan
     const toWorld = (e: PointerEvent) => { const r = cv.getBoundingClientRect(); return { x: (e.clientX - r.left - view.x) / view.k, y: (e.clientY - r.top - view.y) / view.k }; };
-    const pickAt = (p: { x: number; y: number }) => data.nodes.find((n) => (n.x - p.x) ** 2 + (n.y - p.y) ** 2 < (8 + Math.sqrt(n.deg) * 1.5) ** 2 / Math.min(1, view.k));
+    const pickAt = (p: { x: number; y: number }) => sim.find((n) => (n.x - p.x) ** 2 + (n.y - p.y) ** 2 < (8 + Math.sqrt(n.deg) * 1.5) ** 2 / Math.min(1, view.k));
     let drag: Node | null = null, pan: { x: number; y: number; vx: number; vy: number } | null = null, moved = false;
     const down = (e: PointerEvent) => {
       const p = toWorld(e); const n = pickAt(p); moved = false;

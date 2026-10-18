@@ -12,14 +12,21 @@ export default function GuestbookAdmin() {
   const [error, setError] = useState<string | null>(null);
   const [token, setToken] = useState("");
 
-  const load = useCallback(async () => {
-    const res = await fetch("/api/guestbook/admin", { cache: "no-store" });
-    if (res.status === 401) { setAuthed(false); return; }
-    const data = await res.json();
-    if (!res.ok) { setError(data.error ?? "Couldn't load entries."); setAuthed(true); return; }
-    setEntries(data.entries); setAuthed(true); setError(null);
-  }, []);
-  useEffect(() => { load(); }, [load]);
+  const [version, setVersion] = useState(0);
+  const load = useCallback(() => setVersion((v) => v + 1), []);
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/guestbook/admin", { cache: "no-store" })
+      .then(async (res) => {
+        if (!alive) return;
+        if (res.status === 401) { setAuthed(false); return; }
+        const data = await res.json();
+        if (!res.ok) { setError(data.error ?? "Couldn't load entries."); setAuthed(true); return; }
+        setEntries(data.entries); setAuthed(true); setError(null);
+      })
+      .catch(() => alive && setError("Couldn't load entries."));
+    return () => { alive = false; };
+  }, [version]);
 
   const login = async (e: FormEvent) => {
     e.preventDefault();

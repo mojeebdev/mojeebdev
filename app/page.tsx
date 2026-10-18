@@ -77,7 +77,7 @@ export default async function Home() {
           </div>
           <div className="info-row">
             <dt>Building</dt>
-            <dd><p><Link href="/work/arcapush">Arcapush</Link>, since February 2026. It's a discovery and distribution registry for products, AI agents and hackathon builds, with a CLI and MCP workflow.</p></dd>
+            <dd><p><Link href="/work/arcapush">Arcapush</Link>, since February 2026. It&rsquo;s a discovery and distribution registry for products, AI agents and hackathon builds, with a CLI and MCP workflow.</p></dd>
           </div>
           <div className="info-row">
             <dt>Focus</dt>

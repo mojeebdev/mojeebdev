@@ -68,7 +68,7 @@ function memoryStore(): GuestbookStore {
   return {
     kind: "memory",
     async listApproved(limit) { return rows.filter((r) => r.status === "approved").slice(0, limit).map(pub); },
-    async listForModeration() { return rows.map(({ ip_hash: _ip, ...r }) => r); },
+    async listForModeration() { return rows.map((r) => ({ id: r.id, created_at: r.created_at, name: r.name, message: r.message, link: r.link, status: r.status, reactions: r.reactions })); },
     async create(e) {
       const id = randomUUID();
       rows.unshift({ id, created_at: new Date().toISOString(), name: e.name, message: e.message, link: e.link, status: e.status, reactions: Object.fromEntries(REACTIONS.map((k) => [k, 0])) as Record<ReactionKind, number>, ip_hash: e.ipHash });

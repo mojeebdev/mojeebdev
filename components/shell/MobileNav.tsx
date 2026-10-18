@@ -8,12 +8,13 @@ import ThemeToggle from "./ThemeToggle";
 import { contact, person } from "@/content/site";
 
 export default function MobileNav() {
-  const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  // Remember which path the sheet was opened on, so navigating closes it without an effect.
+  const [openOn, setOpenOn] = useState<string | null>(null);
+  const open = openOn !== null && openOn === pathname;
+  const setOpen = (v: boolean | ((o: boolean) => boolean)) => setOpenOn((typeof v === "function" ? v(open) : v) ? pathname : null);
   const button = useRef<HTMLButtonElement>(null);
   const sheet = useRef<HTMLDivElement>(null);
-
-  useEffect(() => setOpen(false), [pathname]);
 
   useEffect(() => {
     if (!open) return;
@@ -21,7 +22,7 @@ export default function MobileNav() {
     document.body.style.overflow = "hidden";
     sheet.current?.querySelector<HTMLElement>("a")?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setOpen(false); button.current?.focus(); }
+      if (e.key === "Escape") { setOpenOn(null); button.current?.focus(); }
       if (e.key === "Tab" && sheet.current) {
         const items = sheet.current.querySelectorAll<HTMLElement>("a, button");
         const first = items[0], last = items[items.length - 1];
@@ -32,6 +33,7 @@ export default function MobileNav() {
     document.addEventListener("keydown", onKey);
     return () => { document.body.style.overflow = prev; document.removeEventListener("keydown", onKey); };
   }, [open]);
+
 
   return (
     <div className="topbar">

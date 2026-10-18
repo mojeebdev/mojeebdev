@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { kindLabel, statusLabel, type Project, type ProjectArea, type ProjectKind } from "@/content/projects";
 import "./archive.css";
 
@@ -14,12 +14,6 @@ export default function Archive({ projects }: { projects: Project[] }) {
   const [kind, setKind] = useState<ProjectKind | "all">("all");
   const [area, setArea] = useState<ProjectArea | "all">("all");
   const [activeOnly, setActiveOnly] = useState(false);
-  const [hash, setHash] = useState("");
-
-  useEffect(() => {
-    const h = decodeURIComponent(location.hash.slice(1));
-    if (h) { setHash(h); requestAnimationFrame(() => document.getElementById(h)?.scrollIntoView({ block: "center" })); }
-  }, []);
 
   const list = useMemo(() => {
     const needle = q.trim().toLowerCase();
@@ -50,7 +44,7 @@ export default function Archive({ projects }: { projects: Project[] }) {
       <p className="meta archive__count" aria-live="polite">{list.length} of {projects.length} projects</p>
       <ul role="list" className="archive__list">
         {list.map((p) => (
-          <li key={p.slug} id={p.slug} className="archive__row" data-target={hash === p.slug || undefined}>
+          <li key={p.slug} id={p.slug} className="archive__row">
             <span className="archive__logo" aria-hidden="true">
               {p.logo ? <Image src={p.logo} alt="" width={28} height={28} /> : <span>{p.name.slice(0, 1)}</span>}
             </span>
