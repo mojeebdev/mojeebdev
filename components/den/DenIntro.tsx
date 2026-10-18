@@ -2,46 +2,52 @@
 
 /**
  * Enter the Den — the homepage introduction.
- * 1. The leopard walks into a near-empty canvas.  2. It notices the pointer/touch.
- * 3. The visitor is invited to interact.          4. First touch: a playful dodge, then a raised paw.
- * 5. Paw touch unlocks the homepage.              6. A circular reveal opens onto the profile.
+ * Step 1 (greet): the leopard sits and idles (blinking, breathing, small head movements). "Say hi to the leopard."
+ * Step 2 (reach): a tap makes it wink, smile with an open mouth, tilt its head and raise a paw. "High five? Tap the paw."
+ * Step 3 (five):  tapping the paw plays a high-five, a small burst of paw prints, a happy reaction, then a circular
+ *                 reveal into the profile.
  *
  * Shown only when the boot script in app/layout.tsx adds `den-pending` (first visit, motion allowed, or ?intro=1).
- * Always skippable (button or Escape). Three.js only adds depth (floor, soft shadow, dust, camera drift) and is
- * dynamically imported after first paint; without WebGL the CSS floor and shadow remain.
+ * Marked as seen the moment it shows, so refreshes and internal navigation never replay it. Always skippable
+ * (button or Escape); Enter/Space activate the current step. Three.js only adds depth and loads after first paint;
+ * without WebGL the CSS floor and shadow remain. A failsafe in the boot script removes it if this script never runs.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import Leopard, { type LeopardExpression, type LeopardPose } from "@/components/mascot/Leopard";
+import { useRootClass } from "@/lib/useExternal";
 import "./den.css";
 
-type Stage = "enter" | "notice" | "dodge" | "reach" | "unlock" | "done";
+type Stage = "greet" | "reach" | "five" | "done";
 const STORAGE_KEY = "den:v1";
+const BURST = 8;
 
 export default function DenIntro() {
-  const [active, setActive] = useState(false);
-  const [stage, setStage] = useState<Stage>("enter");
-  const [touch, setTouch] = useState(false);
+  const active = useRootClass("den-pending");
+  const [stage, setStage] = useState<Stage>("greet");
   const root = useRef<HTMLDivElement>(null);
   const cat = useRef<HTMLButtonElement>(null);
+  const paw = useRef<HTMLButtonElement>(null);
   const skipBtn = useRef<HTMLButtonElement>(null);
+  const busy = useRef(false);
   const scene = useRef<{ setLook: (x: number, y: number) => void; setCatX: (x: number) => void; reveal: () => void; dispose: () => void } | null>(null);
   const timers = useRef<number[]>([]);
 
   const later = (fn: () => void, ms: number) => { timers.current.push(window.setTimeout(fn, ms)); };
+  useEffect(() => { const list = timers.current; return () => list.forEach(clearTimeout); }, []);
 
-  // Boot: only run when the pre-paint script asked for the intro.
+  // Tell the boot script we're alive (cancels its failsafe).
+  useEffect(() => { (window as unknown as { __denReady?: boolean }).__denReady = true; }, []);
+
+  // While open: mark as seen, and hide the rest of the page from keyboard and assistive tech.
   useEffect(() => {
-    (window as unknown as { __denReady?: boolean }).__denReady = true;
-    const html = document.documentElement;
-    if (!html.classList.contains("den-pending")) return;
-    setActive(true);
-    setTouch(matchMedia("(hover: none)").matches);
-    // Hide everything else from assistive tech and keyboard while the den is open.
+    if (!active) return;
+    try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch {}
     const others = Array.from(document.querySelectorAll<HTMLElement>(".sidebar, .topbar, .site-footer, main > :not(.den)"));
     others.forEach((el) => el.setAttribute("inert", ""));
-    later(() => setStage((s) => (s === "enter" ? "notice" : s)), 1500);
+    // Focus the leopard so Enter/Space act on the step; Skip intro stays one Tab away.
+    cat.current?.focus({ preventScroll: true });
     return () => others.forEach((el) => el.removeAttribute("inert"));
-  }, []);
+  }, [active]);
 
   // Lazy Three.js environment after first paint.
   useEffect(() => {
@@ -63,20 +69,15 @@ export default function DenIntro() {
     return () => { cancelled = true; if (!idle) clearTimeout(handle); };
   }, [active]);
 
-  // Focus the skip control first (DESIGN.md §13), then the leopard once it has arrived.
-  useEffect(() => { if (active) skipBtn.current?.focus({ preventScroll: true }); }, [active]);
-
   const finish = useCallback((instant = false) => {
-    try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch {}
-    const html = document.documentElement;
     const close = () => {
-      html.classList.remove("den-pending");
-      setActive(false);
+      document.documentElement.classList.remove("den-pending");
       setStage("done");
       scene.current?.dispose();
       document.querySelectorAll<HTMLElement>("[inert]").forEach((el) => el.removeAttribute("inert"));
-      document.getElementById("hero-name")?.setAttribute("tabindex", "-1");
-      document.getElementById("hero-name")?.focus({ preventScroll: true });
+      const h1 = document.getElementById("hero-name");
+      h1?.setAttribute("tabindex", "-1");
+      h1?.focus({ preventScroll: true });
       const url = new URL(location.href);
       if (url.searchParams.has("intro")) { url.searchParams.delete("intro"); history.replaceState(null, "", url.toString()); }
     };
@@ -84,18 +85,44 @@ export default function DenIntro() {
     close();
   }, []);
 
-  // Escape skips at any time.
+  const highFive = useCallback(() => {
+    if (busy.current) return;
+    busy.current = true;
+    setStage("five");
+    const r = paw.current?.getBoundingClientRect() ?? cat.current?.getBoundingClientRect();
+    const p = r ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : { x: innerWidth / 2, y: innerHeight / 2 };
+    root.current?.style.setProperty("--paw-x", `${p.x}px`);
+    root.current?.style.setProperty("--paw-y", `${p.y}px`);
+    scene.current?.reveal();
+    // Let the high-five and burst land first, then open onto the profile.
+    later(() => root.current?.classList.add("is-revealing"), 780);
+    later(() => finish(), 1520);
+  }, [finish]);
+
+  const advance = useCallback(() => {
+    if (stage === "greet") {
+      setStage("reach");
+      later(() => paw.current?.focus({ preventScroll: true }), 60);
+    } else if (stage === "reach") highFive();
+  }, [stage, highFive]);
+
+  // Keyboard: Escape skips; Enter/Space act on the current step when focus isn't already on a control.
   useEffect(() => {
     if (!active) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") finish(true); };
+    const onKey = (e: KeyboardEvent) => {
+      root.current?.classList.add("is-kbd");
+      if (e.key === "Escape") { finish(true); return; }
+      if ((e.key === "Enter" || e.key === " ") && !(e.target as HTMLElement).closest("button, a")) { e.preventDefault(); advance(); }
+    };
     document.addEventListener("keydown", onKey);
-    return () => { document.removeEventListener("keydown", onKey); timers.current.forEach(clearTimeout); };
-  }, [active, finish]);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [active, finish, advance]);
 
-  // The leopard notices the pointer or touch.
+  // The leopard follows the pointer or touch with its eyes and head.
   useEffect(() => {
     if (!active) return;
     const onMove = (e: PointerEvent) => {
+      if (e.type === "pointerdown") root.current?.classList.remove("is-kbd");
       const el = cat.current;
       if (!el) return;
       const r = el.getBoundingClientRect();
@@ -110,34 +137,11 @@ export default function DenIntro() {
     return () => { window.removeEventListener("pointermove", onMove); window.removeEventListener("pointerdown", onMove); };
   }, [active]);
 
-  const interact = () => {
-    if (stage === "enter" || stage === "notice") {
-      setStage("dodge");
-      scene.current?.setCatX(0.34);
-      later(() => { setStage("reach"); scene.current?.setCatX(0); cat.current?.focus({ preventScroll: true }); }, 620);
-    } else if (stage === "reach") {
-      setStage("unlock");
-      const r = cat.current?.getBoundingClientRect();
-      const paw = r ? { x: r.left + r.width * 0.79, y: r.top + r.height * 0.41 } : { x: innerWidth / 2, y: innerHeight / 2 };
-      root.current?.style.setProperty("--paw-x", `${paw.x}px`);
-      root.current?.style.setProperty("--paw-y", `${paw.y}px`);
-      scene.current?.reveal();
-      later(() => root.current?.classList.add("is-revealing"), 380);
-      later(() => finish(), 1150);
-    }
-  };
-
   if (stage === "done") return null;
 
-  const pose: LeopardPose = stage === "enter" ? "walk" : stage === "reach" ? "reach" : stage === "unlock" ? "celebrate" : "sit";
-  const expression: LeopardExpression = stage === "notice" ? "curious" : stage === "dodge" || stage === "reach" ? "playful" : "happy";
-  const verb = touch ? "Tap" : "Click";
-  const hint =
-    stage === "enter" ? "Something’s padding in…"
-    : stage === "notice" ? `${verb} the leopard to say hi.`
-    : stage === "dodge" ? "Ha — too slow."
-    : stage === "reach" ? `High five? ${verb} the paw.`
-    : "Welcome to the den.";
+  const pose: LeopardPose = stage === "greet" ? "look" : stage === "reach" ? "reach" : "celebrate";
+  const expression: LeopardExpression = stage === "greet" ? "curious" : stage === "reach" ? "playful" : "happy";
+  const hint = stage === "greet" ? "Say hi to the leopard." : stage === "reach" ? "High five? Tap the paw." : "High five!";
 
   return (
     <div ref={root} className="den" data-stage={stage} role="dialog" aria-modal="true" aria-labelledby="den-title" aria-describedby="den-help">
@@ -149,19 +153,36 @@ export default function DenIntro() {
           ref={cat}
           type="button"
           className="den__cat"
-          onClick={interact}
-          aria-label={stage === "reach" ? "High-five the leopard and enter the site" : "Say hi to the leopard"}
-          disabled={stage === "unlock"}
+          onClick={advance}
+          aria-label={stage === "greet" ? "Say hi to the leopard" : stage === "reach" ? "High-five the leopard and enter the site" : "Entering the site"}
+          aria-disabled={stage === "five" || undefined}
+          tabIndex={stage === "reach" ? -1 : 0}
         >
           <Leopard pose={pose} expression={expression} size="100%" />
         </button>
-        <span className="den__print" aria-hidden="true">
-          <svg viewBox="0 0 40 40"><ellipse cx="20" cy="25" rx="9" ry="7.5" /><circle cx="9" cy="14" r="4" /><circle cx="16" cy="8" r="4" /><circle cx="24" cy="8" r="4" /><circle cx="31" cy="14" r="4" /></svg>
-        </span>
+        {stage !== "greet" && (
+          <button
+            ref={paw}
+            type="button"
+            className="den__paw-hit"
+            onClick={highFive}
+            aria-label="Tap the paw: high-five the leopard and enter the site"
+            aria-disabled={stage === "five" || undefined}
+          />
+        )}
+        {stage === "five" && (
+          <span className="den__burst" aria-hidden="true">
+            {Array.from({ length: BURST }, (_, i) => (
+              <svg key={i} viewBox="0 0 40 40" style={{ ["--a" as string]: `${(360 / BURST) * i - 90}deg`, ["--d" as string]: `${i % 2 ? 78 : 104}px` }}>
+                {i % 2 ? <path d="M20 4 L24 16 L36 20 L24 24 L20 36 L16 24 L4 20 L16 16 Z" /> : <><ellipse cx="20" cy="25" rx="9" ry="7.5" /><circle cx="9" cy="14" r="4" /><circle cx="16" cy="8" r="4" /><circle cx="24" cy="8" r="4" /><circle cx="31" cy="14" r="4" /></>}
+              </svg>
+            ))}
+          </span>
+        )}
       </div>
       <div className="den__copy">
         <p id="den-title" className="den__hint" aria-live="polite">{hint}</p>
-        <p id="den-help" className="den__help">{touch ? "Or skip straight to the profile." : "Enter or Space works too · Esc skips."}</p>
+        <p id="den-help" className="den__help">Enter or Space works too · Esc skips.</p>
       </div>
       <button ref={skipBtn} type="button" className="den__skip" onClick={() => finish(true)}>Skip intro <span aria-hidden="true">→</span></button>
       <span className="den__brand" aria-hidden="true">mojeeb.xyz · enter the den</span>
