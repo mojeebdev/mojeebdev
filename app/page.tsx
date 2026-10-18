@@ -19,7 +19,7 @@ import { contact, studio } from "@/content/site";
 export const revalidate = 21600;
 
 export default async function Home() {
-  const { arcapush, openSource, packages, founderReportedArcapush, founderReportedGeneral } = await getHomeMetrics();
+  const { arcapush, openSource, packages, arcapushMilestones, workMilestones } = await getHomeMetrics();
   const s = streaks(calendarDays);
   const b = busiest(calendarDays);
   const last90 = calendarDays.slice(-91);
@@ -33,11 +33,9 @@ export default async function Home() {
       <MetricStrip
         groups={[
           { id: "arcapush", title: "Arcapush", href: "https://arcapush.com", caption: "Flagship product · live from Arcapush’s public metrics", metrics: arcapush },
+          { id: "arcapush-all-time", title: "Arcapush, all time", caption: "Since launch in February 2026 · Arcapush analytics", metrics: arcapushMilestones },
           { id: "oss", title: "Open source", caption: "Developer tools on npm · live from the npm registry", metrics: openSource },
-        ]}
-        founderReported={[
-          { title: "Arcapush, historical milestones", metrics: founderReportedArcapush },
-          { title: "Across all work", metrics: founderReportedGeneral },
+          { id: "work", title: "Across all work", caption: "Products, tools and experiments", metrics: workMilestones },
         ]}
       />
 

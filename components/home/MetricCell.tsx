@@ -3,7 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { Metric } from "@/lib/data/types";
 
-const typeLabel = { "live-api": "Live source", "repository-snapshot": "Repository snapshot", "founder-reported": "Founder-reported" } as const;
+const typeLabel = { "live-api": "Live source", "repository-snapshot": "Repository snapshot", records: "Records" } as const;
 
 function when(iso: string | null) {
   if (!iso) return "unknown";

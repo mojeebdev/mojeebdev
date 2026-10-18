@@ -4,21 +4,21 @@ import { githubMetric } from "./github";
 import { getAllPackageStats, type PackageStats } from "./npm";
 import { formatCount, type Metric } from "./types";
 
-const FR_AS_OF = "2026-10-18T00:00:00Z";
+const MILESTONES_AS_OF = "2026-10-18T00:00:00Z";
 
 /**
- * Founder-reported historical Arcapush milestones (supplied 2026-10-18). Their collection windows are not documented
- * in any public source, and they differ from the live public counters, so they are shown separately, labelled, and
- * never summed with each other or relabelled. "300+ indexed builds" is superseded by the live count and not shown.
+ * Arcapush all-time milestones from Arcapush's own analytics, confirmed by Mojeeb (18 Oct 2026). They cover all of
+ * Arcapush's history, so they are larger than the live public counters, which began recording in August. Each figure
+ * is a separate metric: never summed with another.
  */
-export const founderReportedArcapush: Metric[] = [
-  { key: "fr-arcapush-visits", label: "All-time platform visits", value: "22K+", display: "22K+", definition: "Founder-reported all-time visits to the Arcapush platform. This includes the period before 19 Aug 2026, when the public visit counter began recording, so it is larger than the live figure.", source: "Founder-reported (Arcapush analytics)", sourceType: "founder-reported", window: "All time, Feb 2026 to Oct 2026 (exact source and window: TODO(mojeeb))", asOf: FR_AS_OF, status: "ok" },
-  { key: "fr-arcapush-listing", label: "Listing visits", value: "22K+", display: "22K+", definition: "Founder-reported visits to individual listing pages. A separate metric: not part of, and not added to, platform visits.", source: "Founder-reported (Arcapush analytics)", sourceType: "founder-reported", window: "All time (exact window: TODO(mojeeb))", asOf: FR_AS_OF, status: "ok" },
-  { key: "fr-arcapush-attention", label: "Attention delivered, all time", value: "9K+", display: "9K+", definition: "Founder-reported outbound attention delivered from Arcapush to listed builds. These are visits sent onward, not unique visitors. Recorded over a longer window than the live 'clicks to builds' counter.", source: "Founder-reported (Arcapush analytics)", sourceType: "founder-reported", window: "All time (exact window: TODO(mojeeb))", asOf: FR_AS_OF, status: "ok" },
+export const arcapushMilestones: Metric[] = [
+  { key: "ms-arcapush-visits", label: "All-time platform visits", value: "22K+", display: "22K+", definition: "Visits to the Arcapush platform since launch in February 2026. Larger than the live counter above, which began recording on 19 Aug 2026.", source: "Arcapush analytics", sourceType: "records", window: "All time, since February 2026", asOf: MILESTONES_AS_OF, status: "ok" },
+  { key: "ms-arcapush-listing", label: "Listing visits", value: "22K+", display: "22K+", definition: "Visits to individual listing pages. A separate metric: not part of, and not added to, platform visits.", source: "Arcapush analytics", sourceType: "records", window: "All time, since February 2026", asOf: MILESTONES_AS_OF, status: "ok" },
+  { key: "ms-arcapush-attention", label: "Attention delivered, all time", value: "9K+", display: "9K+", definition: "Outbound visits Arcapush sent on to listed builds. Visits, not unique visitors.", source: "Arcapush analytics", sourceType: "records", window: "All time, since February 2026", asOf: MILESTONES_AS_OF, status: "ok" },
 ];
 
-export const founderReportedGeneral: Metric[] = [
-  { key: "fr-projects", label: "Projects and experiments shipped", value: "40+", display: "40+", definition: "Mojeeb's own count of products, tools, experiments and hackathon builds. The archive on this site documents the subset with verifiable links.", source: "Founder-reported", sourceType: "founder-reported", window: "All time", asOf: FR_AS_OF, status: "ok" },
+export const workMilestones: Metric[] = [
+  { key: "ms-projects", label: "Projects and experiments shipped", value: "40+", display: "40+", definition: "Products, tools, experiments and hackathon builds shipped. The archive on this site documents the ones with public links.", source: "Mojeeb's project records", sourceType: "records", window: "All time", asOf: MILESTONES_AS_OF, status: "ok" },
 ];
 
 const FLAGSHIP = ["@blindspotlab/stackbrief", "@blindspotlab/stylegraft", "@blindspotlab/arcapush"];
@@ -42,7 +42,7 @@ export async function getHomeMetrics() {
     arcapush,
     openSource: [...openSourceMetrics(pkgs), githubMetric()],
     packages: pkgs,
-    founderReportedArcapush,
-    founderReportedGeneral,
+    arcapushMilestones,
+    workMilestones,
   };
 }

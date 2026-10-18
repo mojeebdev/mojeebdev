@@ -31,4 +31,4 @@
 - Profile: https://mojeeb.xyz/ · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
 
 ## Notes on figures
-Every number on the site states its source, definition, window and timestamp. Founder-reported figures (for example "40+ projects shipped") are labelled as such and never combined with live counters.
+Every number on the site states its source, definition, window and timestamp. All-time figures from Mojeeb's own records (for example "40+ projects shipped") name their source and are never combined with live counters.
