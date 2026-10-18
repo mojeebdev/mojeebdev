@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PortraitCircle } from "@/components/ui/Portrait";
-import { contact, creatorOf, person } from "@/content/site";
+import { alsoBehind, contact, creatorOfProduct, founderOf, person } from "@/content/site";
 
 export default function Hero() {
   return (
@@ -12,21 +12,20 @@ export default function Hero() {
           {person.role} <span aria-hidden="true">·</span> <a href={contact.github} className="hero__handle">@{contact.githubHandle}</a>
         </p>
         <p className="hero__studio">
-          {person.studioLine.replace("BlindspotLab", "")}
-          <a href="https://blindspotlab.xyz">BlindspotLab</a>
+          Founder of <a href={founderOf.href}>{founderOf.name}</a>. Creator of <a href={creatorOfProduct.href}>{creatorOfProduct.name}</a>.
+        </p>
+        <p className="hero__creator">
+          Also behind{" "}
+          {alsoBehind.map((c, i) => (
+            <span key={c.name}>
+              <a href={c.href}>{c.name}</a>
+              {i < alsoBehind.length - 2 ? ", " : i === alsoBehind.length - 2 ? ", and " : "."}
+            </span>
+          ))}
         </p>
       </div>
       <p className="hero__headline">
         {person.headline.lead} <span className="serif">{person.headline.accent}</span> {person.headline.tail}
-      </p>
-      <p className="hero__creator">
-        Creator of{" "}
-        {creatorOf.map((c, i) => (
-          <span key={c.name}>
-            <Link href={c.href}>{c.name}</Link>
-            {i < creatorOf.length - 2 ? ", " : i === creatorOf.length - 2 ? " and " : "."}
-          </span>
-        ))}
       </p>
       <div className="hero__ctas">
         <Link href="/work" className="btn btn--primary">Explore my work</Link>

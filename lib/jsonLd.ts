@@ -18,6 +18,7 @@ export const personEntity = {
   email: `mailto:${contact.personalEmail}`,
   image: { "@type": "ImageObject", contentUrl: `${BASE_URL}${portrait.src}`, caption: portrait.alt },
   jobTitle: "Product Engineer and Strategist",
+  disambiguatingDescription: "Founder of BlindspotLab. Creator of Arcapush.",
   description: person.summary,
   homeLocation: { "@type": "Place", name: person.location },
   founder: { "@id": ORG_ID },
@@ -38,11 +39,25 @@ const orgEntity = {
   founder: { "@id": PERSON_ID },
 };
 
+const arcapushEntity = {
+  "@type": "WebApplication",
+  "@id": "https://arcapush.com/#app",
+  name: "Arcapush",
+  url: "https://arcapush.com",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: "A discovery and distribution registry for products, AI agents and hackathon builds.",
+  creator: { "@id": PERSON_ID },
+  publisher: { "@id": ORG_ID },
+  dateCreated: "2026-02",
+};
+
 export const siteGraphJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     personEntity,
     orgEntity,
+    arcapushEntity,
     { "@type": "WebSite", "@id": WEBSITE_ID, url: BASE_URL, name: person.name, inLanguage: "en", publisher: { "@id": PERSON_ID } },
   ],
 };

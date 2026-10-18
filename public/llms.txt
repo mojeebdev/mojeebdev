@@ -4,12 +4,14 @@
 ## Identity
 - Name: Mojeeb Titilayo
 - Role: Product Engineer + Strategist
-- Founder of BlindspotLab Limited (RC 9855946, incorporated in Nigeria on 14 September 2026): https://blindspotlab.xyz
+- Founder of BlindspotLab. Creator of Arcapush.
+- BlindspotLab Limited (RC 9855946, incorporated in Nigeria on 14 September 2026): https://blindspotlab.xyz
+- Arcapush (created by Mojeeb Titilayo, February 2026): https://arcapush.com
 - Location: Lagos, Nigeria
 - Email: hello@mojeeb.xyz (personal) · mojeeb@blindspotlab.xyz (studio)
 - GitHub: https://github.com/mojeebdev · X: https://x.com/MojeebMotion · LinkedIn: https://www.linkedin.com/in/tmojeeb
 
-## Creator of
+## Also behind (open-source developer tools)
 - StackBrief: open-source, local-first CLI for source-cited repository architecture briefs. npm @blindspotlab/stackbrief · https://github.com/mojeebdev/stackbrief
 - StyleGraft: open-source agent skill that turns visual references into product-specific DESIGN.md files. npm @blindspotlab/stylegraft · https://github.com/mojeebdev/StyleGraft
 - Arcapush CLI: terminal and MCP submission for Arcapush. npm @blindspotlab/arcapush · https://github.com/mojeebdev/arcapush-cli

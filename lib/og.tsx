@@ -27,7 +27,7 @@ export async function renderOg({ eyebrow, title, body, chips = [] }: { eyebrow: 
           <img src={a.photo} width={88} height={88} style={{ borderRadius: 999, objectFit: "cover", objectPosition: portrait.circle.focal, border: "1px solid #E4E5E8" }} alt="" />
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: -0.6 }}>Mojeeb Titilayo</div>
-            <div style={{ fontSize: 22, color: "#6B707A" }}>Product Engineer + Strategist · Founder of BlindspotLab</div>
+            <div style={{ fontSize: 22, color: "#6B707A" }}>Product Engineer + Strategist · Founder of BlindspotLab · Creator of Arcapush</div>
           </div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 18, maxWidth: 1000 }}>

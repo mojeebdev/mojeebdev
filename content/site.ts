@@ -4,13 +4,13 @@ export const person = {
   givenName: "Mojeeb",
   familyName: "Titilayo",
   role: "Product Engineer + Strategist",
-  studioLine: "Founder of BlindspotLab",
+  studioLine: "Founder of BlindspotLab. Creator of Arcapush.",
   headline: { lead: "I think in", accent: "products.", tail: "I build the systems behind them." },
   location: "Lagos, Nigeria",
   /** As stated on the live mojeeb.xyz hero (18 Oct 2026). Set to null to hide. */
   availability: "Available for selected work" as string | null,
   summary:
-    "Product engineer and strategist. I founded BlindspotLab, build Arcapush, and maintain open-source developer tools: StackBrief, StyleGraft and the Arcapush CLI.",
+    "Product engineer and strategist. Founder of BlindspotLab and creator of Arcapush, the discovery and distribution registry for products, AI agents and hackathon builds. Also behind the open-source developer tools StackBrief, StyleGraft and the Arcapush CLI.",
 };
 
 /**
@@ -66,10 +66,13 @@ export const contact = {
   studio: "https://blindspotlab.xyz",
 };
 
-export const creatorOf = [
-  { name: "StackBrief", href: "/work/stackbrief" },
-  { name: "StyleGraft", href: "/work/stylegraft" },
-  { name: "the Arcapush CLI", href: "/#tools" },
+/** Hero attribution: founder/creator line, then the published developer tools (linked to npm). */
+export const founderOf = { name: "BlindspotLab", href: "https://blindspotlab.xyz" } as const;
+export const creatorOfProduct = { name: "Arcapush", href: "https://arcapush.com" } as const;
+export const alsoBehind = [
+  { name: "StackBrief", href: "https://www.npmjs.com/package/@blindspotlab/stackbrief" },
+  { name: "StyleGraft", href: "https://www.npmjs.com/package/@blindspotlab/stylegraft" },
+  { name: "the Arcapush CLI", href: "https://www.npmjs.com/package/@blindspotlab/arcapush" },
 ] as const;
 
 export const nav = [

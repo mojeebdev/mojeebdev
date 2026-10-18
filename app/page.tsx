@@ -2,6 +2,7 @@ import Link from "next/link";
 import Hero from "@/components/home/Hero";
 import MetricStrip from "@/components/home/MetricStrip";
 import ToolsSection from "@/components/home/ToolsSection";
+import Flagship from "@/components/home/Flagship";
 import WorkCard from "@/components/work/WorkCard";
 import Heatmap from "@/components/activity/Heatmap";
 import ToolTiles from "@/components/activity/ToolTiles";
@@ -18,7 +19,7 @@ import { contact, studio } from "@/content/site";
 export const revalidate = 21600;
 
 export default async function Home() {
-  const { primary, packages, founderReported } = await getHomeMetrics();
+  const { arcapush, openSource, packages, founderReportedArcapush, founderReportedGeneral } = await getHomeMetrics();
   const s = streaks(calendarDays);
   const b = busiest(calendarDays);
   const last90 = calendarDays.slice(-91);
@@ -29,13 +30,24 @@ export default async function Home() {
       <JsonLd data={profilePageJsonLd} />
       <DenIntro />
       <Hero />
-      <MetricStrip metrics={primary} founderReported={founderReported} />
+      <MetricStrip
+        groups={[
+          { id: "arcapush", title: "Arcapush", href: "https://arcapush.com", caption: "Flagship product · live from Arcapush’s public metrics", metrics: arcapush },
+          { id: "oss", title: "Open source", caption: "Developer tools on npm · live from the npm registry", metrics: openSource },
+        ]}
+        founderReported={[
+          { title: "Arcapush, historical milestones", metrics: founderReportedArcapush },
+          { title: "Across all work", metrics: founderReportedGeneral },
+        ]}
+      />
 
-      <ToolsSection packages={packages} index="01" />
+      <Flagship index="01" />
+
+      <ToolsSection packages={packages} index="02" />
 
       <Section
         id="work"
-        index="02"
+        index="03"
         label="Selected work"
         title="Case studies"
         dek="Six projects with the strongest evidence: studio products, open-source tools, a hackathon build carried further, and client engineering."
@@ -48,7 +60,7 @@ export default async function Home() {
 
       <Section
         id="activity"
-        index="03"
+        index="04"
         label="Activity"
         title="Shipping activity"
         dek="Public GitHub contributions over the trailing year, refreshed weekly by the profile workflow."
@@ -67,7 +79,7 @@ export default async function Home() {
         </div>
       </Section>
 
-      <Section id="profile" index="04" label="Profile" title="Information">
+      <Section id="profile" index="05" label="Profile" title="Information">
         <dl className="info-rows">
           <div className="info-row">
             <dt>Studio</dt>
@@ -76,8 +88,8 @@ export default async function Home() {
             </dd>
           </div>
           <div className="info-row">
-            <dt>Building</dt>
-            <dd><p><Link href="/work/arcapush">Arcapush</Link>, since February 2026. It&rsquo;s a discovery and distribution registry for products, AI agents and hackathon builds, with a CLI and MCP workflow.</p></dd>
+            <dt>Created</dt>
+            <dd><p><Link href="/work/arcapush">Arcapush</Link>, which I&rsquo;ve built since February 2026, and the developer tools behind it and beside it: StackBrief, StyleGraft and the Arcapush CLI.</p></dd>
           </div>
           <div className="info-row">
             <dt>Focus</dt>
@@ -96,14 +108,14 @@ export default async function Home() {
         </dl>
       </Section>
 
-      <Section id="guestbook" index="05" label="Guestbook" title="Leave a note" dek="No account needed. Say hello, share a thought, or leave a link back to your work.">
+      <Section id="guestbook" index="06" label="Guestbook" title="Leave a note" dek="No account needed. Say hello, share a thought, or leave a link back to your work.">
         <GuestbookPreview />
       </Section>
 
       <section className="section" aria-labelledby="hire-title">
         <div className="cta-band">
           <div>
-            <p className="label" style={{ marginBottom: 10 }}>06 / Work with me</p>
+            <p className="label" style={{ marginBottom: 10 }}>07 / Work with me</p>
             <h2 id="hire-title" className="h2">Have a product that needs building, or a system that needs untangling?</h2>
             <p className="dek" style={{ marginTop: 10 }}>I take on product engineering and strategy engagements, personally or through BlindspotLab.</p>
           </div>

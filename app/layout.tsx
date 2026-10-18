@@ -14,13 +14,14 @@ import { siteGraphJsonLd } from "@/lib/jsonLd";
 import { BASE_URL } from "@/lib/site";
 import { person } from "@/content/site";
 
-const title = `${person.name}, Product Engineer + Strategist`;
+const title = `${person.name} · Product Engineer + Strategist · Creator of Arcapush`;
 const description =
-  "Mojeeb Titilayo is a product engineer and strategist, founder of BlindspotLab and creator of StackBrief, StyleGraft and the Arcapush CLI.";
+  "Mojeeb Titilayo is a product engineer and strategist: founder of BlindspotLab and creator of Arcapush. Also behind the open-source developer tools StackBrief, StyleGraft and the Arcapush CLI.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: { default: title, template: `%s · ${person.name}` },
+  keywords: ["Mojeeb Titilayo", "Product Engineer", "Arcapush", "BlindspotLab", "StackBrief", "StyleGraft", "Arcapush CLI", "developer tools", "product strategy"],
   description,
   applicationName: person.name,
   authors: [{ name: person.name, url: `${BASE_URL}/about` }],

@@ -32,11 +32,11 @@ export const caseStudies: CaseStudy[] = [
     number: "01",
     title: "Arcapush",
     dek: "A discovery and distribution registry for products, AI agents and hackathon builds, run as a measured loop rather than a directory.",
-    kindLabel: "Studio product · BlindspotLab",
+    kindLabel: "Flagship product · created by Mojeeb Titilayo",
     statusLabel: "Live",
     status: "live",
     period: "February 2026 – present",
-    role: "Founder and sole engineer: product direction, architecture, implementation, editorial operations and the CLI.",
+    role: "Creator and sole engineer: I conceived Arcapush and own product direction, architecture, implementation, editorial operations and the CLI. It runs as a BlindspotLab product.",
     problem:
       "Builders ship constantly, but attention doesn't follow. Launch platforms reward a single day of noise. Small products, agents and hackathon builds need a permanent, structured record and a fair way to be found.",
     direction:

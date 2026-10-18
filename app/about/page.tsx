@@ -9,7 +9,7 @@ import "./about.css";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Mojeeb Titilayo: product engineer and strategist from Lagos, founder of BlindspotLab, creator of StackBrief, StyleGraft and the Arcapush CLI. Story, working principles and the DAETO framework.",
+  description: "Mojeeb Titilayo: product engineer and strategist from Lagos. Founder of BlindspotLab, creator of Arcapush, and behind StackBrief, StyleGraft and the Arcapush CLI. Story, working principles and the DAETO framework.",
   alternates: { canonical: "/about" },
 };
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
         <div className="info-row">
           <dt>Now</dt>
           <dd>
-            <p>I build <Link href="/work/arcapush">Arcapush</Link> and run <a href={studio.url}>{studio.name}</a>, the studio I founded ({studio.legalName}, {studio.registration}, incorporated {studio.incorporatedLabel}). I also maintain three open-source packages on npm. See <Link href="/now">what I’m working on now</Link>.</p>
+            <p>I’m the founder of <a href={studio.url}>{studio.name}</a> ({studio.legalName}, {studio.registration}, incorporated {studio.incorporatedLabel}) and the creator of <Link href="/work/arcapush">Arcapush</Link>, which I’ve built since February 2026. I also maintain three open-source developer tools on npm. See <Link href="/now">what I’m working on now</Link>.</p>
           </dd>
         </div>
         <div className="info-row" id="experience">
