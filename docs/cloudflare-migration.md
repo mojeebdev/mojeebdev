@@ -271,6 +271,7 @@ npx wrangler whoami
 npx wrangler d1 create mojeeb-guestbook
 ```
 
+
 → Send me the printed **`database_id`** (a UUID). If Wrangler offers to add the binding to your config automatically, answer **no**. I'll add it to `wrangler.jsonc` as `binding: DB`, `database_name: mojeeb-guestbook`, with that exact id, in a small follow-up PR. Don't paste a guessed id anywhere.
 
 **3. After the binding PR is merged: migrate locally, regenerate types**
