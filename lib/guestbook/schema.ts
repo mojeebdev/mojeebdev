@@ -38,14 +38,21 @@ export function validate(input: Record<string, unknown>): { ok: true; data: Requ
   return Object.keys(errors).length ? { ok: false, errors } : { ok: true, data: { name, message, link } };
 }
 
-export type GuestbookEntry = {
+export const STATUSES = ["pending", "approved", "spam"] as const;
+export type Status = (typeof STATUSES)[number];
+export const MODERATION_ACTIONS = ["approve", "pending", "spam", "delete"] as const;
+export type ModerationAction = (typeof MODERATION_ACTIONS)[number];
+
+/** Public shape of an approved entry. Maps to D1 columns display_name / website_url (see lib/guestbook/store.ts). */
+export type PublicEntry = {
   id: string;
   created_at: string;
   name: string;
   message: string;
   link: string | null;
-  status: "pending" | "approved" | "spam";
   reactions: Record<ReactionKind, number>;
 };
 
-export type PublicEntry = Omit<GuestbookEntry, "status">;
+export type GuestbookEntry = PublicEntry & { status: Status; updated_at: string };
+
+export const isEntryId = (v: unknown): v is string => typeof v === "string" && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);

@@ -1,0 +1,7 @@
+# Local secrets for the Cloudflare build (`npm run dev:d1`, `npm run preview:d1`). Copy to .dev.vars (git-ignored).
+# Production values are set as Worker secrets: npx wrangler secret put <NAME>   (never commit real values)
+
+# Required for the guestbook: long random string (salts IP hashes, signs form tokens). e.g. `openssl rand -hex 32`
+GUESTBOOK_IP_SALT=
+# Optional: moderation token sign-in when Cloudflare Access isn't configured (24+ characters)
+GUESTBOOK_ADMIN_TOKEN=

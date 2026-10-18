@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Guestbook moderation", robots: { ind
 export default function AdminPage() {
   return (
     <>
-      <header className="page-head"><p className="label">Guestbook</p><h1 className="h1">Moderation</h1><p className="dek">Approve, return to pending, mark as spam, or delete entries. Requires the admin token.</p></header>
+      <header className="page-head"><p className="label">Guestbook</p><h1 className="h1">Moderation</h1><p className="dek">Approve, return to pending, mark as spam, or delete entries. Protected by Cloudflare Access (or the admin token before Access is set up).</p></header>
       <GuestbookAdmin />
     </>
   );
