@@ -1,0 +1,97 @@
+/* Leopard rig styles. Colours come from the character sheet and are used only for the mascot. */
+.leopard {
+  --lp-fur: #f5c66b;
+  --lp-fur-light: #fbebd3;
+  --lp-shadow: #e0a653;
+  --lp-spot: #4a2a16;
+  --lp-nose: #e9727c;
+  --lp-ear: #f3a383;
+  --lp-o: #111111;
+  --lx: 0;
+  --ly: 0;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+}
+.leopard .lp-line { stroke: var(--lp-o); stroke-width: 4.2; stroke-linejoin: round; stroke-linecap: round; }
+.leopard .lp-fur { fill: var(--lp-fur); }
+.leopard .lp-light { fill: var(--lp-fur-light); }
+.leopard .lp-shade { fill: var(--lp-shadow); opacity: 0.55; }
+.leopard .lp-ear-in { fill: var(--lp-ear); }
+.leopard .lp-spots ellipse, .leopard .lp-dot { fill: var(--lp-spot); }
+.leopard .lp-ground { fill: currentColor; opacity: 0.07; }
+.leopard .lp-nose { fill: var(--lp-nose); stroke: var(--lp-o); stroke-width: 2.4; stroke-linejoin: round; }
+.leopard .lp-nose--sm { stroke-width: 1.6; }
+.leopard .lp-mouth { fill: none; stroke: var(--lp-o); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+.leopard .lp-mouth-in { fill: #7a2a2e; stroke: var(--lp-o); stroke-width: 3; stroke-linejoin: round; }
+.leopard .lp-tongue { fill: var(--lp-nose); }
+.leopard .lp-whiskers path { stroke: var(--lp-o); stroke-width: 1.3; stroke-linecap: round; opacity: 0.55; }
+.leopard .lp-eyes path, .leopard .lp-closed { fill: none; stroke: var(--lp-o); stroke-width: 4.2; stroke-linecap: round; }
+.leopard .lp-closed { stroke-width: 2.6; }
+.leopard .lp-sclera { fill: #fff; stroke: var(--lp-o); stroke-width: 3.6; }
+.leopard .lp-pupil circle:first-child { fill: var(--lp-o); }
+.leopard .lp-glint { fill: #fff; }
+.leopard .lp-toe { stroke: var(--lp-o); stroke-width: 2.4; stroke-linecap: round; fill: none; }
+.leopard .lp-beans ellipse, .leopard .lp-beans circle { fill: var(--lp-spot); }
+.leopard .lp-tail-o { fill: none; stroke: var(--lp-o); stroke-width: 22; stroke-linecap: round; }
+.leopard .lp-tail-f { fill: none; stroke: var(--lp-fur); stroke-width: 14; stroke-linecap: round; }
+.leopard .lp-tail-r { fill: none; stroke: var(--lp-spot); stroke-width: 14; stroke-dasharray: 9 13; stroke-dashoffset: -4; }
+.leopard .lp-tail-o--sm { stroke-width: 13; }
+.leopard .lp-tail-f--sm { stroke-width: 7.5; }
+.leopard .lp-tail-r--sm { stroke-width: 7.5; stroke-dasharray: 6 9; }
+.leopard .lp-arm-o { fill: none; stroke: var(--lp-o); stroke-width: 24; stroke-linecap: round; }
+.leopard .lp-arm-f { fill: none; stroke: var(--lp-fur); stroke-width: 16; stroke-linecap: round; }
+.leopard .lp-zzz text { font: 700 10px var(--font-sans); fill: var(--ink-3); }
+
+/* ---------- part pivots ---------- */
+.leopard .lp-head { transform-origin: 120px 124px; transform-box: view-box; }
+.leopard .lp-tail { transform-origin: 84px 206px; transform-box: view-box; }
+.leopard .lp-body-wrap { transform-origin: 120px 214px; transform-box: view-box; }
+.leopard .lp-arm--r { transform-origin: 146px 150px; transform-box: view-box; }
+.leopard .lp-arm--l { transform-origin: 94px 150px; transform-box: view-box; }
+.leopard .lp-ear--l { transform-origin: 84px 60px; transform-box: view-box; }
+.leopard .lp-ear--r { transform-origin: 156px 60px; transform-box: view-box; }
+.leopard .lp-pupil { transform-box: view-box; transition: transform 140ms var(--ease, ease-out); transform: translate(calc(var(--lx) * 3.2px), calc(var(--ly) * 3px)); }
+
+/* ---------- expressions ---------- */
+.leopard .lp-eyes { display: none; }
+.lp-expr--happy .lp-eyes--happy, .lp-expr--curious .lp-eyes--open, .lp-expr--playful .lp-eyes--playful { display: inline; }
+.leopard .lp-mouth--open { display: none; }
+.lp-expr--playful .lp-mouth--open { display: inline; }
+.lp-expr--playful .lp-mouth--smile { display: none; }
+
+/* ---------- poses ---------- */
+.leopard .lp-arm { display: none; }
+.lp-pose--reach .lp-arm--r, .lp-pose--celebrate .lp-arm { display: inline; }
+.lp-pose--celebrate .lp-arm--r { transform: rotate(-12deg); }
+.lp-pose--celebrate .lp-arm--l { transform: rotate(12deg); }
+.leopard .lp-head { transform: translate(calc(var(--lx) * 3px), calc(var(--ly) * 2px)) rotate(calc(var(--lx) * 5deg)); transition: transform 180ms ease-out; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-pose--sit .lp-body-wrap, .lp-pose--look .lp-body-wrap, .lp-pose--reach .lp-body-wrap { animation: lp-breathe 3.6s ease-in-out infinite; }
+  .lp-pose--sit .lp-tail, .lp-pose--look .lp-tail, .lp-pose--reach .lp-tail { animation: lp-tail 2.8s ease-in-out infinite; }
+  .lp-expr--curious .lp-eye, .lp-expr--playful .lp-eye { animation: lp-blink 5.2s infinite; transform-box: fill-box; transform-origin: center; }
+  .lp-pose--look .lp-head { animation: lp-look 3.4s ease-in-out infinite; }
+  .lp-pose--reach .lp-arm--r { animation: lp-wave 0.9s ease-in-out infinite; }
+  .lp-pose--celebrate .lp-body-wrap, .lp-pose--celebrate .lp-head { animation: lp-hop 0.5s ease-in-out 2; }
+  .lp-pose--walk .lp-body-wrap { animation: lp-bob 0.42s ease-in-out infinite; }
+  .lp-pose--walk .lp-head { animation: lp-bob-head 0.42s ease-in-out infinite; }
+  .lp-pose--walk .lp-foot--l { animation: lp-step 0.42s ease-in-out infinite; }
+  .lp-pose--walk .lp-foot--r { animation: lp-step 0.42s ease-in-out infinite reverse; }
+  .lp-pose--walk .lp-tail { animation: lp-tail 0.84s ease-in-out infinite; }
+  .leopard--rest .lp-rest-body { animation: lp-sleep 4s ease-in-out infinite; transform-origin: 60px 72px; transform-box: view-box; }
+  .leopard--rest .lp-zzz text { animation: lp-z 3.2s ease-in-out infinite; }
+  .leopard--rest .lp-zzz text + text { animation-delay: 0.8s; }
+  .lp-ear--l { animation: lp-ear 6s ease-in-out infinite; }
+}
+@keyframes lp-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.012, 0.985); } }
+@keyframes lp-tail { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-9deg); } }
+@keyframes lp-blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.1); } }
+@keyframes lp-look { 0%, 100% { transform: rotate(0) translateX(0); } 30% { transform: rotate(-7deg) translateX(-4px); } 65% { transform: rotate(6deg) translateX(4px); } }
+@keyframes lp-wave { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-14deg); } }
+@keyframes lp-hop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+@keyframes lp-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes lp-bob-head { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(2deg); } }
+@keyframes lp-step { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes lp-sleep { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.04); } }
+@keyframes lp-z { 0% { opacity: 0; transform: translate(0, 4px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translate(4px, -6px); } }
+@keyframes lp-ear { 0%, 94%, 100% { transform: rotate(0); } 97% { transform: rotate(-8deg); } }
