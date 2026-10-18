@@ -8,7 +8,7 @@ Audited 2026-10-18. This document updates `docs/phase-1-audit.md` (2026-10-03) f
 |---|---|---|
 | Three reference screenshots (A, B, C) | Received mid-build (in chat) | `DESIGN.md` records the observed reference read and the preserve/adapt/exclude decisions. |
 | Leopard character sheet | Received in chat; **not available as a file** | Redrawn faithfully as a layered SVG rig (`components/mascot/Leopard.tsx`) using the sheet's palette, outlines, rosettes, cream bib and ringed tail. **v1 redraw, pending approval.** Source artwork can replace it. |
-| Official portrait (cream cap, crossed arms) | Shown in chat; **not available as a file** | The pipeline is ready in `content/site.ts`: circular focal point and zoom, the full composition for `/about`, and AVIF/WebP through `next/image`. Commit the original as `public/portrait/mojeeb-official.jpg` and set `USE_OFFICIAL_PORTRAIT = true`. Until then the 2026-10-15 profile avatar is used. |
+| Official portrait (cream cap, crossed arms) | Committed by Mojeeb on 2026-10-18 as `public/portrait/mojeeb-official.png` | In use: circular hero crop, the full composition on `/about`, the OG avatar, and AVIF/WebP through `next/image`. |
 | Live product screenshots | Chromium in the build sandbox can't complete TLS through the egress proxy | Case studies use technical diagrams drawn from source, plus OG art. `TODO(mojeeb)`: product screenshots. |
 | Guestbook database | No credentials in this session | Supabase REST adapter, SQL migration (`supabase/guestbook.sql`) and setup guide (`docs/guestbook.md`). Production shows "not connected" until env vars are set. |
 | Live mojeeb.xyz landing page | Captured 2026-10-18 | `docs/before/`. It states "Available for selected work", which is reused as the subtle availability line. |
@@ -156,7 +156,7 @@ These figures are never summed together, and outbound attention is never labelle
 
 ## 8. Open TODO(mojeeb)
 1. Approve the SVG leopard redraw, or supply the original character artwork as files (SVG/PNG layers).
-2. Commit the official portrait as `public/portrait/mojeeb-official.jpg` and flip `USE_OFFICIAL_PORTRAIT`.
+2. ~~Commit the official portrait~~: done (`mojeeb-official.png`).
 3. Guestbook: superseded by Cloudflare D1. Activation steps are in `docs/cloudflare-migration.md` §10 and `docs/guestbook.md`.
 4. Source and window for the founder-reported Arcapush figures (22K / 22K / 9K).
 5. Confirm "Available for selected work" (taken from the live site) is still current.
