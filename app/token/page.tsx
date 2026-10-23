@@ -5,10 +5,10 @@ import { portrait } from "@/content/site";
 import "./token.css";
 
 export const metadata: Metadata = {
-  title: "Creator Token | Mojeeb",
-  description: "Why Mojeeb is exploring a personal creator token on Robinhood Chain: supporting independent product development, infrastructure and personal runway. Contract address supplied by the creator.",
+  title: "$MOJEEB | Mojeeb Creator Token",
+  description: "$MOJEEB is Mojeeb’s personal creator token on Robinhood Chain. Read the story, contract address, intended use of creator fees, and risk disclosures.",
   alternates: { canonical: "/token" },
-  openGraph: { title: "Still building. A note from Mojeeb.", description: "A transparent look at why I'm launching a personal creator token, what the fees may support, and the risks.", url: "https://mojeeb.xyz/token", type: "website" },
+  openGraph: { title: "$MOJEEB. Still building. Still here.", description: "A transparent look at why I'm launching a personal creator token, what the fees may support, and the risks.", url: "https://mojeeb.xyz/token", type: "website" },
   twitter: { card: "summary_large_image", title: "Still building. A note from Mojeeb.", description: "Why I'm exploring a personal creator token on Robinhood Chain." },
 };
 
@@ -18,7 +18,7 @@ export default function TokenPage() {
       <div className="token-hero-copy">
         <p className="label">An open letter · October 2026</p>
         <h1 className="token-title">Still building.<br/><em>Still here.</em></h1>
-        <p className="token-lead">I’m Mojeeb. I build products, the systems behind them, and the tools that help other builders get discovered. This is why I launched a personal creator token.</p>
+        <p className="token-lead">I’m Mojeeb. I build products, the systems behind them, and the tools that help other builders get discovered. This is why I launched $MOJEEB, my personal creator token.</p>
         <div className="token-actions"><a href="#why" className="btn btn--primary">Read my story ↓</a><a href="https://x.com/MojeebMotion" className="btn" target="_blank" rel="noopener noreferrer">Follow updates ↗</a></div>
       </div>
       <div className="token-portrait"><Image src={portrait.src} alt={portrait.alt} width={portrait.width} height={portrait.height} priority sizes="(max-width: 760px) 90vw, 360px" /></div>
@@ -30,9 +30,9 @@ export default function TokenPage() {
 
     <section className="token-section"><p className="label">02 / The work</p><h2>Real products. Already shipped.</h2><p>Through <a href="https://blindspotlab.xyz" target="_blank" rel="noopener noreferrer">BlindspotLab ↗</a>, I build and maintain products including <a href="https://arcapush.com" target="_blank" rel="noopener noreferrer">Arcapush ↗</a>, <Link href="/work/revel">Revel ↗</Link>, and <a href="https://blindspotlab.xyz/work/dearly" target="_blank" rel="noopener noreferrer">Dearly ↗</a>. The work existed before this token idea, and it will remain the reason I keep showing up.</p><p>You can review the products, code and track record on <Link href="/projects">my projects page ↗</Link>.</p></section>
 
-    <section className="token-section"><p className="label">03 / The experiment</p><h2>A creator token, with clear boundaries.</h2><p>I launched a personal creator token through <a href="https://pons.family" target="_blank" rel="noopener noreferrer">Pons ↗</a> on Robinhood Chain. The token name and ticker are not listed here yet. My planned initial purchase was $10; I will confirm the executed amount separately.</p><p>If eligible trading occurs, creator fees may help pay for product infrastructure, continued development, and my personal living expenses. Revenue is not guaranteed, and this is not a claim on BlindspotLab, Arcapush, their assets, or future earnings.</p><p>I may explore community content initiatives and rewards later, but no contests, allocations or payments are promised at this stage. Any future program will have separately published terms and disclosure requirements.</p></section>
+    <section className="token-section"><p className="label">03 / The experiment</p><h2>A creator token, with clear boundaries.</h2><p>I launched a personal creator token through <a href="https://pons.family" target="_blank" rel="noopener noreferrer">Pons ↗</a> on Robinhood Chain. The token ticker is $MOJEEB. My planned initial purchase was $10; I will confirm the executed amount separately.</p><p>If eligible trading occurs, creator fees may help pay for product infrastructure, continued development, and my personal living expenses. Revenue is not guaranteed, and this is not a claim on BlindspotLab, Arcapush, their assets, or future earnings.</p><p>I may explore community content initiatives and rewards later, but no contests, allocations or payments are promised at this stage. Any future program will have separately published terms and disclosure requirements.</p></section>
 
-    <section className="token-section token-contract"><p className="label">04 / Official contract</p><h2>Contract address.</h2><p>This is the address I have publicly supplied for my token. Confirm it independently on the intended chain and through my official channels before interacting.</p><div className="token-address"><span>Contract address</span><strong style={{overflowWrap:"anywhere",fontSize:"clamp(.8rem,1.6vw,1rem)"}}>0x11816bf756ca82cdfdfef87e5d029d45aa6144ba</strong></div><p className="token-small">Launch identity: <strong>mojeeb.eth</strong>. Verify the chain, contract and official announcement before interacting with any token.</p></section>
+    <section className="token-section token-contract"><p className="label">04 / Official contract</p><h2>Contract address.</h2><p>This is the address I have publicly supplied for $MOJEEB. Confirm it independently on the intended chain and through my official channels before interacting.</p><div className="token-address"><span>Contract address</span><strong style={{overflowWrap:"anywhere",fontSize:"clamp(.8rem,1.6vw,1rem)"}}>0x11816bf756ca82cdfdfef87e5d029d45aa6144ba</strong></div><p className="token-small">Launch identity: <strong>mojeeb.eth</strong>. Verify the chain, contract and official announcement before interacting with any token.</p></section>
 
     <section className="token-section"><p className="label">05 / Read before participating</p><h2>Support should be informed.</h2><p>This is a speculative cryptoasset. Prices can fall sharply or become worthless. Liquidity, trading activity and creator fees are not guaranteed. There are no promised returns, redemption rights, or ownership rights in my products or company. The launch, fees and availability remain subject to platform rules and applicable legal requirements.</p><p>Check the launch platform for the final creator-fee configuration and verify the contract details before trading. Please do your own research and never spend money you need for essentials.</p></section>
 
