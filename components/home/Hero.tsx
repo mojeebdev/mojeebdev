@@ -31,6 +31,7 @@ export default function Hero() {
       <div className="hero__ctas">
         <Link href="/work" className="btn btn--primary">Explore my work</Link>
         <Link href="/contact" className="btn">Work with me</Link>
+        <Link href="/den" className="btn btn--ghost">Enter the Leopard&apos;s Den <span aria-hidden="true">↗</span></Link>
         <a href={contact.github} className="btn btn--ghost btn--icon">
           <Icon name="github" size={16} />
           <span>GitHub</span>

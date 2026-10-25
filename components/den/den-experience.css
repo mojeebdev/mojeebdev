@@ -1,0 +1,181 @@
+/* The Leopard's Den — cinematic miniature atelier. All styles are route-scoped. */
+.denw {
+  width: 100%;
+  display: grid;
+  gap: 18px;
+  color: var(--ink);
+  padding-bottom: 48px;
+}
+@media (min-width: 1024px) {
+  .denw {
+    width: min(1180px, calc(100vw - var(--sidebar-w) - 96px));
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+.denw__header { display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+.denw__header h1 { font-size: clamp(2.25rem, 5vw, 4.25rem); line-height: 1; letter-spacing: -0.055em; font-weight: 600; }
+.denw__header h1 em { font-family: var(--font-serif); font-weight: 400; }
+.denw__eyebrow {
+  display: block; font: 500 0.67rem/1.6 var(--font-mono);
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3);
+}
+.denw__header .denw__eyebrow { margin-bottom: 9px; }
+.denw__header-actions { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.denw__header-actions a, .denw__header-actions button {
+  min-height: 42px; display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--line); border-radius: 999px; padding: 0 14px;
+  background: var(--surface); color: var(--ink); font-size: 0.82rem;
+  text-decoration: none; cursor: pointer;
+}
+.denw__header-actions :is(a, button):hover { border-color: var(--ink-3); }
+.denw__lede { max-width: 55ch; font-size: 0.96rem; color: var(--ink-2); }
+.denw__theatre {
+  position: relative; isolation: isolate; background: #0e0f11;
+  width: 100%; height: min(70svh, 710px); min-height: 475px;
+  overflow: hidden; border-radius: 22px; border: 1px solid #30343b;
+  color: #fafaf8; -webkit-tap-highlight-color: transparent;
+}
+.denw__canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.denw__vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 51% 47%, transparent 31%, rgb(0 0 0 / 0.28) 100%); }
+.denw__loading { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #b6beca; font-size: 0.875rem; }
+.denw__fallback { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 8px; align-items: center; justify-content: center; padding: 24px; text-align: center; color: #f5f1e8; background: radial-gradient(circle, #2d3645, #0e0f11 75%); }
+.denw__fallback strong { font-size: 1.1rem; font-weight: 500; }
+.denw__fallback span { color: #b5bfcd; max-width: 30ch; font-size: 0.875rem; }
+.denw__leopard {
+  position: absolute; width: clamp(75px, 10vw, 120px); height: clamp(75px, 10vw, 120px);
+  z-index: 3; pointer-events: none; transform: translate(-50%, -72%) scale(var(--den-cat-zoom, 1));
+  filter: drop-shadow(0 12px 12px rgb(0 0 0 / 0.38)); transition: filter 250ms ease;
+}
+.denw__leopard .leopard { width: 100%; height: 100%; }
+.denw__leopard.is-happy { filter: drop-shadow(0 0 14px rgb(245 198 107 / 0.4)); }
+.denw__anchor {
+  position: absolute; transform: translate(-50%, -70%); z-index: 4; visibility: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 8px 12px; border-radius: 12px; white-space: nowrap;
+  border: 1px solid rgb(154 177 205 / 0.37); color: #f8f8f6;
+  background: rgb(16 20 27 / 0.78); box-shadow: 0 4px 20px rgb(0 0 0 / 0.18);
+  backdrop-filter: blur(6px); cursor: pointer;
+  font-size: 0.72rem; line-height: 1.3;
+}
+.denw__anchor span { font: 500 0.58rem var(--font-mono); color: #f5c66b; letter-spacing: 0.08em; }
+.denw__anchor strong { font-weight: 500; }
+.denw__anchor:hover, .denw__anchor:focus-visible, .denw__anchor.is-active { border-color: #f5c66b; background: rgb(30 35 44 / 0.94); }
+.denw__scene-top { position: absolute; inset: 20px 23px auto; z-index: 5; display: flex; justify-content: space-between; gap: 12px; pointer-events: none; font: 500 0.62rem var(--font-mono); letter-spacing: 0.08em; color: #b7c2d0; }
+.denw__scene-controls {
+  position: absolute; top: 52px; right: 16px; z-index: 7;
+  display: grid; gap: 4px; padding: 5px; border: 1px solid #4b5666;
+  border-radius: 12px; background: rgb(14 16 22 / 0.80);
+}
+.denw__scene-controls button {
+  width: 37px; height: 37px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; color: #f8f8f6; background: transparent;
+  font: 400 1.3rem/1 var(--font-sans); cursor: pointer;
+}
+.denw__scene-controls button:hover { background: #354153; }
+.denw__scene-controls button:disabled { cursor: default; opacity: 0.35; }
+.denw__overview-prompt {
+  position: absolute; left: 24px; bottom: 25px; z-index: 6; max-width: 335px;
+  padding: 20px 22px; background: rgb(16 20 26 / 0.86);
+  border: 1px solid #57616e; border-radius: 16px; backdrop-filter: blur(12px);
+}
+.denw__overview-prompt h2 { font-size: 1.38rem; font-weight: 500; letter-spacing: -0.025em; line-height: 1.2; }
+.denw__overview-prompt p { margin: 7px 0 14px; color: #c5cfdb; font-size: 0.82rem; line-height: 1.5; }
+.denw__overview-prompt button {
+  padding: 0; border: 0; background: none; cursor: pointer;
+  color: #f5c66b; font-size: 0.86rem; font-weight: 600;
+}
+.denw__station-panel {
+  position: absolute; z-index: 8; bottom: 20px; right: 22px;
+  display: flex; flex-direction: column; gap: 11px;
+  width: min(370px, calc(100% - 44px)); max-height: calc(100% - 88px);
+  padding: 22px; overflow: auto; overscroll-behavior: contain;
+  background: rgb(13 17 24 / 0.95); color: #f9f8f6;
+  border: 1px solid #647082; border-radius: 17px;
+  box-shadow: 0 15px 45px rgb(0 0 0 / 0.3);
+  backdrop-filter: blur(16px);
+}
+.denw__station-meta { display: flex; justify-content: space-between; align-items: center; font: 0.68rem var(--font-mono); color: #afbac7; }
+.denw__station-meta button { width: 35px; height: 35px; background: #252e3b; color: #f9f8f6; border: 0; border-radius: 9px; cursor: pointer; font-size: 1.3rem; }
+.denw__station-panel .denw__eyebrow { color: #f5c66b; }
+.denw__station-panel h2 { font-size: clamp(1.45rem, 2.3vw, 2rem); font-weight: 500; line-height: 1.16; letter-spacing: -0.03em; }
+.denw__station-panel p:not(.denw__eyebrow) { font-size: 0.91rem; color: #c5cedb; line-height: 1.55; }
+.denw__proof { padding-top: 7px; border-top: 1px solid #323d4c; font: 0.66rem/1.5 var(--font-mono); color: #a8b6c9; }
+.denw__primary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+  min-height: 45px; padding: 9px 18px; border-radius: 9px;
+  background: #f5c66b; border: 1px solid #f5c66b; color: #1a1d23;
+  text-decoration: none; text-align: center; cursor: pointer;
+  font-size: 0.9rem; font-weight: 600; line-height: 1.3;
+}
+.denw__primary:hover { background: #ffdb97; }
+.denw__primary:disabled { opacity: 0.72; cursor: default; }
+.denw__tour-next {
+  min-height: 40px; background: transparent; border: 1px solid #566377; border-radius: 8px;
+  color: #f5f1e8; cursor: pointer; padding: 8px 12px; font-size: 0.83rem;
+}
+.denw__intro {
+  position: absolute; inset: 0; z-index: 12; display: grid; place-items: center;
+  background: radial-gradient(circle at 50% 44%, rgb(45 54 67 / 0.96), rgb(11 14 18 / 0.99) 73%);
+  text-align: center; padding: 20px;
+  transition: opacity 600ms ease, visibility 600ms;
+}
+.denw__intro.is-entering { opacity: 0; pointer-events: none; }
+.denw__intro-copy { display: grid; justify-items: center; gap: 10px; max-width: 420px; }
+.denw__intro-cat { width: clamp(145px, 21vw, 240px); aspect-ratio: 1; filter: drop-shadow(0 20px 18px rgb(0 0 0 / 0.32)); }
+.denw__intro .denw__eyebrow { color: #bdc8d4; }
+.denw__intro h2 { font-weight: 500; font-size: clamp(1.7rem, 3.6vw, 2.8rem); letter-spacing: -0.04em; line-height: 1.12; }
+.denw__intro-copy > p { max-width: 32ch; color: #c3ceda; font-size: 0.9rem; }
+.denw__intro-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 17px; }
+.denw__intro-actions > button:not(.denw__primary) { background: none; color: #f5f1e8; border: 0; padding: 8px; cursor: pointer; font-size: 0.86rem; text-decoration: underline; text-underline-offset: 3px; }
+.denw__help { border: 1px solid var(--line); border-radius: 12px; padding: 15px 19px; background: var(--surface-2); font-size: 0.87rem; color: var(--ink-2); }
+.denw__help[hidden] { display: none; }
+.denw__help strong { display: block; color: var(--ink); margin-bottom: 6px; }
+.denw__directory { display: grid; gap: 15px; padding: 26px 0 0; }
+.denw__directory-intro { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+.denw__directory-intro p { color: var(--ink-2); font-size: 0.88rem; }
+.denw__directory-list { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+.denw__directory-list button {
+  display: grid; grid-template-columns: 27px 1fr; align-items: baseline; column-gap: 8px;
+  text-align: left; min-height: 83px; padding: 15px 14px;
+  border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+  cursor: pointer; transition: background 150ms ease, border-color 150ms ease;
+}
+.denw__directory-list button:hover, .denw__directory-list button.is-active { border-color: var(--blue); background: var(--blue-soft); }
+.denw__directory-list button span { color: var(--blue); font: 500 0.72rem var(--font-mono); }
+.denw__directory-list button strong { font-size: 0.93rem; font-weight: 500; }
+.denw__directory-list button small { grid-column: 2; color: var(--ink-3); font-size: 0.76rem; }
+.denw__tail { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; align-items: center; padding: 20px 0; border-top: 1px solid var(--line); }
+.denw__tail > p { font-family: var(--font-serif); font-style: italic; font-size: 1.15rem; }
+.denw__tail > div { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; }
+.denw__tail a, .denw__tail button { background: none; border: 0; padding: 4px 0; color: var(--ink-2); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: 0.78rem; }
+.denw__tail a:hover, .denw__tail button:hover { color: var(--blue); }
+@media (max-width: 850px) {
+  .denw__directory-list { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .denw__scene-top span:last-child { display: none; }
+  .denw__station-panel { bottom: 12px; right: 12px; width: min(355px, calc(100% - 24px)); padding: 15px; gap: 8px; max-height: min(55%, 350px); }
+}
+@media (max-width: 600px) {
+  .denw { gap: 15px; }
+  .denw__header { align-items: start; }
+  .denw__header h1 { font-size: clamp(2.15rem, 10vw, 3.1rem); }
+  .denw__header-actions { flex-direction: column; gap: 5px; align-items: flex-end; }
+  .denw__header-actions :is(a,button) { min-height: 34px; padding: 0 9px; font-size: 0.72rem; }
+  .denw__theatre { height: min(66svh, 610px); min-height: 510px; border-radius: 13px; }
+  .denw__scene-top { left: 12px; top: 14px; }
+  .denw__scene-controls { top: 40px; right: 9px; }
+  .denw__scene-controls button { width: 34px; height: 34px; }
+  .denw__anchor { padding: 5px 7px; border-radius: 8px; max-width: 118px; white-space: normal; text-align: center; font-size: 0.62rem; }
+  .denw__anchor span { font-size: 0.51rem; }
+  .denw__overview-prompt { left: 11px; bottom: 11px; width: min(278px, calc(100% - 60px)); padding: 14px; }
+  .denw__overview-prompt h2 { font-size: 1.13rem; }
+  .denw__overview-prompt p { font-size: 0.73rem; }
+  .denw__directory-list button { padding: 11px 9px; grid-template-columns: 20px 1fr; gap: 4px; min-height: 75px; }
+  .denw__directory-list button strong { font-size: 0.81rem; line-height: 1.3; }
+  .denw__directory-list button small { font-size: 0.69rem; }
+  .denw__tail { padding-top: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .denw *, .denw *::before, .denw *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}

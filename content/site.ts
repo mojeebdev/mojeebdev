@@ -76,6 +76,7 @@ export const alsoBehind = [
 
 export const nav = [
   { href: "/", label: "Profile" },
+  { href: "/den", label: "The Den" },
   { href: "/work", label: "Work" },
   { href: "/activity", label: "Activity" },
   { href: "/lab", label: "Lab" },
