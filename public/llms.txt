@@ -28,7 +28,7 @@
 - https://mojeeb.xyz/work/aitax (client engineering; pre-release, no contract deployed)
 
 ## Pages
-- Profile: https://mojeeb.xyz/ · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
+- The Den (landing page, interactive 3D workshop): https://mojeeb.xyz/ · Profile: /profile · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
 
 ## Notes on figures
 Every number on the site states its source, definition, window and timestamp. All-time figures from Mojeeb's own records (for example "40+ projects shipped") name their source and are never combined with live counters.

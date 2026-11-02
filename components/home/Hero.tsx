@@ -2,17 +2,15 @@ import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import { PortraitCircle } from "@/components/ui/Portrait";
 import { alsoBehind, contact, creatorOfProduct, founderOf, person } from "@/content/site";
-import type { Pulse } from "@/lib/leopard/types";
-import HeroWorld from "./HeroWorld";
 
-/** The hero is a scene in the Den: who I am on the left, a live window into the workshop on the right. */
-export default function Hero({ pulse }: { pulse: Pulse }) {
+/** The profile hero, styled like a panel in the Den. */
+export default function Hero() {
   return (
     <section className="hero hero--den" aria-labelledby="hero-name">
       <div className="hero__copy">
-        <p className="hero__eyebrow">mojeeb.xyz · the leopard&apos;s den</p>
+        <p className="hero__eyebrow">The golden lantern · profile</p>
         <div className="hero__who">
-          <PortraitCircle size={84} priority className="hero__portrait" />
+          <PortraitCircle size={96} priority className="hero__portrait" />
           <div className="hero__id">
             <h1 id="hero-name" className="hero__name">{person.name}<span className="serif">.</span></h1>
             <p className="hero__role">
@@ -38,6 +36,7 @@ export default function Hero({ pulse }: { pulse: Pulse }) {
         <div className="hero__ctas">
           <Link href="/work" className="btn btn--primary">Explore my work</Link>
           <Link href="/contact" className="btn">Work with me</Link>
+          <Link href="/" className="btn btn--ghost">Back to the Den <span aria-hidden="true">↗</span></Link>
           <a href={contact.github} className="btn btn--ghost btn--icon">
             <Icon name="github" size={16} />
             <span>GitHub</span>
@@ -49,7 +48,6 @@ export default function Hero({ pulse }: { pulse: Pulse }) {
           {person.availability && <span className="chip chip--blue">{person.availability}</span>}
         </p>
       </div>
-      <HeroWorld pulse={pulse} />
     </section>
   );
 }

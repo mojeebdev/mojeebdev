@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 export default function AboutPage() {
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "About", path: "/about" }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "About", path: "/about" }])} />
       <header className="about-head">
         <div className="about-head__copy">
           <p className="label">About</p>

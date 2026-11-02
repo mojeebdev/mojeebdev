@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
       { source: "/ai", destination: "/work", permanent: true },
       { source: "/blog", destination: "/writing", permanent: true },
       { source: "/builds", destination: "/projects", permanent: true },
+      { source: "/den", destination: "/", permanent: true },
       { source: "/mojeeb_headshot.png", destination: "/portrait/mojeeb-portrait.png", permanent: false },
     ];
   },

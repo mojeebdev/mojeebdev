@@ -42,11 +42,9 @@ export const viewport: Viewport = {
 
 /**
  * Runs before first paint: sets day or night from the Lagos clock (6am–6pm is day) unless the visitor picked one in
- * the theme toggle or the URL has ?time=day|night, marks JS as available, and decides whether the
- * homepage intro should show (every load of /, unless ?intro=0). A 6 s failsafe removes the intro if its
- * script never boots, so content can never be trapped behind it.
+ * the theme toggle or the URL has ?time=day|night, and marks JS as available.
  */
-const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var p=new URLSearchParams(location.search),q=p.get('time'),m=null;try{m=localStorage.getItem('theme')}catch(e){}if(m==='light')m='day';if(m==='dark')m='night';var h=(new Date().getUTCHours()+1)%24,auto=(h>=18||h<6)?'night':'day';d.setAttribute('data-theme',q==='day'||q==='night'?q:m==='day'||m==='night'?m:auto);if(location.pathname==='/'&&p.get('intro')!=='0'){d.classList.add('den-pending');setTimeout(function(){if(!window.__denReady)d.classList.remove('den-pending')},6000)}}catch(e){}})();`;
+const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var p=new URLSearchParams(location.search),q=p.get('time'),m=null;try{m=localStorage.getItem('theme')}catch(e){}if(m==='light')m='day';if(m==='dark')m='night';var h=(new Date().getUTCHours()+1)%24,auto=(h>=18||h<6)?'night':'day';d.setAttribute('data-theme',q==='day'||q==='night'?q:m==='day'||m==='night'?m:auto);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

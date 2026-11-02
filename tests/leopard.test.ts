@@ -44,7 +44,7 @@ describe("pulse lines", () => {
     const sparse = pulseLines({ ...pulse, github: { week: 0, weekEnd: null, streak: 0 }, arcapush: { indexed: null, visits: null }, npm30: null });
     expect(sparse.map((l) => l.text).join(" ")).not.toMatch(/GitHub|Arcapush|npm/);
     expect(pulseLines(pulse, { den: true }).at(-1)?.href).toBe("/guestbook");
-    expect(pulseLines(pulse).at(-1)?.href).toBe("/den");
+    expect(pulseLines(pulse).at(-1)?.href).toBe("/");
   });
   it("greets by referrer, ignoring the site itself, else by Lagos time", () => {
     expect(openerFor("https://t.co/abc", "mojeeb.xyz", 10, "10:00am")).toMatch(/from X/);
@@ -59,7 +59,7 @@ describe("model reply parsing", () => {
     expect(parseReply("Arcapush is a registry.\nLINK: /work/arcapush")).toEqual({ text: "Arcapush is a registry.", href: "/work/arcapush" });
     expect(parseReply("Hi.\nLINK: https://evil.example")).toEqual({ text: "Hi.", href: undefined });
     expect(parseReply("**Bold** answer")?.text).toBe("Bold answer");
-    expect(allowedLinks.has("/den")).toBe(true);
+    expect(allowedLinks.has("/profile")).toBe(true);
   });
 });
 

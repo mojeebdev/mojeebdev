@@ -65,8 +65,8 @@ export const siteGraphJsonLd = {
 export const profilePageJsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfilePage",
-  "@id": `${BASE_URL}/#profile`,
-  url: BASE_URL,
+  "@id": `${BASE_URL}/profile#profile`,
+  url: `${BASE_URL}/profile`,
   name: `${person.name}, ${person.role}`,
   mainEntity: { "@id": PERSON_ID },
   isPartOf: { "@id": WEBSITE_ID },

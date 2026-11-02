@@ -19,10 +19,10 @@ export function pulseLines(p: Pulse, { den = false } = {}): LeopardLine[] {
     lines.push({ text: `Arcapush, Mojeeb's flagship, is indexing ${count(p.arcapush.indexed)} builds right now.`, href: "/work/arcapush", cta: "How Arcapush works" });
   }
   if (p.npm30 !== null && p.npm30 > 0) {
-    lines.push({ text: `Mojeeb's open-source tools were downloaded ${count(p.npm30)} times on npm in the last 30 days.`, href: "/#tools", cta: "Meet the tools" });
+    lines.push({ text: `Mojeeb's open-source tools were downloaded ${count(p.npm30)} times on npm in the last 30 days.`, href: "/profile#tools", cta: "Meet the tools" });
   }
   lines.push({ text: `There are ${p.projects} projects in the archive. The best ${p.caseStudies} have full case studies.`, href: "/work", cta: "Read the case studies" });
-  if (!den) lines.push({ text: "Want to see where all of it lives? Come into my Den.", href: "/den", cta: "Enter the Den" });
+  if (!den) lines.push({ text: "Want to see where all of it lives? Come into my Den.", href: "/", cta: "Enter the Den" });
   else lines.push({ text: "Every glowing lantern up there is a note someone left in the guestbook.", href: "/guestbook", cta: "Light a lantern" });
   return lines;
 }

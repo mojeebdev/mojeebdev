@@ -244,3 +244,58 @@
 :root[data-theme="day"] .denw__intro-actions > button:not(.denw__primary) { color: #1b1f26; }
 :root[data-theme="day"] .denw__speech { background: #1b2433; color: #fbf6ea; }
 :root[data-theme="day"] .denw__burst svg { fill: #1b1f26; }
+
+/* ---------- The Den is the homepage: the world fills the screen ---------- */
+.shell:has(.denw) { display: block; }
+.shell:has(.denw) .sidebar { display: none; }
+@media (min-width: 1024px) { .shell:has(.denw) .topbar { display: flex; } }
+.main:has(.denw) { padding: 60px 0 0; }
+.content:has(.denw) { max-width: none; }
+.main:has(.denw) > .content:last-child { padding-inline: 16px; }
+.denw, .denw:is(*) { width: 100%; left: auto; transform: none; position: relative; gap: 0; padding-bottom: 0; }
+.denw__theatre { height: calc(100svh - 60px); min-height: 540px; border-radius: 0; border: 0; border-bottom: 1px solid var(--line); }
+.denw__header { position: absolute; z-index: 11; top: 18px; left: 22px; right: 22px; align-items: flex-start; pointer-events: none; }
+.denw__header > * { pointer-events: auto; }
+.denw__header h1 { font-size: clamp(2rem, 4vw, 3.4rem); }
+.denw__header .denw__eyebrow { color: var(--gold); }
+.denw__lede { max-width: 40ch; margin-top: 8px; font-size: 0.875rem; }
+.denw__header-actions { flex-wrap: wrap; justify-content: flex-end; }
+.denw__header-actions .denw__header-gold { background: #f5c66b; border-color: #f5c66b; color: #1a1d23; font-weight: 600; }
+.denw__header-actions .denw__header-gold:hover { background: #ffdb97; }
+.denw__scene-top { inset: auto auto 14px 50%; transform: translateX(-50%); justify-content: center; gap: 20px; white-space: nowrap; }
+.denw__scene-controls { top: 150px; }
+.denw__help, .denw__directory, .denw__tail { width: min(1100px, calc(100% - 32px)); margin-inline: auto; }
+.denw__help { margin-top: 20px; }
+.denw__directory { padding-top: 40px; }
+.denw__tail { margin-top: 24px; }
+
+/* The golden lantern: Mojeeb's profile, hanging above the leopard. */
+.denw__anchor--profile { border-color: #f5c66b; background: rgb(40 30 10 / 0.82); box-shadow: 0 0 22px rgb(245 198 107 / 0.35); }
+.denw__anchor--profile span { color: #ffdb97; }
+.denw__profile-who { display: flex; align-items: center; gap: 14px; }
+.denw__profile-who h2 { font-size: 1.5rem !important; }
+.denw__profile-who .portrait-circle { box-shadow: 0 0 0 2px #f5c66b, 0 0 0 6px rgb(245 198 107 / 0.18); }
+.denw__profile-links { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.82rem; }
+.denw__profile-links a { color: #d8e2ee; }
+.denw__profile-links a:hover { color: #f5c66b; }
+
+@media (max-width: 850px) {
+  .denw__scene-top { display: none; }
+  .denw__header { flex-direction: column; gap: 10px; }
+  .denw__header-actions { justify-content: flex-start; }
+  .denw__scene-controls { top: auto; bottom: 150px; }
+}
+@media (max-width: 600px) {
+  .denw__theatre { height: calc(100svh - 60px); min-height: 600px; }
+  .denw__header { top: 12px; left: 12px; right: 12px; }
+  .denw__header h1 { font-size: 2rem; }
+  .denw__lede { display: none; }
+  .denw__header-actions :is(a, button) { min-height: 32px; padding: 0 10px; font-size: 0.72rem; }
+  .denw__scene-controls { bottom: 140px; right: 9px; }
+}
+.denw__header { transition: opacity 400ms ease; }
+.denw.is-intro .denw__header { opacity: 0; pointer-events: none; }
+.denw.is-intro .denw__header > * { pointer-events: none; }
+@media (max-width: 600px) {
+  .denw__header-actions { flex-direction: row; align-items: center; gap: 6px; }
+}

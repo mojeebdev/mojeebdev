@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default function WorkPage() {
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "Work", path: "/work" }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Work", path: "/work" }])} />
       <header className="page-head">
         <p className="label">Work</p>
         <h1 className="h1">Selected work</h1>

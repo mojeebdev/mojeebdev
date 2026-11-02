@@ -5,17 +5,16 @@ import { LeopardPeek, LeopardRest } from "@/components/mascot/Leopard";
 import { lagosHour, lagosTimeLabel } from "@/lib/lagos";
 import { openerFor } from "@/lib/leopard/lines";
 import type { LeopardLine } from "@/lib/leopard/types";
-import { useLagosNight, useRootClass } from "@/lib/useExternal";
+import { useLagosNight } from "@/lib/useExternal";
 import LeopardChat from "./LeopardChat";
 import "./leopard.css";
 
 /**
- * The homepage guide. Once the intro has closed, the leopard peeks in from the corner and says something true and
+ * The profile page guide. The leopard peeks in from the corner and says something true and
  * current: where you came from, what Mojeeb shipped this week, live Arcapush and npm figures. Visitors can ask it
  * questions. At night in Lagos it's asleep until you poke it.
  */
 export default function LeopardGuide({ lines }: { lines: LeopardLine[] }) {
-  const introOpen = useRootClass("den-pending");
   const night = useLagosNight();
   const [open, setOpen] = useState(false);
   const [opener, setOpener] = useState<string | null>(null);
@@ -28,9 +27,9 @@ export default function LeopardGuide({ lines }: { lines: LeopardLine[] }) {
     return openerFor(document.referrer, location.host, lagosHour(now), lagosTimeLabel(now));
   };
 
-  // Say hello once, shortly after the intro closes (or straight away when there was no intro). Not at night: it's asleep.
+  // Say hello once, shortly after the page opens. Not at night: it's asleep.
   useEffect(() => {
-    if (introOpen || greeted.current || night) return;
+    if (greeted.current || night) return;
     greeted.current = true;
     const t = window.setTimeout(() => {
       try { if (sessionStorage.getItem("leopard:closed")) return; } catch {}
@@ -40,7 +39,7 @@ export default function LeopardGuide({ lines }: { lines: LeopardLine[] }) {
       setOpen(true);
     }, 900);
     return () => window.clearTimeout(t);
-  }, [introOpen, night]);
+  }, [night]);
 
   useEffect(() => {
     if (!open) return;

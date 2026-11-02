@@ -262,6 +262,15 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
   controls.addEventListener("start", cancelFocus);
   const raycaster = new Raycaster(), pointer = new Vector2();
   const lanternGroup = new Group(); scene.add(lanternGroup);
+  // Mojeeb's profile: one large golden lantern hanging above the leopard.
+  const profile = makeLantern("profile", 0);
+  profile.group.userData.base = new Vector3(0, 4.7, 0);
+  profile.group.scale.setScalar(2.1);
+  (profile.body.material as MeshStandardMaterial).color.set(0xffc95a);
+  (profile.body.material as MeshStandardMaterial).emissive.set(0xffa21f);
+  const profileLight = new PointLight(gold, 6, 7, 2);
+  profile.group.add(profileLight);
+  scene.add(profile.group);
   let lanternHits: Mesh[] = [];
   let lanternBodies: Mesh[] = [];
   let night = false;
@@ -274,7 +283,7 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
     const rect = canvas.getBoundingClientRect();
     pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects([...lanternHits, ...hitObjects], false);
+    const hits = raycaster.intersectObjects([profile.hit, ...lanternHits, ...hitObjects], false);
     const first = hits[0]?.object.userData;
     if (first?.lantern) callbacks.onLantern?.(first.lantern as string);
     else if (first?.denStation) callbacks.onSelect(first.denStation as DenStationId);
@@ -340,13 +349,13 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
     const still = reducedMotion.matches;
     if (!still) floats.forEach((g, i) => { g.position.y = Math.sin(time * 0.0008 + i * 0.9) * 0.018; });
     animators.forEach((fn) => fn(time, still));
-    lanternGroup.children.forEach((g) => {
+    [profile.group, ...lanternGroup.children].forEach((g) => {
       const base = g.userData.base as Vector3;
       g.position.set(base.x, base.y + (still ? 0 : Math.sin(time * 0.0011 + g.userData.phase) * 0.12), base.z);
       if (!still) g.rotation.y = Math.sin(time * 0.0006 + g.userData.phase) * 0.4;
     });
     renderer.render(scene, camera);
-    const points: Projected = { leopard: project(new Vector3(0, 1.18, 0)) };
+    const points: Projected = { leopard: project(new Vector3(0, 1.18, 0)), profile: project(new Vector3(0, profile.group.position.y + 0.75, 0)) };
     for (const station of denStations) points[station.id] = project(markers.get(station.id)!);
     callbacks.onProject(points);
   };
@@ -381,6 +390,8 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
       glow.intensity = night ? 14 : 6;
       stars.visible = night;
       lanternBodies.forEach((b) => { (b.material as MeshStandardMaterial).emissiveIntensity = night ? 1.6 : 0.9; });
+      (profile.body.material as MeshStandardMaterial).emissiveIntensity = night ? 1.9 : 1.1;
+      profileLight.intensity = night ? 9 : 4;
       if (!disposed) renderer.render(scene, camera);
     },
     setPaused(value) { paused = value; resume(); },
