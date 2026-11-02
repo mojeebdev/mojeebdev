@@ -34,6 +34,11 @@ html.den-pending .den {
 .den[data-stage="greet"] .den__cat { animation: den-settle 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
 @keyframes den-settle { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
 
+/* Step 0: asleep (night in Lagos). Curled up low on the floor; the rig breathes and the z's drift. */
+.den[data-stage="sleep"] .den__cat { display: flex; align-items: flex-end; justify-content: center; animation: den-settle 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.den[data-stage="sleep"] .den__cat .leopard { width: 100%; height: auto; }
+.den[data-stage="sleep"] .lp-zzz text { font-size: 14px; }
+
 /* Step 2: reach. A playful bounce and head tilt as the paw comes up. */
 .den[data-stage="reach"] .den__cat { animation: den-bounce 460ms cubic-bezier(0.3, 1.5, 0.5, 1) both; }
 @keyframes den-bounce { 0% { transform: translateY(0); } 40% { transform: translateY(-10px); } 100% { transform: translateY(0); } }

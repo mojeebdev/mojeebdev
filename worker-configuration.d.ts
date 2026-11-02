@@ -3,6 +3,7 @@
 interface __BaseEnv_Env {
 	DB: D1Database;
 	GUESTBOOK_LIMITER: RateLimit;
+	LEOPARD_LIMITER: RateLimit;
 	IMAGES: ImagesBinding;
 	ASSETS: Fetcher;
 	GUESTBOOK_AUTO_APPROVE: "false";

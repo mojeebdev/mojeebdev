@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { isLagosNight } from "./lagos";
 
 /** Subscribe to browser-only values (storage, media queries, DOM classes) without setState-in-effect. */
 export function useStorageValue(key: string, store: "local" | "session" = "local", fallback = "") {
@@ -33,6 +34,23 @@ export function useRootClass(name: string) {
   return useSyncExternalStore(
     (cb) => { const o = new MutationObserver(cb); o.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] }); return () => o.disconnect(); },
     () => document.documentElement.classList.contains(name),
+    () => false,
+  );
+}
+
+/**
+ * True at night in Lagos (8pm–6am). `?time=night` or `?time=day` overrides it, for demos and testing.
+ * Re-checks every minute; the server snapshot is "day" so server HTML never depends on the clock.
+ */
+export function useLagosNight() {
+  return useSyncExternalStore(
+    (cb) => { const t = window.setInterval(cb, 60_000); return () => window.clearInterval(t); },
+    () => {
+      const o = new URLSearchParams(location.search).get("time");
+      if (o === "night") return true;
+      if (o === "day") return false;
+      return isLagosNight();
+    },
     () => false,
   );
 }

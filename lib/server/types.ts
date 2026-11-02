@@ -27,6 +27,10 @@ export interface WorkerBindings {
   /** D1 database `mojeeb-guestbook`. Absent until the database is created and bound. */
   DB?: D1Database;
   GUESTBOOK_LIMITER?: RateLimit;
+  /** Workers rate limiter for /api/leopard questions. */
+  LEOPARD_LIMITER?: RateLimit;
+  /** Secret (optional): lets Claude answer "ask the leopard" questions. Without it, answers come from site entries. */
+  ANTHROPIC_API_KEY?: string;
   /** Secret: salts IP hashes and signs form tokens. */
   GUESTBOOK_IP_SALT?: string;
   /** Secret (optional): token sign-in for moderation when Cloudflare Access is not configured. */

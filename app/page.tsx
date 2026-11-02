@@ -8,6 +8,9 @@ import Heatmap from "@/components/activity/Heatmap";
 import ToolTiles from "@/components/activity/ToolTiles";
 import GuestbookPreview from "@/components/guestbook/GuestbookPreview";
 import DenIntro from "@/components/den/DenIntro";
+import LeopardGuide from "@/components/leopard/LeopardGuide";
+import { buildPulse } from "@/lib/data/pulse";
+import { pulseLines } from "@/lib/leopard/lines";
 import Section from "@/components/ui/Section";
 import JsonLd from "@/components/ui/JsonLd";
 import { getHomeMetrics } from "@/lib/data/metrics";
@@ -24,11 +27,13 @@ export default async function Home() {
   const b = busiest(calendarDays);
   const last90 = calendarDays.slice(-91);
   const last90Total = last90.reduce((t, d) => t + d.count, 0);
+  const leopardLines = pulseLines(buildPulse({ arcapush, packages }));
 
   return (
     <>
       <JsonLd data={profilePageJsonLd} />
       <DenIntro />
+      <LeopardGuide lines={leopardLines} />
       <Hero />
       <MetricStrip
         groups={[

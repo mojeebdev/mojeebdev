@@ -1,0 +1,52 @@
+/* The leopard's voice: speech bubble + "ask me" (LeopardChat) and the homepage corner guide (LeopardGuide). */
+.lchat { --lc-ink: var(--ink); --lc-ink-2: var(--ink-2); --lc-ink-3: var(--ink-3); --lc-line: var(--line); --lc-field: var(--surface-2); --lc-accent: var(--blue);
+  display: grid; gap: 10px; color: var(--lc-ink); }
+.lchat--dark { --lc-ink: #f9f8f6; --lc-ink-2: #c5cedb; --lc-ink-3: #9aa6b5; --lc-line: #3a4553; --lc-field: #1b222c; --lc-accent: #f5c66b; }
+.lchat__say { font-size: 1rem; line-height: 1.45; letter-spacing: -0.01em; min-height: 2.9em; }
+.lchat__thinking { color: var(--lc-ink-3); }
+.lchat__link { justify-self: start; color: var(--lc-accent); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
+.lchat__link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.lchat__error { font-size: 0.8125rem; color: var(--danger); }
+.lchat--dark .lchat__error { color: #ff9b91; }
+.lchat__row { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.lchat__next { padding: 0; border: 0; background: none; color: var(--lc-ink-2); font-size: 0.8125rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.lchat__next:hover { color: var(--lc-ink); }
+.lchat__source { font: 0.6875rem var(--font-mono); color: var(--lc-ink-3); }
+.lchat__ask { display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid var(--lc-line); }
+.lchat__ask input { flex: 1; min-width: 0; min-height: 40px; padding: 0 12px; border: 1px solid var(--lc-line); border-radius: 999px; background: var(--lc-field); color: var(--lc-ink); font: inherit; font-size: 0.875rem; }
+.lchat__ask input::placeholder { color: var(--lc-ink-3); }
+.lchat__ask input:focus-visible { outline: 2px solid var(--lc-accent); outline-offset: 1px; }
+.lchat__ask button { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--lc-ink); color: var(--bg); font-weight: 600; font-size: 0.875rem; cursor: pointer; }
+.lchat--dark .lchat__ask button { background: #f5c66b; color: #1a1d23; }
+.lchat__ask button:disabled { opacity: 0.45; cursor: default; }
+.lchat__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lchat__chips button { min-height: 32px; padding: 0 10px; border: 1px solid var(--lc-line); border-radius: 999px; background: transparent; color: var(--lc-ink-2); font-size: 0.75rem; cursor: pointer; }
+.lchat__chips button:hover { color: var(--lc-ink); border-color: var(--lc-accent); }
+
+/* Homepage corner guide. Hidden while the intro overlay is open. */
+.lguide { position: fixed; right: 16px; bottom: 16px; z-index: 120; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; pointer-events: none; }
+html.den-pending .lguide { display: none; }
+.lguide > * { pointer-events: auto; }
+.lguide__cat { display: grid; place-items: end center; width: 92px; height: 76px; padding: 0; border: 0; background: none; cursor: pointer; color: var(--ink);
+  filter: drop-shadow(0 6px 10px rgb(0 0 0 / 0.18)); animation: lguide-in 520ms cubic-bezier(0.3, 1.4, 0.5, 1) both; -webkit-tap-highlight-color: transparent; }
+.lguide__cat:hover { transform: translateY(-3px); transition: transform 160ms var(--ease); }
+.lguide__cat:focus-visible { outline: 2px dashed var(--blue); outline-offset: 4px; border-radius: 12px; }
+.lguide__cat .lp-ground { display: none; }
+@keyframes lguide-in { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+.lguide__bubble { position: relative; width: min(350px, calc(100vw - 32px)); padding: 18px 18px 16px; border: 1px solid var(--line-strong); border-radius: 18px 18px 6px 18px;
+  background: var(--surface); box-shadow: var(--shadow-float); animation: lguide-pop 300ms cubic-bezier(0.3, 1.3, 0.5, 1) both; transform-origin: 90% 100%; }
+.lguide__bubble .lchat__say { padding-right: 22px; }
+.lguide__teaser { margin-right: 46px; margin-bottom: -6px; padding: 7px 11px; border-radius: 12px 12px 3px 12px; background: var(--surface); border: 1px solid var(--line-strong);
+  box-shadow: var(--shadow-float); font-size: 0.75rem; font-weight: 600; animation: lguide-pop 300ms 400ms cubic-bezier(0.3, 1.3, 0.5, 1) both; }
+@keyframes lguide-pop { from { opacity: 0; transform: scale(0.9) translateY(8px); } to { opacity: 1; transform: none; } }
+.lguide__close { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-3); font-size: 1.25rem; line-height: 1; cursor: pointer; }
+.lguide__close:hover { background: var(--surface-2); color: var(--ink); }
+@media (max-width: 479px) {
+  .lguide { right: 10px; bottom: 10px; }
+  .lguide__cat { width: 74px; height: 62px; }
+  .lguide__cat svg { width: 64px; height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lguide__cat, .lguide__bubble, .lguide__teaser { animation: none; }
+  .lguide__cat:hover { transform: none; }
+}

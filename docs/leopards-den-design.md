@@ -93,3 +93,23 @@ The first release deliberately uses procedural low-poly primitives, no external 
 ## Acceptance
 
 The immersive experience is additive, not the default interface. The main homepage remains fast and crawlable. Exit and direct navigation always work. The six stations must present true, useful content, not marketing filler.
+
+## Living Den (layers 1 and 2)
+
+The leopard and the Den now run on live, sourced data. Nothing is invented: a figure whose source doesn't respond is left out.
+
+**The leopard talks** (`components/leopard/`, `lib/leopard/`)
+- Homepage: after the intro, the leopard peeks in from the bottom-right corner with a speech bubble (on phones, a "tap me" teaser instead). Its first line fits where the visitor came from (X, LinkedIn, GitHub, Arcapush, search) or the time in Lagos. Then it rotates true facts from `pulseLines()`: public GitHub contributions in the last 7 days of the calendar and the current streak, builds indexed on Arcapush, npm downloads over 30 days, the project count.
+- /den: click the leopard on the dais (or "Ask the leopard" in the directory) to open the same chat in the panel slot.
+- "Ask me about Mojeeb's work" posts to `/api/leopard`. With the `ANTHROPIC_API_KEY` Worker secret set, Claude Opus 5.5 (low effort, server-side refusal fallback) answers from `knowledgeText()`, which is the site's own content (prompt-cached), plus the live figures. Links are checked against an allowlist. Without the key, or if Claude fails or declines, `answerLocally()` answers from hand-written entries. Questions are never stored. Rate limits: 8 a minute per isolate, plus the `LEOPARD_LIMITER` Workers binding.
+
+**The world is built from data** (`components/den/denWorldScene.ts`, `DenWorldData`)
+- Wall of Builds: one tile per project in `content/projects.ts`.
+- Engineering Workbench: one rising spark per public GitHub contribution in the last 7 days (capped at 40).
+- Discovery Beacon: glow scales with Arcapush platform visits (log scale).
+- Lanterns: one paper lantern per approved guestbook note (latest 30), floating over the island. Click one to read the note.
+- Each station panel shows its live figure.
+
+**Day and night.** Lagos time (UTC+1). From 8pm to 6am the Den turns to night (darker sky, stars, brighter lanterns), and on both the homepage and /den the leopard is asleep until you tap it. Add `?time=night` or `?time=day` to any URL to preview either.
+
+**To enable Claude answers:** `npx wrangler secret put ANTHROPIC_API_KEY`. The rate-limit binding is in `wrangler.jsonc`.

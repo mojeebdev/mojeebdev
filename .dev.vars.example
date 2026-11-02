@@ -5,3 +5,5 @@
 GUESTBOOK_IP_SALT=
 # Optional: moderation token sign-in when Cloudflare Access isn't configured (24+ characters)
 GUESTBOOK_ADMIN_TOKEN=
+# Optional: lets Claude answer "Ask the leopard" questions (/api/leopard). Without it, answers come from site entries.
+ANTHROPIC_API_KEY=
