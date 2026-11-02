@@ -27,14 +27,15 @@ export default async function Home() {
   const b = busiest(calendarDays);
   const last90 = calendarDays.slice(-91);
   const last90Total = last90.reduce((t, d) => t + d.count, 0);
-  const leopardLines = pulseLines(buildPulse({ arcapush, packages }));
+  const pulse = buildPulse({ arcapush, packages });
+  const leopardLines = pulseLines(pulse);
 
   return (
     <>
       <JsonLd data={profilePageJsonLd} />
       <DenIntro />
       <LeopardGuide lines={leopardLines} />
-      <Hero />
+      <Hero pulse={pulse} />
       <MetricStrip
         groups={[
           { id: "arcapush", title: "Arcapush", href: "https://arcapush.com", caption: "Flagship product · live from Arcapush’s public metrics", metrics: arcapush },

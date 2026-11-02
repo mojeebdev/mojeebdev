@@ -16,7 +16,7 @@ const SUGGESTIONS = ["What is Arcapush?", "Can I hire Mojeeb?", "What's StackBri
 
 const isInternal = (href: string) => href.startsWith("/");
 
-/** The leopard's voice: rotating true facts, plus "ask me anything" answered from the site (and Claude when enabled). */
+/** The leopard's voice: rotating true facts, plus "ask me anything" answered from the site (and an AI model when enabled). */
 export default function LeopardChat({ lines, opener, tone = "light" }: Props) {
   const [idx, setIdx] = useState(opener ? -1 : 0);
   const [question, setQuestion] = useState("");
@@ -62,7 +62,7 @@ export default function LeopardChat({ lines, opener, tone = "light" }: Props) {
       {error && <p className="lchat__error" role="alert">{error}</p>}
       <div className="lchat__row">
         <button type="button" className="lchat__next" onClick={next}>{answer ? "Back to the news" : "Tell me something else"}</button>
-        {answer && <span className="lchat__source">{answer.source === "claude" ? "Answered by Claude from this site" : "Answered from this site"}</span>}
+        {answer && <span className="lchat__source">{answer.source === "ai" ? "Answered by AI from this site's content" : "Answered from this site"}</span>}
       </div>
       <form className="lchat__ask" onSubmit={onSubmit}>
         <label htmlFor={qid} className="sr-only">Ask the leopard about Mojeeb&apos;s work</label>

@@ -8,7 +8,7 @@ import type { LeopardAnswer } from "./types";
 /**
  * What the leopard knows: only what this site already publishes. Used two ways:
  *  - `answerLocally` matches a question to a hand-written entry (no API key, no cost, always available);
- *  - `knowledgeText` is the reference material Claude answers from when ANTHROPIC_API_KEY is set.
+ *  - `knowledgeText` is the reference material the AI model answers from when OPENROUTER_API_KEY is set.
  */
 
 type Entry = { keys: string[]; text: string; href?: string };
@@ -71,7 +71,7 @@ function projectAnswer(project: (typeof projects)[number]): LeopardAnswer {
   };
 }
 
-/** Site paths and external URLs the leopard may link to. Anything else Claude suggests is dropped. */
+/** Site paths and external URLs the leopard may link to. Anything else the model suggests is dropped. */
 export const allowedLinks = new Set<string>([
   "/", "/about", "/about#daeto", "/work", "/projects", "/activity", "/lab", "/lab/constellation", "/writing", "/now", "/guestbook", "/contact", "/den", "/token", "/#tools",
   ...caseStudies.map((c) => `/work/${c.slug}`),
@@ -79,7 +79,7 @@ export const allowedLinks = new Set<string>([
   studio.url,
 ]);
 
-/** Plain-text reference material for Claude. Stable between deploys so it can be prompt-cached. */
+/** Plain-text reference material for the AI model. */
 export function knowledgeText() {
   const studies = caseStudies.map((c) => [
     `### ${c.title} (${c.kindLabel}, ${c.statusLabel}, ${c.period}) — page: /work/${c.slug}`,

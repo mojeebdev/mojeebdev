@@ -5,5 +5,7 @@
 GUESTBOOK_IP_SALT=
 # Optional: moderation token sign-in when Cloudflare Access isn't configured (24+ characters)
 GUESTBOOK_ADMIN_TOKEN=
-# Optional: lets Claude answer "Ask the leopard" questions (/api/leopard). Without it, answers come from site entries.
-ANTHROPIC_API_KEY=
+# Optional: lets a low-cost OpenRouter model answer "Ask the leopard" questions (/api/leopard). Without it, answers come
+# from site entries. OPENROUTER_MODEL optionally picks the first model to try (default google/gemini-2.5-flash-lite).
+OPENROUTER_API_KEY=
+OPENROUTER_MODEL=

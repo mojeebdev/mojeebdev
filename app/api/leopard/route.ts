@@ -1,7 +1,7 @@
 import { getPulse } from "@/lib/data/pulse";
 import { noStoreJson as json } from "@/lib/guestbook/server";
 import { clientIp, rateLimited } from "@/lib/guestbook/security";
-import { askClaude } from "@/lib/leopard/claude";
+import { askModel } from "@/lib/leopard/ai";
 import { answerLocally } from "@/lib/leopard/knowledge";
 import { getBindings } from "@/lib/server/bindings";
 
@@ -10,8 +10,8 @@ export const dynamic = "force-dynamic";
 const QUESTION = { min: 2, max: 280 } as const;
 
 /**
- * Ask the leopard. With ANTHROPIC_API_KEY set, Claude answers from this site's content and live figures; without it,
- * or if Claude fails or declines, the leopard answers from hand-written entries. Questions are never stored.
+ * Ask the leopard. With OPENROUTER_API_KEY set, a low-cost model answers from this site's content and live figures;
+ * without it, or if the model fails, the leopard answers from hand-written entries. Questions are never stored.
  */
 export async function POST(req: Request) {
   if (Number(req.headers.get("content-length") ?? 0) > 2048) return json({ error: "That's a long question. Try a shorter one." }, 413);
@@ -32,8 +32,8 @@ export async function POST(req: Request) {
     return json({ error: "The leopard needs a breather. Try again in a minute." }, 429);
   }
 
-  if (env.ANTHROPIC_API_KEY) {
-    const answer = await askClaude(question, await getPulse({ npm: false }), env.ANTHROPIC_API_KEY);
+  if (env.OPENROUTER_API_KEY) {
+    const answer = await askModel(question, await getPulse({ npm: false }), env.OPENROUTER_API_KEY, env.OPENROUTER_MODEL);
     if (answer) return json(answer);
   }
   return json(answerLocally(question));

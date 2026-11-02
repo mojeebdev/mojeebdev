@@ -4,8 +4,8 @@ import type { Pulse } from "@/lib/leopard/types";
 
 const env: { current: WorkerBindings } = { current: {} };
 vi.mock("@/lib/server/bindings", () => ({ getBindings: () => env.current }));
-const askClaude = vi.fn();
-vi.mock("@/lib/leopard/claude", () => ({ askClaude: (...args: unknown[]) => askClaude(...args) }));
+const askModel = vi.fn();
+vi.mock("@/lib/leopard/ai", () => ({ askModel: (...args: unknown[]) => askModel(...args) }));
 
 const pulse: Pulse = { github: { week: 42, weekEnd: "2026-11-01", streak: 9 }, arcapush: { indexed: 310, visits: 5000 }, npm30: 1200, projects: 56, caseStudies: 6 };
 vi.mock("@/lib/data/pulse", () => ({ getPulse: async () => pulse }));
@@ -13,7 +13,7 @@ vi.mock("@/lib/data/pulse", () => ({ getPulse: async () => pulse }));
 const { POST } = await import("@/app/api/leopard/route");
 const { answerLocally, allowedLinks } = await import("@/lib/leopard/knowledge");
 const { pulseLines, openerFor } = await import("@/lib/leopard/lines");
-const { parseReply } = await vi.importActual<typeof import("@/lib/leopard/claude")>("@/lib/leopard/claude");
+const { parseReply } = await vi.importActual<typeof import("@/lib/leopard/ai")>("@/lib/leopard/ai");
 
 let ip = 0;
 const ask = (body: unknown, headers: Record<string, string> = {}) =>
@@ -54,7 +54,7 @@ describe("pulse lines", () => {
   });
 });
 
-describe("Claude reply parsing", () => {
+describe("model reply parsing", () => {
   it("keeps allowed links and drops anything else", () => {
     expect(parseReply("Arcapush is a registry.\nLINK: /work/arcapush")).toEqual({ text: "Arcapush is a registry.", href: "/work/arcapush" });
     expect(parseReply("Hi.\nLINK: https://evil.example")).toEqual({ text: "Hi.", href: undefined });
@@ -64,21 +64,21 @@ describe("Claude reply parsing", () => {
 });
 
 describe("POST /api/leopard", () => {
-  beforeEach(() => { ip++; env.current = {}; askClaude.mockReset(); vi.spyOn(console, "log").mockImplementation(() => {}); vi.spyOn(console, "warn").mockImplementation(() => {}); });
+  beforeEach(() => { ip++; env.current = {}; askModel.mockReset(); vi.spyOn(console, "log").mockImplementation(() => {}); vi.spyOn(console, "warn").mockImplementation(() => {}); });
 
   it("answers from the site without an API key", async () => {
     const res = await ask({ question: "What is Arcapush?" });
     expect(res.status).toBe(200);
     expect(await res.json()).toMatchObject({ href: "/work/arcapush", source: "site" });
-    expect(askClaude).not.toHaveBeenCalled();
+    expect(askModel).not.toHaveBeenCalled();
   });
 
-  it("uses Claude when a key is set, and falls back when Claude returns nothing", async () => {
-    env.current = { ANTHROPIC_API_KEY: "sk-test" };
-    askClaude.mockResolvedValueOnce({ text: "From Claude.", source: "claude" });
-    expect(await (await ask({ question: "What is Arcapush?" })).json()).toEqual({ text: "From Claude.", source: "claude" });
-    expect(askClaude).toHaveBeenCalledWith("What is Arcapush?", pulse, "sk-test");
-    askClaude.mockResolvedValueOnce(null);
+  it("uses the OpenRouter model when a key is set, and falls back when it returns nothing", async () => {
+    env.current = { OPENROUTER_API_KEY: "sk-or-test", OPENROUTER_MODEL: "openai/gpt-oss-120b" };
+    askModel.mockResolvedValueOnce({ text: "From the model.", source: "ai" });
+    expect(await (await ask({ question: "What is Arcapush?" })).json()).toEqual({ text: "From the model.", source: "ai" });
+    expect(askModel).toHaveBeenCalledWith("What is Arcapush?", pulse, "sk-or-test", "openai/gpt-oss-120b");
+    askModel.mockResolvedValueOnce(null);
     expect((await (await ask({ question: "What is Arcapush?" })).json()).source).toBe("site");
   });
 

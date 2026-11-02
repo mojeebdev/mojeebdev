@@ -17,4 +17,4 @@ export type Pulse = {
 };
 
 export type LeopardLine = { text: string; href?: string; cta?: string };
-export type LeopardAnswer = { text: string; href?: string; source: "claude" | "site" };
+export type LeopardAnswer = { text: string; href?: string; source: "ai" | "site" };

@@ -230,3 +230,17 @@
   .denw__speech { animation: none; }
   .denw *, .denw *::before, .denw *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Daytime in the Den (6am–6pm Lagos, or the visitor's choice): a pale sky behind the island. Labels and panels keep
+   their dark glass, which reads well on the light sky. */
+:root[data-theme="day"] .denw__theatre { background: #d6e4f0; border-color: #c3d1de; }
+:root[data-theme="day"] .denw__vignette { background: radial-gradient(ellipse at 51% 47%, transparent 45%, rgb(90 110 135 / 0.16) 100%); }
+:root[data-theme="day"] .denw__scene-top { color: #33414f; }
+:root[data-theme="day"] .denw__loading { color: #3b4856; }
+:root[data-theme="day"] .denw__intro { background: radial-gradient(circle at 50% 44%, rgb(255 250 238 / 0.97), rgb(212 227 240 / 0.99) 73%); }
+:root[data-theme="day"] .denw__intro h2 { color: #1b1f26; }
+:root[data-theme="day"] .denw__intro-copy > p { color: #434d5a; }
+:root[data-theme="day"] .denw__intro .denw__eyebrow, :root[data-theme="day"] .denw__intro-help { color: #5b6573; }
+:root[data-theme="day"] .denw__intro-actions > button:not(.denw__primary) { color: #1b1f26; }
+:root[data-theme="day"] .denw__speech { background: #1b2433; color: #fbf6ea; }
+:root[data-theme="day"] .denw__burst svg { fill: #1b1f26; }

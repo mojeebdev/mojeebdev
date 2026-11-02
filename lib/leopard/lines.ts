@@ -38,7 +38,7 @@ export function openerFor(referrer: string, ownHost: string, hour: number, time:
     if (/arcapush\.com$/.test(host)) return "Back from Arcapush? That's Mojeeb's flagship.";
     if (/(google|bing|duckduckgo|perplexity|chatgpt|claude)\./.test(host)) return "Found your way here through search? Good instincts.";
   }
-  if (hour >= 20 || hour < 6) return `It's ${time} in Lagos. I should be asleep, but hello.`;
+  if (hour >= 18 || hour < 6) return `It's ${time} in Lagos. I should be asleep, but hello.`;
   if (hour < 12) return "Good morning from Lagos.";
   if (hour < 17) return "Good afternoon from Lagos.";
   return "Good evening from Lagos.";

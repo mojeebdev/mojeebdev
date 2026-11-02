@@ -101,7 +101,7 @@ The leopard and the Den now run on live, sourced data. Nothing is invented: a fi
 **The leopard talks** (`components/leopard/`, `lib/leopard/`)
 - Homepage: after the intro, the leopard peeks in from the bottom-right corner with a speech bubble (on phones, a "tap me" teaser instead). Its first line fits where the visitor came from (X, LinkedIn, GitHub, Arcapush, search) or the time in Lagos. Then it rotates true facts from `pulseLines()`: public GitHub contributions in the last 7 days of the calendar and the current streak, builds indexed on Arcapush, npm downloads over 30 days, the project count.
 - /den: click the leopard on the dais (or "Ask the leopard" in the directory) to open the same chat in the panel slot.
-- "Ask me about Mojeeb's work" posts to `/api/leopard`. With the `ANTHROPIC_API_KEY` Worker secret set, Claude Opus 5.5 (low effort, server-side refusal fallback) answers from `knowledgeText()`, which is the site's own content (prompt-cached), plus the live figures. Links are checked against an allowlist. Without the key, or if Claude fails or declines, `answerLocally()` answers from hand-written entries. Questions are never stored. Rate limits: 8 a minute per isolate, plus the `LEOPARD_LIMITER` Workers binding.
+- "Ask me about Mojeeb's work" posts to `/api/leopard`. With the `OPENROUTER_API_KEY` Worker secret set, a low-cost OpenRouter model answers from `knowledgeText()`, which is the site's own content, plus the live figures. The default is `google/gemini-2.5-flash-lite` ($0.10/$0.40 per million tokens, about $0.0005 a question), falling back to `openai/gpt-oss-120b` and `mistralai/mistral-small-3.2-24b-instruct`; set the `OPENROUTER_MODEL` var to put another model first. Links are checked against an allowlist. Without the key, or if the model fails, `answerLocally()` answers from hand-written entries. Questions are never stored. Rate limits: 8 a minute per isolate, plus the `LEOPARD_LIMITER` Workers binding.
 
 **The world is built from data** (`components/den/denWorldScene.ts`, `DenWorldData`)
 - Wall of Builds: one tile per project in `content/projects.ts`.
@@ -110,6 +110,10 @@ The leopard and the Den now run on live, sourced data. Nothing is invented: a fi
 - Lanterns: one paper lantern per approved guestbook note (latest 30), floating over the island. Click one to read the note.
 - Each station panel shows its live figure.
 
-**Day and night.** Lagos time (UTC+1). From 8pm to 6am the Den turns to night (darker sky, stars, brighter lanterns), and on both the homepage and /den the leopard is asleep until you tap it. Add `?time=night` or `?time=day` to any URL to preview either.
+**Day and night.** Lagos time (UTC+1). 6am–6pm is day, 6pm–6am is night. The boot script in `app/layout.tsx` sets `data-theme="day"|"night"` on `<html>` before first paint, and `components/shell/TimeOfDay.tsx` re-checks every minute so an open page changes over at 6am and 6pm. The theme toggle cycles Lagos time (default), Day and Night. `?time=night` or `?time=day` on any URL previews either. At night the leopard is asleep until tapped, the 3D world has stars and brighter lanterns; by day it sits under a pale sky.
 
-**To enable Claude answers:** `npx wrangler secret put ANTHROPIC_API_KEY`. The rate-limit binding is in `wrangler.jsonc`.
+## The whole site is the Den
+
+The Den's look is the site's look (`app/styles/den-theme.css`, tokens in `app/styles/tokens.css`): night is the Midnight Atelier (dark ink, warm paper text, signal blue, leopard gold), day is the same world in daylight. Both share a fixed sky (stars at night, sun and haze by day) and a perspective floor grid, glass panels with gold edges on hover, gold mono eyebrows, gold primary buttons and a gold tick on every section rule. The homepage hero is a scene in the Den: identity on the left and a live, slowly swaying window into the 3D island on the right (`components/home/HeroWorld.tsx`, `createDenWorld(..., { preview: true })`), built from the same live data as /den, starting after the intro and pausing off screen. The whole window links to /den.
+
+**To enable AI answers:** `npx wrangler secret put OPENROUTER_API_KEY` (optionally add `OPENROUTER_MODEL` under `vars`). The rate-limit binding is in `wrangler.jsonc`.
