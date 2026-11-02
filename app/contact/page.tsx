@@ -23,7 +23,7 @@ const offers = [
 export default function ContactPage() {
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "Contact", path: "/contact" }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Contact", path: "/contact" }])} />
       <header className="page-head">
         <p className="label">Contact</p>
         <h1 className="h1">Work with me</h1>

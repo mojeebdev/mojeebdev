@@ -1,33 +1,33 @@
-/* ---------- Hero (reference A) ---------- */
-.hero { display: grid; justify-items: center; text-align: center; gap: 18px; padding: 24px 0 48px; }
-
-.portrait-circle { position: relative; display: block; flex: none; overflow: hidden; border-radius: 50%; background: #c9c9c9; box-shadow: 0 0 0 1px var(--line); }
-.hero__portrait { width: clamp(132px, 30vw, 200px) !important; height: clamp(132px, 30vw, 200px) !important; }
-.hero__id { display: grid; gap: 4px; margin-top: 6px; }
-.hero__name { font-weight: 600; font-size: clamp(2rem, 4.2vw, 2.75rem); line-height: 1.1; letter-spacing: -0.025em; }
-.hero__role { color: var(--ink-2); font-size: 1.0625rem; }
-.hero__handle { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line-strong); }
-.hero__handle:hover { color: var(--blue); }
-.hero__studio { color: var(--ink-2); font-size: 1rem; }
-.hero__studio a { color: var(--ink); text-decoration-color: var(--line-strong); }
-.hero__studio a:hover { color: var(--blue); text-decoration-color: currentColor; }
-.hero__headline { max-width: 22ch; margin-top: 18px; font-weight: 300; font-size: clamp(1.65rem, 3.4vw, 2.4rem); line-height: 1.15; letter-spacing: -0.03em; }
-.hero__headline .serif { font-size: 1.08em; }
-.hero__creator { color: var(--ink-3); max-width: 52ch; font-size: 0.9375rem; }
-.hero__creator a { color: var(--ink); text-decoration-color: var(--line-strong); }
-.hero__creator a:hover { color: var(--blue); text-decoration-color: currentColor; }
-.hero__ctas { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 8px; }
-.hero__meta { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; align-items: center; color: var(--ink-3); font-size: 0.875rem; }
-@media (max-width: 479px) { .hero__ctas { display: grid; width: 100%; } }
-
-/* Desktop: keep identity, headline, CTAs, location and availability above the fold even on a 1366×768 screen
-   (≈ 650 px of browser viewport). The portrait scales with viewport height; type sizes are unchanged. */
-@media (min-width: 1024px) {
-  .hero { gap: 14px; padding: 0 0 40px; }
-  .hero__portrait { width: clamp(136px, 22vh, 200px) !important; height: clamp(136px, 22vh, 200px) !important; }
-  .hero__headline { margin-top: 8px; }
-  .hero__ctas { margin-top: 4px; }
+/* ---------- Profile hero: a panel in the Den ---------- */
+.hero--den {
+  --hw-bg: radial-gradient(ellipse at 72% 45%, #1d2738, #0b0e12 72%);
+  --hw-line: #262f3c;
+  position: relative; isolation: isolate; display: grid; margin-bottom: 48px; overflow: hidden;
+  border: 1px solid var(--hw-line); border-radius: 26px; background: var(--hw-bg);
+  box-shadow: 0 30px 80px rgb(0 0 0 / 0.35);
 }
+:root[data-theme="day"] .hero--den { --hw-bg: radial-gradient(ellipse at 72% 40%, #eaf2f9, #d3e2ef 72%); --hw-line: #c3d1de; box-shadow: 0 24px 60px rgb(60 70 90 / 0.14); }
+.hero__copy { position: relative; z-index: 3; display: grid; align-content: start; gap: 16px; padding: 26px 22px 24px; }
+.hero__eyebrow { font: 500 0.6875rem var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); }
+.hero__who { display: flex; align-items: center; gap: 16px; }
+.portrait-circle { position: relative; display: block; flex: none; overflow: hidden; border-radius: 50%; background: #c9c9c9; box-shadow: 0 0 0 2px var(--gold), 0 0 0 6px var(--gold-soft); }
+.hero__id { display: grid; gap: 2px; }
+.hero__name { font-weight: 600; font-size: clamp(2rem, 4.4vw, 3.1rem); line-height: 1; letter-spacing: -0.05em; }
+.hero__name .serif { color: var(--gold); }
+.hero__role { color: var(--ink-2); font-size: 0.9375rem; }
+.hero__handle { color: var(--ink-3); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.hero__handle:hover { color: var(--gold); }
+.hero__headline { max-width: 22ch; font-weight: 300; font-size: clamp(1.75rem, 3.4vw, 2.6rem); line-height: 1.08; letter-spacing: -0.035em; }
+.hero__headline .serif { font-size: 1.08em; color: var(--gold); }
+.hero__studio { max-width: 46ch; color: var(--ink-2); font-size: 0.9375rem; }
+.hero__studio a, .hero__creator a { color: var(--ink); text-decoration-color: var(--line-strong); }
+.hero__studio a:hover, .hero__creator a:hover { color: var(--gold); text-decoration-color: currentColor; }
+.hero__creator { color: var(--ink-3); }
+.hero__ctas { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.hero__meta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; color: var(--ink-3); font-size: 0.875rem; }
+
+@media (min-width: 900px) { .hero__copy { padding: 40px 44px 36px; } }
+@media (max-width: 479px) { .hero__ctas { display: grid; } }
 
 /* ---------- Metric strip (reference A) ---------- */
 .metrics { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; padding-bottom: 48px; }

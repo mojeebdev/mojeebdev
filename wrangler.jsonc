@@ -99,11 +99,12 @@
 		}
 	},
 	"upload_source_maps": true,
+	// ISR / data cache for vinext (vite.config.ts → kvDataAdapter), shared across isolates. Local dev and
+	// `npm run preview` use a local simulation under .wrangler/; deployed Workers use this namespace.
 	"kv_namespaces": [
 		{
 			"binding": "VINEXT_KV_CACHE",
-			"id": "d0ab7ae9f6f940f492162fe10752ce15",
-			"remote": true
+			"id": "d0ab7ae9f6f940f492162fe10752ce15"
 		}
 	]
 }

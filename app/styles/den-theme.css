@@ -1,0 +1,132 @@
+/* The Den, everywhere. Atmosphere and surfaces borrowed from /den (components/den/den-experience.css): a night
+ * sky of faint stars, a perspective floor grid, glass panels with gold edges, mono eyebrows, gold primary actions.
+ * Everything reads tokens, so day and night share one design: stars at night, sun and haze by day. */
+
+/* ---------- Atmosphere ---------- */
+:root:not([data-theme="day"]) body {
+  background:
+    radial-gradient(1100px 620px at 78% -8%, rgb(76 145 245 / 0.13), transparent 62%),
+    radial-gradient(900px 520px at 4% -4%, rgb(245 198 107 / 0.08), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+:root:not([data-theme="day"]) body::before,
+:root:not([data-theme="day"]) body::after { content: ""; position: fixed; z-index: -1; pointer-events: none; }
+/* Stars: three offset tiles of single-pixel dots, fading towards the floor. */
+:root:not([data-theme="day"]) body::before {
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgb(223 232 255 / 0.55) 0.8px, transparent 1.4px),
+    radial-gradient(circle, rgb(223 232 255 / 0.35) 0.7px, transparent 1.3px),
+    radial-gradient(circle, rgb(245 198 107 / 0.45) 0.8px, transparent 1.5px);
+  background-size: 173px 173px, 241px 241px, 397px 397px;
+  background-position: 0 0, 61px 97px, 211px 43px;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.5) 55%, transparent 85%);
+          mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.5) 55%, transparent 85%);
+  animation: den-twinkle 9s ease-in-out infinite alternate;
+}
+@keyframes den-twinkle { from { opacity: 0.65; } to { opacity: 1; } }
+/* Floor: the island's grid, tilted into perspective at the bottom of the viewport. */
+:root:not([data-theme="day"]) body::after {
+  left: -25%; right: -25%; bottom: 0; height: 46vh;
+  background-image:
+    linear-gradient(rgb(120 140 164 / 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(120 140 164 / 0.16) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 0.9), transparent 88%);
+          mask-image: linear-gradient(to top, rgb(0 0 0 / 0.9), transparent 88%);
+}
+
+/* Day: a pale sky with the sun over the top-right corner, soft haze, and the same floor grid in warm lines. */
+:root[data-theme="day"] body {
+  background:
+    radial-gradient(520px 420px at 88% -6%, rgb(255 214 128 / 0.55), transparent 65%),
+    radial-gradient(1200px 520px at 50% -10%, rgb(170 205 236 / 0.55), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+}
+:root[data-theme="day"] body::before,
+:root[data-theme="day"] body::after { content: ""; position: fixed; z-index: -1; pointer-events: none; }
+:root[data-theme="day"] body::before {
+  inset: 0 0 auto; height: 60vh;
+  background:
+    radial-gradient(260px 60px at 18% 14%, rgb(255 255 255 / 0.7), transparent 70%),
+    radial-gradient(340px 70px at 62% 24%, rgb(255 255 255 / 0.55), transparent 70%),
+    radial-gradient(220px 50px at 40% 8%, rgb(255 255 255 / 0.5), transparent 70%);
+  animation: den-drift 60s ease-in-out infinite alternate;
+}
+@keyframes den-drift { from { transform: translateX(-2%); } to { transform: translateX(3%); } }
+:root[data-theme="day"] body::after {
+  left: -25%; right: -25%; bottom: 0; height: 46vh;
+  background-image:
+    linear-gradient(rgb(140 118 80 / 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(140 118 80 / 0.16) 1px, transparent 1px);
+  background-size: 56px 56px;
+  transform: perspective(520px) rotateX(62deg);
+  transform-origin: 50% 100%;
+  -webkit-mask-image: linear-gradient(to top, rgb(0 0 0 / 0.9), transparent 88%);
+          mask-image: linear-gradient(to top, rgb(0 0 0 / 0.9), transparent 88%);
+}
+
+/* ---------- Type ---------- */
+.label { color: var(--gold); letter-spacing: 0.1em; }
+.h1, .h2 { letter-spacing: -0.035em; }
+.h1 { font-weight: 600; }
+.h2 { font-size: clamp(1.75rem, 3vw, 2.25rem); }
+.h1 .serif, .h2 .serif { font-weight: 400; }
+::selection { background: var(--gold); color: var(--on-gold); }
+:focus-visible { outline-color: var(--gold); }
+.prose a, .text-link, .info-row a:hover, .arrow-link:hover { color: var(--gold); }
+
+/* ---------- Sections: a hairline with a gold "station" tick ---------- */
+.section { position: relative; border-top-color: var(--line); }
+.section::before { content: ""; position: absolute; top: -1px; left: 0; width: 56px; height: 1px; background: var(--gold); opacity: 0.8; }
+.section--flush::before { display: none; }
+
+/* ---------- Buttons ---------- */
+.btn { border-radius: var(--r-control); background: var(--panel); border-color: var(--line-strong); }
+.btn:hover { background: var(--surface-2); border-color: var(--gold); }
+.btn--primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); font-weight: 600; }
+.btn--primary:hover { background: var(--gold-strong); border-color: var(--gold-strong); color: var(--on-gold); }
+:root[data-theme="day"] .btn--primary { background: #f5c66b; border-color: #e7b14e; }
+:root[data-theme="day"] .btn--primary:hover { background: #ffdb97; }
+.btn--ghost { background: transparent; border-color: transparent; }
+.btn--ghost:hover { background: var(--gold-soft); border-color: transparent; }
+
+/* ---------- Glass panels with gold edges ---------- */
+.panel, .metric-strip, .pkg, .work-card__link, .flagship, .cta-band, .tool-tile, .metric__pop, .lab-card, .gb-entry, .denw__help {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  -webkit-backdrop-filter: blur(10px);
+          backdrop-filter: blur(10px);
+}
+.metric-strip, .work-card__link, .flagship, .cta-band { border-radius: 22px; }
+.pkg, .work-card__link, .flagship, .tool-tile { transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease), transform var(--t-reveal) var(--ease); }
+.pkg:hover, .work-card__link:hover, .flagship:hover, .tool-tile:hover { border-color: color-mix(in srgb, var(--gold) 55%, var(--line)); box-shadow: var(--glow); }
+.pkg[data-leader] { border-color: color-mix(in srgb, var(--gold) 40%, var(--line)); }
+.work-card__visual { background: radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--blue) 10%, transparent), transparent 70%); }
+.metric__value { color: var(--ink); }
+.metric__type { color: var(--gold); }
+.cta-band { background: radial-gradient(ellipse at 85% 0%, var(--gold-soft), transparent 60%), var(--panel); border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); }
+.chip--blue { color: var(--gold); border-color: color-mix(in srgb, var(--gold) 40%, transparent); background: var(--gold-soft); }
+
+/* ---------- Sidebar: the Den's directory ---------- */
+@media (min-width: 1024px) {
+  .sidebar { background: color-mix(in srgb, var(--bg) 70%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+}
+.sidebar__name { font-weight: 600; }
+.sidebar__nav a[aria-current="page"] { color: var(--ink); background: var(--gold-soft); }
+.sidebar__nav a[aria-current="page"]::before { color: var(--gold); }
+.sidebar__nav a:hover { background: var(--surface-2); }
+.sheet__nav a[aria-current="page"] { color: var(--gold); }
+.theme-toggle { background: var(--panel); }
+.theme-toggle__dot[data-mode="auto"] { background: linear-gradient(90deg, var(--gold) 50%, transparent 50%); border-color: var(--gold); }
+.theme-toggle__dot[data-mode="day"] { background: #f5c66b; border-color: #c48a1c; }
+.theme-toggle__dot[data-mode="night"] { background: #1b2433; border-color: var(--ink-3); }
+.topbar { background: color-mix(in srgb, var(--bg) 80%, transparent); }
+
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation: none !important; }
+}

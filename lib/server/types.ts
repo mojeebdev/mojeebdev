@@ -29,8 +29,10 @@ export interface WorkerBindings {
   GUESTBOOK_LIMITER?: RateLimit;
   /** Workers rate limiter for /api/leopard questions. */
   LEOPARD_LIMITER?: RateLimit;
-  /** Secret (optional): lets Claude answer "ask the leopard" questions. Without it, answers come from site entries. */
-  ANTHROPIC_API_KEY?: string;
+  /** Secret (optional): lets a low-cost OpenRouter model answer "ask the leopard" questions. Without it, answers come from site entries. */
+  OPENROUTER_API_KEY?: string;
+  /** Var (optional): OpenRouter model to try first, e.g. "google/gemini-2.5-flash-lite". */
+  OPENROUTER_MODEL?: string;
   /** Secret: salts IP hashes and signs form tokens. */
   GUESTBOOK_IP_SALT?: string;
   /** Secret (optional): token sign-in for moderation when Cloudflare Access is not configured. */

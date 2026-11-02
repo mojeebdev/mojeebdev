@@ -27,8 +27,10 @@ export type DenWorldController = {
   focus: (id: DenStationId) => void;
   reset: () => void;
   zoom: (factor: number) => void;
-  /** Night in Lagos: darker sky, stars, brighter lanterns. */
+  /** Night in Lagos: darker sky, stars, brighter lanterns. Day: pale sky and warm sunlight. */
   setNight: (night: boolean) => void;
+  /** Stop rendering while the world is off screen. */
+  setPaused: (paused: boolean) => void;
   /** One paper lantern per guestbook note, floating over the island. */
   setLanterns: (ids: string[]) => void;
   dispose: () => void;
@@ -187,7 +189,8 @@ function makeStars() {
   return stars;
 }
 
-export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, data: DenWorldData): DenWorldController {
+/** `preview`: a non-interactive window into the world (homepage hero) that sways gently instead of orbiting. */
+export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, data: DenWorldData, { preview = false } = {}): DenWorldController {
   const scene = new Scene();
   scene.background = new Color(0x0e0f11);
   const camera = new OrthographicCamera(-8, 8, 6, -6, 0.1, 90);
@@ -204,6 +207,7 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
   controls.minPolarAngle = 0.36; controls.maxPolarAngle = 1.25;
   controls.minAzimuthAngle = -1.0; controls.maxAzimuthAngle = 1.1;
   controls.minZoom = 0.78; controls.maxZoom = 2.5;
+  if (preview) { controls.enableRotate = false; controls.enableZoom = false; controls.enablePan = false; }
   controls.update();
 
   const ambient = new AmbientLight(0xdce5ff, 1.35);
@@ -219,14 +223,18 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
   const glow = new PointLight(blue, 14, 16, 2);
   glow.position.set(0, 4.5, -2.5); scene.add(glow);
 
-  const floor = new Mesh(new PlaneGeometry(200, 200), material(ink));
+  const floorMat = material(ink);
+  const floor = new Mesh(new PlaneGeometry(200, 200), floorMat);
   floor.rotation.x = -Math.PI / 2; floor.position.y = -0.36; floor.receiveShadow = true;
   scene.add(floor);
   const island = new Group(); scene.add(island);
-  box(island, 13.4, 0.45, 10.75, 0x222a35, 0, -0.13, 0);
-  box(island, 13.0, 0.04, 10.4, 0x303845, 0, 0.11, 0);
-  for (let x = -6; x <= 6; x += 1) box(island, 0.012, 0.012, 10.1, 0x414a56, x, 0.14, 0);
-  for (let z = -5; z <= 5; z += 1) box(island, 12.8, 0.012, 0.012, 0x414a56, 0, 0.14, z);
+  const islandBase = box(island, 13.4, 0.45, 10.75, 0x222a35, 0, -0.13, 0);
+  const islandDeck = box(island, 13.0, 0.04, 10.4, 0x303845, 0, 0.11, 0);
+  const gridLines: Mesh[] = [];
+  for (let x = -6; x <= 6; x += 1) gridLines.push(box(island, 0.012, 0.012, 10.1, 0x414a56, x, 0.14, 0));
+  for (let z = -5; z <= 5; z += 1) gridLines.push(box(island, 12.8, 0.012, 0.012, 0x414a56, 0, 0.14, z));
+  // Day and night palettes for the island itself (set in setNight).
+  const tint = (m: Mesh, c: number) => (m.material as MeshStandardMaterial).color.set(c);
   // Raised central dais under the projected SVG leopard.
   cylinder(island, 1.24, 1.40, 0.23, 0x626a73, 0, 0.29, 0);
   ring(island, 1.07, gold, 0.42);
@@ -254,6 +262,15 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
   controls.addEventListener("start", cancelFocus);
   const raycaster = new Raycaster(), pointer = new Vector2();
   const lanternGroup = new Group(); scene.add(lanternGroup);
+  // Mojeeb's profile: one large golden lantern hanging above the leopard.
+  const profile = makeLantern("profile", 0);
+  profile.group.userData.base = new Vector3(0, 4.7, 0);
+  profile.group.scale.setScalar(2.1);
+  (profile.body.material as MeshStandardMaterial).color.set(0xffc95a);
+  (profile.body.material as MeshStandardMaterial).emissive.set(0xffa21f);
+  const profileLight = new PointLight(gold, 6, 7, 2);
+  profile.group.add(profileLight);
+  scene.add(profile.group);
   let lanternHits: Mesh[] = [];
   let lanternBodies: Mesh[] = [];
   let night = false;
@@ -266,13 +283,15 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
     const rect = canvas.getBoundingClientRect();
     pointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
-    const hits = raycaster.intersectObjects([...lanternHits, ...hitObjects], false);
+    const hits = raycaster.intersectObjects([profile.hit, ...lanternHits, ...hitObjects], false);
     const first = hits[0]?.object.userData;
     if (first?.lantern) callbacks.onLantern?.(first.lantern as string);
     else if (first?.denStation) callbacks.onSelect(first.denStation as DenStationId);
   };
-  canvas.addEventListener("pointerdown", onDown);
-  canvas.addEventListener("pointerup", onUp);
+  if (!preview) {
+    canvas.addEventListener("pointerdown", onDown);
+    canvas.addEventListener("pointerup", onUp);
+  }
   const onCancel = () => { down = null; };
   canvas.addEventListener("pointercancel", onCancel);
 
@@ -296,10 +315,11 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
       scale: camera.zoom };
   };
 
-  let disposed = false, playing = !document.hidden, raf = 0, last = 0;
-  const onVisibility = () => { playing = !document.hidden; if (playing) { last = 0; raf = requestAnimationFrame(tick); } else cancelAnimationFrame(raf); };
+  let disposed = false, paused = false, playing = !document.hidden, raf = 0, last = 0;
+  const resume = () => { cancelAnimationFrame(raf); if (playing && !paused) { last = 0; raf = requestAnimationFrame(tick); } };
+  const onVisibility = () => { playing = !document.hidden; resume(); };
   const tick = (time: number) => {
-    if (disposed || !playing) return;
+    if (disposed || !playing || paused) return;
     raf = requestAnimationFrame(tick);
     if (time - last < 1000 / 36) return;
     const dt = Math.min((time - last) / 1000 || 0.016, 0.05);
@@ -320,17 +340,22 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
     );
     const correction = clamped.clone().sub(controls.target);
     controls.target.copy(clamped); camera.position.add(correction);
+    if (preview && !reducedMotion.matches) {
+      // A slow sway around the island instead of user orbit.
+      const a = Math.sin(time * 0.00012) * 0.34, c = Math.cos(a), sn = Math.sin(a);
+      camera.position.set(controls.target.x + baseOffset.x * c + baseOffset.z * sn, controls.target.y + baseOffset.y, controls.target.z - baseOffset.x * sn + baseOffset.z * c);
+    }
     controls.update();
     const still = reducedMotion.matches;
     if (!still) floats.forEach((g, i) => { g.position.y = Math.sin(time * 0.0008 + i * 0.9) * 0.018; });
     animators.forEach((fn) => fn(time, still));
-    lanternGroup.children.forEach((g) => {
+    [profile.group, ...lanternGroup.children].forEach((g) => {
       const base = g.userData.base as Vector3;
       g.position.set(base.x, base.y + (still ? 0 : Math.sin(time * 0.0011 + g.userData.phase) * 0.12), base.z);
       if (!still) g.rotation.y = Math.sin(time * 0.0006 + g.userData.phase) * 0.4;
     });
     renderer.render(scene, camera);
-    const points: Projected = { leopard: project(new Vector3(0, 1.18, 0)) };
+    const points: Projected = { leopard: project(new Vector3(0, 1.18, 0)), profile: project(new Vector3(0, profile.group.position.y + 0.75, 0)) };
     for (const station of denStations) points[station.id] = project(markers.get(station.id)!);
     callbacks.onProject(points);
   };
@@ -353,14 +378,23 @@ export function createDenWorld(canvas: HTMLCanvasElement, callbacks: Callbacks, 
     },
     setNight(value) {
       night = value;
-      (scene.background as Color).set(night ? 0x06080c : 0x0e0f11);
-      ambient.intensity = night ? 0.55 : 1.35;
-      ambient.color.set(night ? 0x9fb2e6 : 0xdce5ff);
+      (scene.background as Color).set(night ? 0x06080c : 0xd6e4f0);
+      floorMat.color.set(night ? ink : 0xc9d8e6);
+      tint(islandBase, night ? 0x222a35 : 0x7d8a99);
+      tint(islandDeck, night ? 0x303845 : 0xaab6c3);
+      gridLines.forEach((g) => tint(g, night ? 0x414a56 : 0x93a0ae));
+      ambient.intensity = night ? 0.55 : 1.8;
+      ambient.color.set(night ? 0x9fb2e6 : 0xf3f6ff);
       sun.intensity = night ? 0.9 : 3.0;
-      sun.color.set(night ? 0xa9bcff : 0xffe1ac);
+      sun.color.set(night ? 0xa9bcff : 0xfff1d8);
+      glow.intensity = night ? 14 : 6;
       stars.visible = night;
       lanternBodies.forEach((b) => { (b.material as MeshStandardMaterial).emissiveIntensity = night ? 1.6 : 0.9; });
+      (profile.body.material as MeshStandardMaterial).emissiveIntensity = night ? 1.9 : 1.1;
+      profileLight.intensity = night ? 9 : 4;
+      if (!disposed) renderer.render(scene, camera);
     },
+    setPaused(value) { paused = value; resume(); },
     setLanterns(ids) {
       lanternGroup.children.slice().forEach((child) => {
         lanternGroup.remove(child);

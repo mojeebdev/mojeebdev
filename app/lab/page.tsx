@@ -20,7 +20,7 @@ const experiments = [
 export default function LabPage() {
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "Lab", path: "/lab" }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Lab", path: "/lab" }])} />
       <header className="page-head">
         <p className="label">Lab</p>
         <h1 className="h1">The playful side</h1>

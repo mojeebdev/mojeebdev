@@ -3,11 +3,13 @@ import "./styles/tokens.css";
 import "./styles/base.css";
 import "./styles/shell.css";
 import "./styles/components.css";
+import "./styles/den-theme.css";
 import "@/components/mascot/mascot.css";
 import Sidebar from "@/components/shell/Sidebar";
 import Footer from "@/components/shell/Footer";
 import Reveal from "@/components/ui/Reveal";
 import DenEasterEgg from "@/components/mascot/DenEasterEgg";
+import TimeOfDay from "@/components/shell/TimeOfDay";
 import JsonLd from "@/components/ui/JsonLd";
 import { hanken, instrument, plexMono } from "@/lib/fonts";
 import { siteGraphJsonLd } from "@/lib/jsonLd";
@@ -35,18 +37,14 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafaf8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e0f11" },
-  ],
+  themeColor: "#0b0e12",
 };
 
 /**
- * Runs before first paint: applies the saved theme, marks JS as available, and decides whether the
- * homepage intro should show (every load of /, unless ?intro=0). A 6 s failsafe removes the intro if its
- * script never boots, so content can never be trapped behind it.
+ * Runs before first paint: sets day or night from the Lagos clock (6am–6pm is day) unless the visitor picked one in
+ * the theme toggle or the URL has ?time=day|night, and marks JS as available.
  */
-const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}try{if(location.pathname==='/'){var q=new URLSearchParams(location.search).get('intro');if(q!=='0'){d.classList.add('den-pending');setTimeout(function(){if(!window.__denReady)d.classList.remove('den-pending')},6000)}}}catch(e){}})();`;
+const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var p=new URLSearchParams(location.search),q=p.get('time'),m=null;try{m=localStorage.getItem('theme')}catch(e){}if(m==='light')m='day';if(m==='dark')m='night';var h=(new Date().getUTCHours()+1)%24,auto=(h>=18||h<6)?'night':'day';d.setAttribute('data-theme',q==='day'||q==='night'?q:m==='day'||m==='night'?m:auto);}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -71,6 +69,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </div>
         <Reveal />
         <DenEasterEgg />
+        <TimeOfDay />
       </body>
     </html>
   );

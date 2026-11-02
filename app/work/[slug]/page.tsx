@@ -59,7 +59,7 @@ export default async function CaseStudyPage({ params }: Props) {
   return (
     <article className="case">
       <JsonLd data={caseStudyJsonLd(c)} />
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "Work", path: "/work" }, { name: c.title, path: `/work/${c.slug}` }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Work", path: "/work" }, { name: c.title, path: `/work/${c.slug}` }])} />
       <nav aria-label="Breadcrumb" className="crumbs meta"><Link href="/work">Work</Link> <span aria-hidden="true">/</span> {c.title}</nav>
       <header className="case__head">
         <p className="label">Case study {c.number}</p>

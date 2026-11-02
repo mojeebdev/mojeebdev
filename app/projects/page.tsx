@@ -14,7 +14,7 @@ export default function ProjectsPage() {
   const live = projects.filter((p) => ["live", "maintained"].includes(p.status)).length;
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "Profile", path: "/" }, { name: "All projects", path: "/projects" }])} />
+      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "All projects", path: "/projects" }])} />
       <header className="page-head">
         <p className="label">Archive</p>
         <h1 className="h1">All projects</h1>

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Leopard, { LeopardRest } from "@/components/mascot/Leopard";
 import LeopardChat from "@/components/leopard/LeopardChat";
+import { PortraitCircle } from "@/components/ui/Portrait";
+import { contact, person } from "@/content/site";
 import type { PublicEntry } from "@/lib/guestbook/schema";
 import { lagosHour, lagosTimeLabel } from "@/lib/lagos";
 import { openerFor, pulseLines } from "@/lib/leopard/lines";
@@ -49,6 +51,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
   const asleep = night && !woke && phase === "greet";
   const [active, setActive] = useState<DenStationId | null>(null);
   const [talking, setTalking] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [opener, setOpener] = useState<string | null>(null);
   const [lantern, setLantern] = useState<PublicEntry | null>(null);
   const [entries, setEntries] = useState<PublicEntry[] | null>(null);
@@ -61,7 +64,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
   const notes = stationNotes(pulse, entries?.length ?? null);
 
   const openStation = useCallback((id: DenStationId) => {
-    setTalking(false); setLantern(null); setActive(id);
+    setTalking(false); setProfileOpen(false); setLantern(null); setActive(id);
     controller.current?.focus(id);
     setCelebrate(true);
     if (celebrateTimer.current) clearTimeout(celebrateTimer.current);
@@ -82,8 +85,9 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
       const instance = createDenWorld(canvas, {
         onSelect: (id) => openStation(id),
         onLantern: (id) => {
+          if (id === "profile") { setActive(null); setTalking(false); setLantern(null); setProfileOpen(true); return; }
           const entry = entriesRef.current.find((e) => e.id === id);
-          if (entry) { setActive(null); setTalking(false); setLantern(entry); }
+          if (entry) { setActive(null); setTalking(false); setProfileOpen(false); setLantern(entry); }
         },
         onProject: (points) => {
           const stage = stageRef.current;
@@ -177,13 +181,13 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
   }, [inIntro, skip, sayHi]);
 
   const reset = useCallback(() => {
-    setTour(false); setActive(null); setTalking(false); setLantern(null); controller.current?.reset();
+    setTour(false); setActive(null); setTalking(false); setProfileOpen(false); setLantern(null); controller.current?.reset();
   }, []);
 
   const talk = () => {
     const now = new Date();
     setOpener((o) => o ?? openerFor(document.referrer, location.host, lagosHour(now), lagosTimeLabel(now)));
-    setActive(null); setLantern(null); setTour(false); setTalking(true);
+    setActive(null); setLantern(null); setProfileOpen(false); setTour(false); setTalking(true);
     controller.current?.reset();
   };
 
@@ -199,6 +203,8 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
     openStation(TOUR[index + 1]);
   }, [active, reset, openStation]);
 
+  const openProfile = () => { setActive(null); setLantern(null); setTalking(false); setTour(false); setProfileOpen(true); };
+
   const replay = () => { reset(); setWoke(false); setPhase("greet"); };
 
   const current = denStations.find((s) => s.id === active) || null;
@@ -211,15 +217,20 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
       : "Explore the products, experiments and ideas inside my workshop.";
 
   return (
-    <section className={"denw" + (night ? " is-night" : "")} aria-label="The Leopard's Den interactive workshop">
+    <section className={"denw" + (night ? " is-night" : "") + (inIntro ? " is-intro" : "")} aria-label="The Leopard's Den: Mojeeb Titilayo's interactive workshop">
       <header className="denw__header">
-        <div><p className="denw__eyebrow">Mojeeb Titilayo · Creative engineering</p><h1>The Leopard&apos;s <em>Den.</em></h1></div>
-        <div className="denw__header-actions">
-          <button type="button" onClick={() => setShowHelp((v) => !v)} aria-expanded={showHelp} aria-controls="den-help">Controls</button>
-          <Link href="/">Exit to portfolio <span aria-hidden="true">↗</span></Link>
+        <div>
+          <p className="denw__eyebrow">{person.name} · {person.role}</p>
+          <h1>The Leopard&apos;s <em>Den.</em></h1>
+          <p className="denw__lede">A tiny world built from live data. Every corner leads to something I&apos;ve actually built. My profile is the golden lantern.</p>
         </div>
+        <nav className="denw__header-actions" aria-label="Den shortcuts">
+          <button type="button" onClick={openProfile} className="denw__header-gold">Profile</button>
+          <Link href="/work">Work</Link>
+          <Link href="/contact">Contact</Link>
+          <button type="button" onClick={() => setShowHelp((v) => !v)} aria-expanded={showHelp} aria-controls="den-help">Controls</button>
+        </nav>
       </header>
-      <p className="denw__lede">A tiny world with a big imagination, built from live data. Every corner leads to something I&apos;ve actually built.</p>
       <div className="denw__theatre" ref={stageRef}>
         <canvas className="denw__canvas" ref={canvasRef} aria-hidden="true" />
         <div className="denw__vignette" aria-hidden="true" />
@@ -244,6 +255,10 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
             <span>{station.number}</span><strong>{station.title}</strong>
           </button>
         ))}
+        <button type="button" data-den-anchor="profile" className={"denw__anchor denw__anchor--profile " + (profileOpen ? "is-active" : "")}
+          onClick={openProfile} aria-label="Open Mojeeb's profile, the golden lantern" tabIndex={phase === "explore" && sceneState === "ready" ? 0 : -1}>
+          <span>✦ THE GOLDEN LANTERN</span><strong>Mojeeb · Profile</strong>
+        </button>
         {inIntro && (
           <div className={"denw__intro " + (phase === "entering" ? "is-entering" : "")} data-stage={asleep ? "sleep" : phase}>
             <div className="denw__intro-copy">
@@ -283,7 +298,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
         {phase === "explore" && (
           <>
             <div className="denw__scene-top">
-              <span>THE WORKSHOP / {current ? current.number : talking ? "THE LEOPARD" : lantern ? "A LANTERN" : "OVERVIEW"}</span>
+              <span>THE WORKSHOP / {current ? current.number : talking ? "THE LEOPARD" : profileOpen ? "PROFILE" : lantern ? "A LANTERN" : "OVERVIEW"}</span>
               <span>LAGOS {lagosTimeLabel().toUpperCase()} · {night ? "NIGHT" : "DAY"}</span>
             </div>
             <div className="denw__scene-controls" aria-label="Camera controls">
@@ -291,12 +306,13 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
               <button type="button" onClick={() => controller.current?.zoom(1 / 1.2)} disabled={sceneState !== "ready"} aria-label="Zoom out">−</button>
               <button type="button" onClick={reset} aria-label="Reset camera">↺</button>
             </div>
-            {!current && !talking && !lantern && <div className="denw__overview-prompt">
+            {!current && !talking && !lantern && !profileOpen && <div className="denw__overview-prompt">
               <h2>Welcome to my world.</h2>
-              <p>Drag to look around. Tap anything that catches your eye, or ask the leopard. {lanternCount > 0
+              <p>Drag to look around. Tap anything that catches your eye, or ask the leopard. The golden lantern is my profile. {lanternCount > 0
                 ? `${lanternCount} lantern${lanternCount === 1 ? "" : "s"} float overhead, one for every guestbook note.`
                 : entries ? "No lanterns yet: the first guestbook note lights one." : ""}</p>
               <div className="denw__overview-actions">
+                <button type="button" onClick={openProfile}>Meet Mojeeb <span aria-hidden="true">✦</span></button>
                 <button type="button" onClick={startTour}>Take the short tour <span aria-hidden="true">↗</span></button>
                 <Link href="/guestbook">Light a lantern <span aria-hidden="true">↗</span></Link>
               </div>
@@ -317,6 +333,21 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
               <aside className="denw__station-panel" aria-label="The leopard">
                 <div className="denw__station-meta"><span>THE LEOPARD · LIVE</span><button type="button" onClick={reset} aria-label="Close">×</button></div>
                 <LeopardChat lines={lines} opener={opener} tone="dark" />
+              </aside>
+            )}
+            {profileOpen && (
+              <aside className="denw__station-panel denw__profile" aria-live="polite" aria-label="Mojeeb's profile">
+                <div className="denw__station-meta"><span>✦ THE GOLDEN LANTERN</span><button type="button" onClick={reset} aria-label="Close profile">×</button></div>
+                <div className="denw__profile-who">
+                  <PortraitCircle size={64} />
+                  <div><h2>{person.name}</h2><p className="denw__eyebrow">{person.role} · {person.location}</p></div>
+                </div>
+                <p>{person.summary}</p>
+                {person.availability && <p className="denw__live">{person.availability}.</p>}
+                <Link href="/profile" className="denw__primary">Open the full profile <span aria-hidden="true">↗</span></Link>
+                <div className="denw__profile-links">
+                  <Link href="/work">Case studies</Link><Link href="/about">About</Link><Link href="/contact">Work with me</Link><a href={contact.github}>GitHub</a>
+                </div>
               </aside>
             )}
             {lantern && (
@@ -342,6 +373,9 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
           <p>Select a station. The world will come to you.</p>
         </div>
         <div className="denw__directory-list">
+          <button type="button" onClick={() => { setPhase("explore"); openProfile(); }} aria-pressed={profileOpen} className={profileOpen ? "is-active" : ""}>
+            <span>✦</span><strong>Mojeeb&apos;s profile</strong><small>The golden lantern</small>
+          </button>
           {denStations.map((station) => (
             <button type="button" key={station.id} onClick={() => { setPhase("explore"); openStation(station.id); }}
               aria-pressed={active === station.id} className={active === station.id ? "is-active" : ""}>
@@ -355,7 +389,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
       </nav>
       <div className="denw__tail">
         <p>The leopard is just the guide. The work is real.</p>
-        <div><button type="button" onClick={replay}>Meet the leopard again</button><Link href="/guestbook">Leave your mark ↗</Link><Link href="/contact">Build something together ↗</Link></div>
+        <div><button type="button" onClick={replay}>Meet the leopard again</button><Link href="/profile">Full profile ↗</Link><Link href="/guestbook">Leave your mark ↗</Link><Link href="/contact">Build something together ↗</Link></div>
       </div>
     </section>
   );
