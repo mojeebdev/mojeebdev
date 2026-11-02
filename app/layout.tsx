@@ -43,10 +43,10 @@ export const viewport: Viewport = {
 
 /**
  * Runs before first paint: applies the saved theme, marks JS as available, and decides whether the
- * homepage intro should show (first visit, motion allowed). A 6 s failsafe removes the intro if its
+ * homepage intro should show (every load of /, unless ?intro=0). A 6 s failsafe removes the intro if its
  * script never boots, so content can never be trapped behind it.
  */
-const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}try{if(location.pathname==='/'){var q=new URLSearchParams(location.search).get('intro');var seen=localStorage.getItem('den:v1');var rm=matchMedia('(prefers-reduced-motion: reduce)').matches;if(q==='1'||(!seen&&!rm&&q!=='0')){d.classList.add('den-pending');setTimeout(function(){if(!window.__denReady)d.classList.remove('den-pending')},6000)}}}catch(e){}})();`;
+const bootScript = `(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')d.setAttribute('data-theme',t)}catch(e){}try{if(location.pathname==='/'){var q=new URLSearchParams(location.search).get('intro');if(q!=='0'){d.classList.add('den-pending');setTimeout(function(){if(!window.__denReady)d.classList.remove('den-pending')},6000)}}}catch(e){}})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

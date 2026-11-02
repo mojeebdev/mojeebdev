@@ -7,8 +7,8 @@
  * Step 3 (five):  tapping the paw plays a high-five, a small burst of paw prints, a happy reaction, then a circular
  *                 reveal into the profile.
  *
- * Shown only when the boot script in app/layout.tsx adds `den-pending` (first visit, motion allowed, or ?intro=1).
- * Marked as seen the moment it shows, so refreshes and internal navigation never replay it. Always skippable
+ * Shown whenever the boot script in app/layout.tsx adds `den-pending`: every full load of the homepage (opt out
+ * with ?intro=0). Reduced-motion visitors get the same steps without movement. Always skippable
  * (button or Escape); Enter/Space activate the current step. Three.js only adds depth and loads after first paint;
  * without WebGL the CSS floor and shadow remain. A failsafe in the boot script removes it if this script never runs.
  */
@@ -18,7 +18,6 @@ import { useRootClass } from "@/lib/useExternal";
 import "./den.css";
 
 type Stage = "greet" | "reach" | "five" | "done";
-const STORAGE_KEY = "den:v1";
 const BURST = 8;
 
 export default function DenIntro() {
@@ -38,10 +37,9 @@ export default function DenIntro() {
   // Tell the boot script we're alive (cancels its failsafe).
   useEffect(() => { (window as unknown as { __denReady?: boolean }).__denReady = true; }, []);
 
-  // While open: mark as seen, and hide the rest of the page from keyboard and assistive tech.
+  // While open: hide the rest of the page from keyboard and assistive tech.
   useEffect(() => {
     if (!active) return;
-    try { localStorage.setItem(STORAGE_KEY, String(Date.now())); } catch {}
     const others = Array.from(document.querySelectorAll<HTMLElement>(".sidebar, .topbar, .site-footer, main > :not(.den)"));
     others.forEach((el) => el.setAttribute("inert", ""));
     // Focus the leopard so Enter/Space act on the step; Skip intro stays one Tab away.
