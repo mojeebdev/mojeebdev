@@ -8,56 +8,76 @@
  * NOT YET ACTIVE: no custom domain is attached here on purpose; it is added during the cutover (commented block below).
  */
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "mojeeb-xyz",
-  // Mojeeb.eth@gmail.com's Account (not a secret; pins CLI and Workers Builds to the right account)
-  "account_id": "1c44f0a287a8d8b44aa136f42ae9e64b",
-  // Matches the workerd runtime bundled with the pinned wrangler (1.20261012.x). Bump deliberately, then re-test.
-  "compatibility_date": "2026-10-12",
-  // Required by vinext's server runtime (AsyncLocalStorage) and next/og. Also populates process.env from vars/secrets.
-  "compatibility_flags": ["nodejs_compat"],
-
-  // Framework-provided Worker entry: vinext's fetch handler (App Router, RSC, route handlers, ISR, image route).
-  "main": "vinext/server/fetch-handler",
-
-  // Static assets built by vinext. Content-hashed /_next/static/* is served directly (immutable caching via the
-  // generated _headers file); everything else runs the Worker first so redirects, headers and routing apply.
-  "assets": {
-    "directory": "dist/client",
-    "html_handling": "none",
-    "not_found_handling": "none",
-    "binding": "ASSETS",
-    "run_worker_first": ["/*", "!/_next/static/*", "!/*/_next/static/*"]
-  },
-
-  // next/image optimisation through Cloudflare Images (resize + AVIF/WebP). No resource to create.
-  "images": { "binding": "IMAGES" },
-
-  // Guestbook abuse limit shared across isolates: 5 submissions per minute per hashed IP. `namespace_id` is a
-  // number you choose (unique within the account); it is not a provisioned resource ID.
-  "ratelimits": [
-    { "name": "GUESTBOOK_LIMITER", "namespace_id": "4801", "simple": { "limit": 5, "period": 60 } },
-    { "name": "LEOPARD_LIMITER", "namespace_id": "4802", "simple": { "limit": 10, "period": 60 } }
-  ],
-
-  "vars": {
-    // "true" publishes clean entries without review. Spam heuristics still apply.
-    "GUESTBOOK_AUTO_APPROVE": "false"
-    // Add once the Cloudflare Access application for /guestbook/admin exists (values are not secret):
-    // "ACCESS_TEAM_DOMAIN": "<your-team>.cloudflareaccess.com",
-    // "ACCESS_AUD": "<Application Audience (AUD) tag>"
-  },
-  // Secrets (never committed; set with `npx wrangler secret put <NAME>` or in the dashboard):
-  //   GUESTBOOK_IP_SALT       required for the guestbook: long random string (salts IP hashes, signs form tokens)
-  //   GUESTBOOK_ADMIN_TOKEN   optional: token sign-in for moderation if Cloudflare Access is not used (24+ chars)
-
-  // D1 database `mojeeb-guestbook` (created 18 Oct 2026, region WEUR). Local commands (`--local`, `npm run preview`)
-  // use a SQLite file under .wrangler/; only `--remote` touches the real database.
-  "d1_databases": [
-    { "binding": "DB", "database_name": "mojeeb-guestbook", "database_id": "2e23fc7f-db68-4044-b226-283e1e2cc07f", "migrations_dir": "migrations" }
-  ],
-
-  /*
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "mojeeb-xyz",
+	// Mojeeb.eth@gmail.com's Account (not a secret; pins CLI and Workers Builds to the right account)
+	"account_id": "1c44f0a287a8d8b44aa136f42ae9e64b",
+	// Matches the workerd runtime bundled with the pinned wrangler (1.20261012.x). Bump deliberately, then re-test.
+	"compatibility_date": "2026-10-12",
+	// Required by vinext's server runtime (AsyncLocalStorage) and next/og. Also populates process.env from vars/secrets.
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	// Framework-provided Worker entry: vinext's fetch handler (App Router, RSC, route handlers, ISR, image route).
+	"main": "vinext/server/fetch-handler",
+	// Static assets built by vinext. Content-hashed /_next/static/* is served directly (immutable caching via the
+	// generated _headers file); everything else runs the Worker first so redirects, headers and routing apply.
+	"assets": {
+		"directory": "dist/client",
+		"html_handling": "none",
+		"not_found_handling": "none",
+		"binding": "ASSETS",
+		"run_worker_first": [
+			"/*",
+			"!/_next/static/*",
+			"!/*/_next/static/*"
+		]
+	},
+	// next/image optimisation through Cloudflare Images (resize + AVIF/WebP). No resource to create.
+	"images": {
+		"binding": "IMAGES"
+	},
+	// Guestbook abuse limit shared across isolates: 5 submissions per minute per hashed IP. `namespace_id` is a
+	// number you choose (unique within the account); it is not a provisioned resource ID.
+	"ratelimits": [
+		{
+			"name": "GUESTBOOK_LIMITER",
+			"namespace_id": "4801",
+			"simple": {
+				"limit": 5,
+				"period": 60
+			}
+		},
+		{
+			"name": "LEOPARD_LIMITER",
+			"namespace_id": "4802",
+			"simple": {
+				"limit": 10,
+				"period": 60
+			}
+		}
+	],
+	"vars": {
+		// "true" publishes clean entries without review. Spam heuristics still apply.
+		"GUESTBOOK_AUTO_APPROVE": "false"
+		// Add once the Cloudflare Access application for /guestbook/admin exists (values are not secret):
+		// "ACCESS_TEAM_DOMAIN": "<your-team>.cloudflareaccess.com",
+		// "ACCESS_AUD": "<Application Audience (AUD) tag>"
+	},
+	// Secrets (never committed; set with `npx wrangler secret put <NAME>` or in the dashboard):
+	//   GUESTBOOK_IP_SALT       required for the guestbook: long random string (salts IP hashes, signs form tokens)
+	//   GUESTBOOK_ADMIN_TOKEN   optional: token sign-in for moderation if Cloudflare Access is not used (24+ chars)
+	// D1 database `mojeeb-guestbook` (created 18 Oct 2026, region WEUR). Local commands (`--local`, `npm run preview`)
+	// use a SQLite file under .wrangler/; only `--remote` touches the real database.
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "mojeeb-guestbook",
+			"database_id": "2e23fc7f-db68-4044-b226-283e1e2cc07f",
+			"migrations_dir": "migrations"
+		}
+	],
+	/*
    * Custom domains (cutover only, after the workers.dev deployment is verified). Apex is canonical; www redirects
    * to it (see docs/cloudflare-migration.md §Cutover for the redirect rule).
    *
@@ -66,16 +86,24 @@
    *   { "pattern": "www.mojeeb.xyz", "custom_domain": true }
    * ],
    */
-
-  // Temporary URLs for verification before the domain moves: mojeeb-xyz.<account>.workers.dev and per-version previews.
-  "workers_dev": true,
-  "preview_urls": true,
-
-  // Workers Logs + traces. Application code logs structured events without visitor personal data (lib/server/log.ts).
-  "observability": {
-    "enabled": true,
-    "head_sampling_rate": 1,
-    "logs": { "enabled": true, "invocation_logs": true }
-  },
-  "upload_source_maps": true
+	// Temporary URLs for verification before the domain moves: mojeeb-xyz.<account>.workers.dev and per-version previews.
+	"workers_dev": true,
+	"preview_urls": true,
+	// Workers Logs + traces. Application code logs structured events without visitor personal data (lib/server/log.ts).
+	"observability": {
+		"enabled": true,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"invocation_logs": true
+		}
+	},
+	"upload_source_maps": true,
+	"kv_namespaces": [
+		{
+			"binding": "VINEXT_KV_CACHE",
+			"id": "d0ab7ae9f6f940f492162fe10752ce15",
+			"remote": true
+		}
+	]
 }
