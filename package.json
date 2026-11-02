@@ -20,6 +20,7 @@
     "og:assets": "node scripts/og-assets.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
     "@vinext/cloudflare": "^1.1.1",
     "next": "^16.4.2",
     "react": "^19.3.1",

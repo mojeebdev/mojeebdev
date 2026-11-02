@@ -2,6 +2,7 @@
 
 /**
  * Enter the Den — the homepage introduction.
+ * Step 0 (sleep, night in Lagos only): the leopard is curled up asleep. "Shh. It's 2:14am in Lagos." A tap wakes it.
  * Step 1 (greet): the leopard sits and idles (blinking, breathing, small head movements). "Say hi to the leopard."
  * Step 2 (reach): a tap makes it wink, smile with an open mouth, tilt its head and raise a paw. "High five? Tap the paw."
  * Step 3 (five):  tapping the paw plays a high-five, a small burst of paw prints, a happy reaction, then a circular
@@ -13,8 +14,9 @@
  * without WebGL the CSS floor and shadow remain. A failsafe in the boot script removes it if this script never runs.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import Leopard, { type LeopardExpression, type LeopardPose } from "@/components/mascot/Leopard";
-import { useRootClass } from "@/lib/useExternal";
+import Leopard, { LeopardRest, type LeopardExpression, type LeopardPose } from "@/components/mascot/Leopard";
+import { lagosTimeLabel } from "@/lib/lagos";
+import { useLagosNight, useRootClass } from "@/lib/useExternal";
 import "./den.css";
 
 type Stage = "greet" | "reach" | "five" | "done";
@@ -23,6 +25,9 @@ const BURST = 8;
 export default function DenIntro() {
   const active = useRootClass("den-pending");
   const [stage, setStage] = useState<Stage>("greet");
+  const night = useLagosNight();
+  const [woke, setWoke] = useState(false);
+  const asleep = night && !woke && stage === "greet";
   const root = useRef<HTMLDivElement>(null);
   const cat = useRef<HTMLButtonElement>(null);
   const paw = useRef<HTMLButtonElement>(null);
@@ -98,11 +103,12 @@ export default function DenIntro() {
   }, [finish]);
 
   const advance = useCallback(() => {
+    if (asleep) { setWoke(true); return; }
     if (stage === "greet") {
       setStage("reach");
       later(() => paw.current?.focus({ preventScroll: true }), 60);
     } else if (stage === "reach") highFive();
-  }, [stage, highFive]);
+  }, [asleep, stage, highFive]);
 
   // Keyboard: Escape skips; Enter/Space act on the current step when focus isn't already on a control.
   useEffect(() => {
@@ -139,10 +145,10 @@ export default function DenIntro() {
 
   const pose: LeopardPose = stage === "greet" ? "look" : stage === "reach" ? "reach" : "celebrate";
   const expression: LeopardExpression = stage === "greet" ? "curious" : stage === "reach" ? "playful" : "happy";
-  const hint = stage === "greet" ? "Say hi to the leopard." : stage === "reach" ? "High five? Tap the paw." : "High five!";
+  const hint = asleep ? `Shh. It's ${lagosTimeLabel()} in Lagos and the leopard is asleep. Tap to wake it.` : stage === "greet" ? "Say hi to the leopard." : stage === "reach" ? "High five? Tap the paw." : "High five!";
 
   return (
-    <div ref={root} className="den" data-stage={stage} role="dialog" aria-modal="true" aria-labelledby="den-title" aria-describedby="den-help">
+    <div ref={root} className="den" data-stage={asleep ? "sleep" : stage} role="dialog" aria-modal="true" aria-labelledby="den-title" aria-describedby="den-help">
       <canvas className="den__gl" aria-hidden="true" />
       <div className="den__floor" aria-hidden="true" />
       <div className="den__stage">
@@ -152,11 +158,11 @@ export default function DenIntro() {
           type="button"
           className="den__cat"
           onClick={advance}
-          aria-label={stage === "greet" ? "Say hi to the leopard" : stage === "reach" ? "High-five the leopard and enter the site" : "Entering the site"}
+          aria-label={asleep ? "Wake the sleeping leopard" : stage === "greet" ? "Say hi to the leopard" : stage === "reach" ? "High-five the leopard and enter the site" : "Entering the site"}
           aria-disabled={stage === "five" || undefined}
           tabIndex={stage === "reach" ? -1 : 0}
         >
-          <Leopard pose={pose} expression={expression} size="100%" />
+          {asleep ? <LeopardRest size={300} /> : <Leopard pose={pose} expression={expression} size="100%" />}
         </button>
         {stage !== "greet" && (
           <button

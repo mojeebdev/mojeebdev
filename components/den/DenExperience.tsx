@@ -1,39 +1,90 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Leopard from "@/components/mascot/Leopard";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import Leopard, { LeopardRest } from "@/components/mascot/Leopard";
+import LeopardChat from "@/components/leopard/LeopardChat";
+import type { PublicEntry } from "@/lib/guestbook/schema";
+import { lagosHour, lagosTimeLabel } from "@/lib/lagos";
+import { openerFor, pulseLines } from "@/lib/leopard/lines";
+import type { Pulse } from "@/lib/leopard/types";
+import { useLagosNight } from "@/lib/useExternal";
 import { denStations, type DenStationId } from "./denStations";
-import type { DenWorldController } from "./denWorldScene";
+import type { DenWorldController, DenWorldData } from "./denWorldScene";
 import "./den-experience.css";
 
 const BURST = 8;
 const TOUR: DenStationId[] = ["beacon", "workbench", "research", "builds", "guestbook", "contact"];
+type Phase = "greet" | "reach" | "five" | "entering" | "explore";
 
-export default function DenExperience() {
+const count = (n: number) => new Intl.NumberFormat("en-GB").format(n);
+const when = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const host = (url: string) => { try { return new URL(url).hostname.replace(/^www\./, ""); } catch { return url; } };
+
+/** A live line for each station, from the same published figures the rest of the site shows. */
+function stationNotes(p: Pulse, lanterns: number | null): Partial<Record<DenStationId, string>> {
+  return {
+    beacon: p.arcapush.indexed !== null ? `Live: Arcapush is indexing ${count(p.arcapush.indexed)} builds. The beacon glows brighter with platform traffic.` : undefined,
+    workbench: p.github.week > 0 ? `Live: ${count(p.github.week)} public GitHub contributions in the last 7 days of the calendar, one spark each.` : undefined,
+    builds: `Live: ${p.projects} tiles on the wall, one for every project in the archive.`,
+    guestbook: lanterns ? `Live: ${lanterns} lantern${lanterns === 1 ? "" : "s"} overhead, one for every approved note.` : undefined,
+  };
+}
+
+export default function DenExperience({ pulse }: { pulse: Pulse }) {
   const stageRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const leopardRef = useRef<HTMLDivElement>(null);
+  const leopardRef = useRef<HTMLButtonElement>(null);
   const controller = useRef<DenWorldController | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const celebrateTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pawRef = useRef<HTMLButtonElement>(null);
   const catRef = useRef<HTMLButtonElement>(null);
-  // The leopard greets every visit, the same way it does on the homepage: say hi, reach, high five, then the world opens.
-  const [phase, setPhase] = useState<"greet" | "reach" | "five" | "entering" | "explore">("greet");
+  const entriesRef = useRef<PublicEntry[]>([]);
+  const night = useLagosNight();
+  // The leopard greets every visit, the same way it does on the homepage: say hi, reach, high five, then the world
+  // opens. At night in Lagos it is asleep first, and a tap wakes it.
+  const [phase, setPhase] = useState<Phase>("greet");
+  const [woke, setWoke] = useState(false);
+  const asleep = night && !woke && phase === "greet";
   const [active, setActive] = useState<DenStationId | null>(null);
+  const [talking, setTalking] = useState(false);
+  const [opener, setOpener] = useState<string | null>(null);
+  const [lantern, setLantern] = useState<PublicEntry | null>(null);
+  const [entries, setEntries] = useState<PublicEntry[] | null>(null);
   const [sceneState, setSceneState] = useState<"loading" | "ready" | "fallback">("loading");
   const [tour, setTour] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
+  const lines = useMemo(() => pulseLines(pulse, { den: true }), [pulse]);
+  const notes = stationNotes(pulse, entries?.length ?? null);
+
+  const openStation = useCallback((id: DenStationId) => {
+    setTalking(false); setLantern(null); setActive(id);
+    controller.current?.focus(id);
+    setCelebrate(true);
+    if (celebrateTimer.current) clearTimeout(celebrateTimer.current);
+    celebrateTimer.current = setTimeout(() => setCelebrate(false), 900);
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
     const canvas = canvasRef.current;
     if (!canvas) return;
+    const world: DenWorldData = {
+      builds: pulse.projects,
+      sparks: pulse.github.week,
+      beacon: pulse.arcapush.visits ? Math.min(1, Math.log10(1 + pulse.arcapush.visits) / 5) : 0.25,
+    };
     import("./denWorldScene").then(({ createDenWorld }) => {
       if (cancelled) return;
       const instance = createDenWorld(canvas, {
-        onSelect: (id) => setActive(id),
+        onSelect: (id) => openStation(id),
+        onLantern: (id) => {
+          const entry = entriesRef.current.find((e) => e.id === id);
+          if (entry) { setActive(null); setTalking(false); setLantern(entry); }
+        },
         onProject: (points) => {
           const stage = stageRef.current;
           if (!stage) return;
@@ -54,25 +105,36 @@ export default function DenExperience() {
             cat.style.setProperty("--den-cat-zoom", String(Math.min(1.2, Math.max(0.7, point.scale))));
           }
         },
-      });
+      }, world);
       if (cancelled) { instance.dispose(); return; }
       controller.current = instance; setSceneState("ready");
     }).catch(() => { if (!cancelled) setSceneState("fallback"); });
     return () => {
       cancelled = true;
       if (timer.current) clearTimeout(timer.current);
+      if (celebrateTimer.current) clearTimeout(celebrateTimer.current);
       controller.current?.dispose();
       controller.current = null;
     };
+  }, [pulse, openStation]);
+
+  // Guestbook notes become lanterns. Fetched in the browser so the page never depends on the database.
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/guestbook?limit=30", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d) => { if (alive) { const list: PublicEntry[] = d.active && Array.isArray(d.entries) ? d.entries : []; entriesRef.current = list; setEntries(list); } })
+      .catch(() => { if (alive) setEntries([]); });
+    return () => { alive = false; };
   }, []);
 
   useEffect(() => {
-    if (!active) return;
-    controller.current?.focus(active);
-    setCelebrate(true);
-    const timeout = setTimeout(() => setCelebrate(false), 900);
-    return () => clearTimeout(timeout);
-  }, [active]);
+    if (sceneState === "ready" && entries) controller.current?.setLanterns(entries.map((e) => e.id));
+  }, [sceneState, entries]);
+
+  useEffect(() => {
+    if (sceneState === "ready") controller.current?.setNight(night);
+  }, [sceneState, night]);
 
   const later = (fn: () => void, ms: number) => {
     if (timer.current) clearTimeout(timer.current);
@@ -86,9 +148,10 @@ export default function DenExperience() {
   }, [phase]);
 
   const sayHi = useCallback(() => {
+    if (asleep) { setWoke(true); return; }
     if (phase === "greet") { setPhase("reach"); setTimeout(() => pawRef.current?.focus({ preventScroll: true }), 60); }
     else if (phase === "reach") highFive();
-  }, [phase, highFive]);
+  }, [asleep, phase, highFive]);
 
   const skip = useCallback(() => { if (timer.current) clearTimeout(timer.current); setPhase("explore"); }, []);
 
@@ -114,30 +177,41 @@ export default function DenExperience() {
   }, [inIntro, skip, sayHi]);
 
   const reset = useCallback(() => {
-    setTour(false); setActive(null); controller.current?.reset();
+    setTour(false); setActive(null); setTalking(false); setLantern(null); controller.current?.reset();
   }, []);
+
+  const talk = () => {
+    const now = new Date();
+    setOpener((o) => o ?? openerFor(document.referrer, location.host, lagosHour(now), lagosTimeLabel(now)));
+    setActive(null); setLantern(null); setTour(false); setTalking(true);
+    controller.current?.reset();
+  };
 
   const startTour = useCallback(() => {
     setTour(true);
-    setActive(TOUR[0]);
     setPhase("explore");
-  }, []);
+    openStation(TOUR[0]);
+  }, [openStation]);
 
   const nextTour = useCallback(() => {
     const index = TOUR.indexOf(active || TOUR[0]);
     if (index >= TOUR.length - 1) { reset(); return; }
-    setActive(TOUR[index + 1]);
-  }, [active, reset]);
+    openStation(TOUR[index + 1]);
+  }, [active, reset, openStation]);
 
-  const replay = () => {
-    reset(); setPhase("greet");
-  };
+  const replay = () => { reset(); setWoke(false); setPhase("greet"); };
 
   const current = denStations.find((s) => s.id === active) || null;
   const tourIndex = current ? TOUR.indexOf(current.id) : -1;
+  const lanternCount = entries?.length ?? 0;
+  const introTitle = asleep ? "Shh. The leopard is asleep." : phase === "greet" ? "Say hi to the leopard." : phase === "reach" ? "High five? Tap the paw." : "Welcome to the Den.";
+  const introText = asleep
+    ? `It's ${lagosTimeLabel()} in Lagos. Tap the leopard to wake it up.`
+    : phase === "five" || phase === "entering" ? lines[0]?.text ?? "Explore the products, experiments and ideas inside my workshop."
+      : "Explore the products, experiments and ideas inside my workshop.";
 
   return (
-    <section className="denw" aria-label="The Leopard's Den interactive workshop">
+    <section className={"denw" + (night ? " is-night" : "")} aria-label="The Leopard's Den interactive workshop">
       <header className="denw__header">
         <div><p className="denw__eyebrow">Mojeeb Titilayo · Creative engineering</p><h1>The Leopard&apos;s <em>Den.</em></h1></div>
         <div className="denw__header-actions">
@@ -145,7 +219,7 @@ export default function DenExperience() {
           <Link href="/">Exit to portfolio <span aria-hidden="true">↗</span></Link>
         </div>
       </header>
-      <p className="denw__lede">A tiny world with a big imagination. Every corner leads to something I&apos;ve actually built.</p>
+      <p className="denw__lede">A tiny world with a big imagination, built from live data. Every corner leads to something I&apos;ve actually built.</p>
       <div className="denw__theatre" ref={stageRef}>
         <canvas className="denw__canvas" ref={canvasRef} aria-hidden="true" />
         <div className="denw__vignette" aria-hidden="true" />
@@ -157,27 +231,33 @@ export default function DenExperience() {
             <span>You can still visit every station below.</span>
           </div>
         )}
-        <div ref={leopardRef} className={"denw__leopard " + (celebrate ? "is-happy" : "")} aria-hidden="true">
-          <Leopard pose={celebrate ? "celebrate" : "look"} expression={celebrate ? "happy" : "curious"} size="100%" />
-        </div>
+        <button type="button" ref={leopardRef} className={"denw__leopard " + (celebrate || talking ? "is-happy" : "")} onClick={talk}
+          aria-label="Talk to the leopard" tabIndex={phase === "explore" && sceneState === "ready" ? 0 : -1}>
+          <Leopard pose={celebrate ? "celebrate" : talking ? "reach" : "look"} expression={celebrate || talking ? "happy" : "curious"} size="100%" />
+          {phase === "explore" && !talking && !current && !lantern && (
+            <span className="denw__speech" aria-hidden="true">{night ? "Still up? Ask me anything." : "Psst. Ask me anything."}</span>
+          )}
+        </button>
         {denStations.map((station) => (
           <button key={station.id} type="button" data-den-anchor={station.id} className={"denw__anchor " + (active === station.id ? "is-active" : "")}
-            onClick={() => setActive(station.id)} aria-label={"Focus " + station.title} tabIndex={phase === "explore" && sceneState === "ready" ? 0 : -1}>
+            onClick={() => openStation(station.id)} aria-label={"Focus " + station.title} tabIndex={phase === "explore" && sceneState === "ready" ? 0 : -1}>
             <span>{station.number}</span><strong>{station.title}</strong>
           </button>
         ))}
         {inIntro && (
-          <div className={"denw__intro " + (phase === "entering" ? "is-entering" : "")} data-stage={phase}>
+          <div className={"denw__intro " + (phase === "entering" ? "is-entering" : "")} data-stage={asleep ? "sleep" : phase}>
             <div className="denw__intro-copy">
               <span className="denw__eyebrow">A little world, made with curiosity.</span>
               <div className="denw__intro-stage">
                 <button ref={catRef} type="button" className="denw__intro-cat" onClick={sayHi}
-                  aria-label={phase === "greet" ? "Say hi to the leopard" : phase === "reach" ? "High-five the leopard and enter the Den" : "Entering the Den"}
+                  aria-label={asleep ? "Wake the sleeping leopard" : phase === "greet" ? "Say hi to the leopard" : phase === "reach" ? "High-five the leopard and enter the Den" : "Entering the Den"}
                   aria-disabled={phase === "five" || phase === "entering" || undefined} tabIndex={phase === "reach" ? -1 : 0}>
-                  <Leopard pose={phase === "greet" ? "look" : phase === "reach" ? "reach" : "celebrate"}
-                    expression={phase === "greet" ? "curious" : phase === "reach" ? "playful" : "happy"} size="100%" />
+                  {asleep ? <LeopardRest size={260} /> : (
+                    <Leopard pose={phase === "greet" ? "look" : phase === "reach" ? "reach" : "celebrate"}
+                      expression={phase === "greet" ? "curious" : phase === "reach" ? "playful" : "happy"} size="100%" />
+                  )}
                 </button>
-                {phase !== "greet" && (
+                {!asleep && phase !== "greet" && (
                   <button ref={pawRef} type="button" className="denw__paw-hit" onClick={highFive}
                     aria-label="Tap the paw: high-five the leopard and enter the Den" aria-disabled={phase !== "reach" || undefined} />
                 )}
@@ -191,8 +271,8 @@ export default function DenExperience() {
                   </span>
                 )}
               </div>
-              <h2 aria-live="polite">{phase === "greet" ? "Say hi to the leopard." : phase === "reach" ? "High five? Tap the paw." : "Welcome to the Den."}</h2>
-              <p>Explore the products, experiments and ideas inside my workshop.</p>
+              <h2 aria-live="polite">{introTitle}</h2>
+              <p>{introText}</p>
               <div className="denw__intro-actions">
                 <button type="button" onClick={skip}>Skip intro</button>
               </div>
@@ -203,18 +283,23 @@ export default function DenExperience() {
         {phase === "explore" && (
           <>
             <div className="denw__scene-top">
-              <span>THE WORKSHOP / {current ? current.number : "OVERVIEW"}</span>
-              {sceneState === "ready" && <span>DRAG TO ORBIT · SCROLL TO ZOOM</span>}
+              <span>THE WORKSHOP / {current ? current.number : talking ? "THE LEOPARD" : lantern ? "A LANTERN" : "OVERVIEW"}</span>
+              <span>LAGOS {lagosTimeLabel().toUpperCase()} · {night ? "NIGHT" : "DAY"}</span>
             </div>
             <div className="denw__scene-controls" aria-label="Camera controls">
               <button type="button" onClick={() => controller.current?.zoom(1.2)} disabled={sceneState !== "ready"} aria-label="Zoom in">+</button>
               <button type="button" onClick={() => controller.current?.zoom(1 / 1.2)} disabled={sceneState !== "ready"} aria-label="Zoom out">−</button>
               <button type="button" onClick={reset} aria-label="Reset camera">↺</button>
             </div>
-            {!current && <div className="denw__overview-prompt">
+            {!current && !talking && !lantern && <div className="denw__overview-prompt">
               <h2>Welcome to my world.</h2>
-              <p>Drag to look around. Tap anything that catches your eye.</p>
-              <button type="button" onClick={startTour}>Take the short tour <span aria-hidden="true">↗</span></button>
+              <p>Drag to look around. Tap anything that catches your eye, or ask the leopard. {lanternCount > 0
+                ? `${lanternCount} lantern${lanternCount === 1 ? "" : "s"} float overhead, one for every guestbook note.`
+                : entries ? "No lanterns yet: the first guestbook note lights one." : ""}</p>
+              <div className="denw__overview-actions">
+                <button type="button" onClick={startTour}>Take the short tour <span aria-hidden="true">↗</span></button>
+                <Link href="/guestbook">Light a lantern <span aria-hidden="true">↗</span></Link>
+              </div>
             </div>}
             {current && (
               <aside className="denw__station-panel" aria-live="polite" aria-label="Selected station">
@@ -222,9 +307,25 @@ export default function DenExperience() {
                 <p className="denw__eyebrow">{current.kicker}</p>
                 <h2>{current.title}</h2>
                 <p>{current.description}</p>
+                {notes[current.id] && <p className="denw__live">{notes[current.id]}</p>}
                 <span className="denw__proof">{current.proof}</span>
                 <Link href={current.href} className="denw__primary">{current.linkLabel} <span aria-hidden="true">↗</span></Link>
                 {tour && <button type="button" className="denw__tour-next" onClick={nextTour}>{tourIndex === TOUR.length - 1 ? "End tour · Return to overview" : "Next stop · " + denStations.find((s) => s.id === TOUR[tourIndex + 1])?.title}</button>}
+              </aside>
+            )}
+            {talking && (
+              <aside className="denw__station-panel" aria-label="The leopard">
+                <div className="denw__station-meta"><span>THE LEOPARD · LIVE</span><button type="button" onClick={reset} aria-label="Close">×</button></div>
+                <LeopardChat lines={lines} opener={opener} tone="dark" />
+              </aside>
+            )}
+            {lantern && (
+              <aside className="denw__station-panel" aria-live="polite" aria-label="A guestbook lantern">
+                <div className="denw__station-meta"><span>A LANTERN · {when(lantern.created_at).toUpperCase()}</span><button type="button" onClick={reset} aria-label="Close lantern">×</button></div>
+                <p className="denw__eyebrow">Left by {lantern.name}</p>
+                <p className="denw__note">{lantern.message}</p>
+                {lantern.link && <a href={lantern.link} rel="ugc nofollow noopener noreferrer" target="_blank" className="denw__proof">{host(lantern.link)} ↗</a>}
+                <Link href="/guestbook" className="denw__primary">Light your own lantern <span aria-hidden="true">↗</span></Link>
               </aside>
             )}
           </>
@@ -232,7 +333,8 @@ export default function DenExperience() {
       </div>
       <div id="den-help" className="denw__help" hidden={!showHelp}>
         <strong>How to explore</strong>
-        <p>Drag to rotate the workshop. Right-drag or two-finger drag to pan. Scroll or pinch to zoom. Click an object or choose a station below to focus. Use Reset to return to the overview. Everything is available through keyboard-operable links and buttons.</p>
+        <p>Drag to rotate the workshop. Right-drag or two-finger drag to pan. Scroll or pinch to zoom. Click an object, a lantern or the leopard, or choose a station below. Use Reset to return to the overview. Everything is available through keyboard-operable links and buttons.</p>
+        <p>The world is built from live data: one wall tile per project in the archive, one spark per public GitHub contribution this week, a beacon that glows with Arcapush traffic, and one lantern per approved guestbook note. After 8pm in Lagos it turns to night.</p>
       </div>
       <nav className="denw__directory" aria-label="Workshop stations" inert={phase !== "explore"}>
         <div className="denw__directory-intro">
@@ -241,11 +343,14 @@ export default function DenExperience() {
         </div>
         <div className="denw__directory-list">
           {denStations.map((station) => (
-            <button type="button" key={station.id} onClick={() => { setPhase("explore"); setActive(station.id); }}
+            <button type="button" key={station.id} onClick={() => { setPhase("explore"); openStation(station.id); }}
               aria-pressed={active === station.id} className={active === station.id ? "is-active" : ""}>
               <span>{station.number}</span><strong>{station.title}</strong><small>{station.kicker}</small>
             </button>
           ))}
+          <button type="button" onClick={() => { setPhase("explore"); talk(); }} aria-pressed={talking} className={talking ? "is-active" : ""}>
+            <span>✦</span><strong>Ask the leopard</strong><small>Live facts and questions</small>
+          </button>
         </div>
       </nav>
       <div className="denw__tail">
