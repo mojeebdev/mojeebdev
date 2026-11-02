@@ -69,7 +69,7 @@ html.den-pending .den {
 .den__brand { position: absolute; left: 20px; top: 28px; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 @media (max-width: 479px) { .den__brand { display: none; } }
 
-/* Reduced motion (only reachable via ?intro=1): same steps, no movement; the reveal becomes a quick fade. */
+/* Reduced motion: same steps, no movement; the reveal becomes a quick fade. */
 @media (prefers-reduced-motion: reduce) {
   .den[data-stage] .den__cat, .den[data-stage] .den__shadow, .den .leopard * { animation: none !important; }
   .den[data-stage] .den__cat { transform: none !important; }

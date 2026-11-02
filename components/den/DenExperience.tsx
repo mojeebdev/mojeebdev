@@ -7,7 +7,7 @@ import { denStations, type DenStationId } from "./denStations";
 import type { DenWorldController } from "./denWorldScene";
 import "./den-experience.css";
 
-const FIRST_VISIT_KEY = "den:workshop:entered";
+const BURST = 8;
 const TOUR: DenStationId[] = ["beacon", "workbench", "research", "builds", "guestbook", "contact"];
 
 export default function DenExperience() {
@@ -16,18 +16,15 @@ export default function DenExperience() {
   const leopardRef = useRef<HTMLDivElement>(null);
   const controller = useRef<DenWorldController | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [phase, setPhase] = useState<"intro" | "entering" | "explore">("intro");
+  const pawRef = useRef<HTMLButtonElement>(null);
+  const catRef = useRef<HTMLButtonElement>(null);
+  // The leopard greets every visit, the same way it does on the homepage: say hi, reach, high five, then the world opens.
+  const [phase, setPhase] = useState<"greet" | "reach" | "five" | "entering" | "explore">("greet");
   const [active, setActive] = useState<DenStationId | null>(null);
   const [sceneState, setSceneState] = useState<"loading" | "ready" | "fallback">("loading");
   const [tour, setTour] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
-
-  useEffect(() => {
-    try {
-      if (localStorage.getItem(FIRST_VISIT_KEY)) setPhase("explore");
-    } catch { /* Privacy settings may prohibit storage. */ }
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -77,12 +74,44 @@ export default function DenExperience() {
     return () => clearTimeout(timeout);
   }, [active]);
 
-  const enter = useCallback(() => {
-    if (phase !== "intro") return;
-    setPhase("entering");
-    try { localStorage.setItem(FIRST_VISIT_KEY, "1"); } catch { /* Still works without storage. */ }
-    timer.current = setTimeout(() => setPhase("explore"), 700);
+  const later = (fn: () => void, ms: number) => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = setTimeout(fn, ms);
+  };
+
+  const highFive = useCallback(() => {
+    if (phase !== "reach" && phase !== "greet") return;
+    setPhase("five");
+    later(() => { setPhase("entering"); later(() => setPhase("explore"), 700); }, 900);
   }, [phase]);
+
+  const sayHi = useCallback(() => {
+    if (phase === "greet") { setPhase("reach"); setTimeout(() => pawRef.current?.focus({ preventScroll: true }), 60); }
+    else if (phase === "reach") highFive();
+  }, [phase, highFive]);
+
+  const skip = useCallback(() => { if (timer.current) clearTimeout(timer.current); setPhase("explore"); }, []);
+
+  const inIntro = phase !== "explore";
+
+  // While the leopard is greeting: Escape skips, Enter/Space act on the current step; the leopard's eyes follow the pointer.
+  useEffect(() => {
+    if (!inIntro) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { skip(); return; }
+      if ((e.key === "Enter" || e.key === " ") && !(e.target as HTMLElement).closest("button, a, input, textarea")) { e.preventDefault(); sayHi(); }
+    };
+    const onMove = (e: PointerEvent) => {
+      const el = catRef.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--lx", Math.max(-1, Math.min(1, (e.clientX - (r.left + r.width / 2)) / (innerWidth / 2.2))).toFixed(3));
+      el.style.setProperty("--ly", Math.max(-1, Math.min(1, (e.clientY - (r.top + r.height * 0.35)) / (innerHeight / 2.2))).toFixed(3));
+    };
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => { document.removeEventListener("keydown", onKey); window.removeEventListener("pointermove", onMove); };
+  }, [inIntro, skip, sayHi]);
 
   const reset = useCallback(() => {
     setTour(false); setActive(null); controller.current?.reset();
@@ -101,7 +130,7 @@ export default function DenExperience() {
   }, [active, reset]);
 
   const replay = () => {
-    reset(); setPhase("intro");
+    reset(); setPhase("greet");
   };
 
   const current = denStations.find((s) => s.id === active) || null;
@@ -137,17 +166,37 @@ export default function DenExperience() {
             <span>{station.number}</span><strong>{station.title}</strong>
           </button>
         ))}
-        {phase !== "explore" && (
-          <div className={"denw__intro " + (phase === "entering" ? "is-entering" : "")}>
+        {inIntro && (
+          <div className={"denw__intro " + (phase === "entering" ? "is-entering" : "")} data-stage={phase}>
             <div className="denw__intro-copy">
               <span className="denw__eyebrow">A little world, made with curiosity.</span>
-              <div className="denw__intro-cat"><Leopard pose={phase === "entering" ? "celebrate" : "reach"} expression="playful" size="100%" /></div>
-              <h2>{phase === "entering" ? "Welcome to the Den." : "High five the leopard."}</h2>
+              <div className="denw__intro-stage">
+                <button ref={catRef} type="button" className="denw__intro-cat" onClick={sayHi}
+                  aria-label={phase === "greet" ? "Say hi to the leopard" : phase === "reach" ? "High-five the leopard and enter the Den" : "Entering the Den"}
+                  aria-disabled={phase === "five" || phase === "entering" || undefined} tabIndex={phase === "reach" ? -1 : 0}>
+                  <Leopard pose={phase === "greet" ? "look" : phase === "reach" ? "reach" : "celebrate"}
+                    expression={phase === "greet" ? "curious" : phase === "reach" ? "playful" : "happy"} size="100%" />
+                </button>
+                {phase !== "greet" && (
+                  <button ref={pawRef} type="button" className="denw__paw-hit" onClick={highFive}
+                    aria-label="Tap the paw: high-five the leopard and enter the Den" aria-disabled={phase !== "reach" || undefined} />
+                )}
+                {(phase === "five" || phase === "entering") && (
+                  <span className="denw__burst" aria-hidden="true">
+                    {Array.from({ length: BURST }, (_, i) => (
+                      <svg key={i} viewBox="0 0 40 40" style={{ ["--a" as string]: `${(360 / BURST) * i - 90}deg`, ["--d" as string]: `${i % 2 ? 78 : 104}px` }}>
+                        {i % 2 ? <path d="M20 4 L24 16 L36 20 L24 24 L20 36 L16 24 L4 20 L16 16 Z" /> : <><ellipse cx="20" cy="25" rx="9" ry="7.5" /><circle cx="9" cy="14" r="4" /><circle cx="16" cy="8" r="4" /><circle cx="24" cy="8" r="4" /><circle cx="31" cy="14" r="4" /></>}
+                      </svg>
+                    ))}
+                  </span>
+                )}
+              </div>
+              <h2 aria-live="polite">{phase === "greet" ? "Say hi to the leopard." : phase === "reach" ? "High five? Tap the paw." : "Welcome to the Den."}</h2>
               <p>Explore the products, experiments and ideas inside my workshop.</p>
               <div className="denw__intro-actions">
-                <button type="button" onClick={enter} className="denw__primary" disabled={phase === "entering"}>High five & enter <span aria-hidden="true">✦</span></button>
-                <button type="button" onClick={() => { try { localStorage.setItem(FIRST_VISIT_KEY, "1"); } catch {} setPhase("explore"); }}>Skip intro</button>
+                <button type="button" onClick={skip}>Skip intro</button>
               </div>
+              <span className="denw__intro-help">Enter or Space works too · Esc skips.</span>
             </div>
           </div>
         )}

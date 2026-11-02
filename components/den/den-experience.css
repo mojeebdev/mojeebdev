@@ -123,11 +123,37 @@
 }
 .denw__intro.is-entering { opacity: 0; pointer-events: none; }
 .denw__intro-copy { display: grid; justify-items: center; gap: 10px; max-width: 420px; }
-.denw__intro-cat { width: clamp(145px, 21vw, 240px); aspect-ratio: 1; filter: drop-shadow(0 20px 18px rgb(0 0 0 / 0.32)); }
+.denw__intro-stage { position: relative; width: clamp(160px, 24vw, 260px); aspect-ratio: 1; }
+.denw__intro-cat { display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 40%; background: none; color: inherit; cursor: pointer; filter: drop-shadow(0 20px 18px rgb(0 0 0 / 0.32)); }
+.denw__intro-cat .leopard { width: 100%; height: 100%; }
+.denw__intro-cat .lp-ground { display: none; }
+.denw__intro-cat:focus-visible, .denw__paw-hit:focus-visible { outline: 2px dashed #f5c66b; outline-offset: 4px; }
+.denw__intro[data-stage="greet"] .denw__intro-cat { animation: denw-settle 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+@keyframes denw-settle { from { opacity: 0; transform: translateY(10px) scale(0.97); } to { opacity: 1; transform: none; } }
+.denw__intro[data-stage="reach"] .denw__intro-cat { animation: denw-bounce 460ms cubic-bezier(0.3, 1.5, 0.5, 1) both; }
+@keyframes denw-bounce { 0% { transform: translateY(0); } 40% { transform: translateY(-10px); } 100% { transform: translateY(0); } }
+.denw__intro[data-stage="reach"] .leopard .lp-head { animation: denw-tilt 600ms ease-out both; }
+@keyframes denw-tilt { 0% { transform: rotate(0); } 60% { transform: rotate(-9deg); } 100% { transform: rotate(-6deg); } }
+.denw__paw-hit { position: absolute; left: 79%; top: 41%; width: max(80px, 36%); aspect-ratio: 1; transform: translate(-50%, -50%); border: 0; border-radius: 50%; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.denw__paw-hit[aria-disabled="true"] { cursor: default; }
+.denw__intro[data-stage="reach"] .denw__paw-hit::after { content: ""; position: absolute; inset: 24%; border-radius: 50%; border: 1.5px solid rgb(245 198 107 / 0.55); animation: denw-ping 1.6s ease-out 500ms infinite; }
+@keyframes denw-ping { 0% { transform: scale(0.7); opacity: 0.9; } 100% { transform: scale(1.35); opacity: 0; } }
+.denw__intro[data-stage="five"] .denw__intro-cat { transform: scale(1.04); transition: transform 240ms ease; }
+.denw__intro[data-stage="five"] .leopard .lp-arm--r { animation: denw-five 300ms cubic-bezier(0.3, 1.6, 0.5, 1) both; }
+@keyframes denw-five { 0% { transform: rotate(0) scale(1); } 45% { transform: rotate(-10deg) scale(1.16); } 100% { transform: rotate(-4deg) scale(1.05); } }
+.denw__burst { position: absolute; left: 79%; top: 41%; width: 0; height: 0; pointer-events: none; }
+.denw__burst svg { position: absolute; left: -11px; top: -11px; width: 22px; height: 22px; max-width: none; fill: #f5f1e8; opacity: 0; animation: denw-burst 760ms cubic-bezier(0.2, 0.7, 0.2, 1) 60ms forwards; }
+.denw__burst svg:nth-child(even) { fill: #f5c66b; stroke: #111; stroke-width: 2.5; stroke-linejoin: round; }
+@keyframes denw-burst {
+  0% { opacity: 0; transform: rotate(var(--a)) translateX(10px) rotate(calc(-1 * var(--a))) scale(0.4); }
+  20%, 70% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(var(--a)) translateX(var(--d)) rotate(calc(-1 * var(--a))) scale(1); }
+}
+.denw__intro-help { font-size: 0.75rem; color: #8e9aa9; }
 .denw__intro .denw__eyebrow { color: #bdc8d4; }
 .denw__intro h2 { font-weight: 500; font-size: clamp(1.7rem, 3.6vw, 2.8rem); letter-spacing: -0.04em; line-height: 1.12; }
 .denw__intro-copy > p { max-width: 32ch; color: #c3ceda; font-size: 0.9rem; }
-.denw__intro-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 17px; }
+.denw__intro-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
 .denw__intro-actions > button:not(.denw__primary) { background: none; color: #f5f1e8; border: 0; padding: 8px; cursor: pointer; font-size: 0.86rem; text-decoration: underline; text-underline-offset: 3px; }
 .denw__help { border: 1px solid var(--line); border-radius: 12px; padding: 15px 19px; background: var(--surface-2); font-size: 0.87rem; color: var(--ink-2); }
 .denw__help[hidden] { display: none; }
