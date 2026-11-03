@@ -15,7 +15,7 @@ export function applyTimeOfDay() {
   if (document.documentElement.getAttribute("data-theme") !== theme) document.documentElement.setAttribute("data-theme", theme);
 }
 
-/** Keeps the theme on Lagos time while the page stays open: at 6am the Den wakes up, at 6pm night falls. */
+/** Keeps the theme on Lagos time while the page stays open: at 6am the site wakes up, at 6pm night falls. */
 export default function TimeOfDay() {
   useEffect(() => {
     applyTimeOfDay();

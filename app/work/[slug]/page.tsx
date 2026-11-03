@@ -1,3 +1,4 @@
+import Image from "next/image";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import Diagram from "@/components/work/Diagram";
 import JsonLd from "@/components/ui/JsonLd";
 import MetricCell from "@/components/home/MetricCell";
 import { caseStudies, getCaseStudy } from "@/content/caseStudies";
+import { getProject } from "@/content/projects";
 import { breadcrumbs, caseStudyJsonLd } from "@/lib/jsonLd";
 import { getArcapushMetrics } from "@/lib/data/arcapush";
 import { getPackageStats, type PackageName } from "@/lib/data/npm";
@@ -48,6 +50,7 @@ export default async function CaseStudyPage({ params }: Props) {
   const c = getCaseStudy(slug);
   if (!c) notFound();
   const metrics = await liveMetrics(c.liveMetrics);
+  const logo = getProject(c.slug)?.logo;
   const idx = caseStudies.findIndex((x) => x.slug === c.slug);
   const next = caseStudies[(idx + 1) % caseStudies.length];
 
@@ -59,11 +62,14 @@ export default async function CaseStudyPage({ params }: Props) {
   return (
     <article className="case">
       <JsonLd data={caseStudyJsonLd(c)} />
-      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Work", path: "/work" }, { name: c.title, path: `/work/${c.slug}` }])} />
+      <JsonLd data={breadcrumbs([{ name: "Home", path: "/" }, { name: "Work", path: "/work" }, { name: c.title, path: `/work/${c.slug}` }])} />
       <nav aria-label="Breadcrumb" className="crumbs meta"><Link href="/work">Work</Link> <span aria-hidden="true">/</span> {c.title}</nav>
       <header className="case__head">
         <p className="label">Case study {c.number}</p>
-        <h1 className="h1">{c.title}</h1>
+        <h1 className="h1 case__title">
+          {logo && <Image src={logo} alt="" width={40} height={40} className="case__mark" />}
+          <span>{c.title}</span>
+        </h1>
         <p className="dek case__dek">{c.dek}</p>
         <div className="case__facts">
           <span className="chip">{c.kindLabel}</span>
@@ -73,6 +79,11 @@ export default async function CaseStudyPage({ params }: Props) {
         <div className="case__links">
           {c.links.map((l) => <a key={l.href} href={l.href} className="btn btn--sm">{l.label} <span aria-hidden="true">↗</span></a>)}
         </div>
+        {c.cover && (
+          <figure className="case__cover">
+            <Image src={c.cover.src} alt={c.cover.alt} width={c.cover.width} height={c.cover.height} sizes="(min-width: 1024px) 900px, 100vw" priority />
+          </figure>
+        )}
       </header>
 
       <div className="case__layout">

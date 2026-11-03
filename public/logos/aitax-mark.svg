@@ -1,0 +1,20 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect x="18" y="18" width="64" height="64" rx="12" fill="#0d1a08" stroke="#a0db13" stroke-width="4"/>
+  <g stroke="#a0db13" stroke-width="4" stroke-linecap="round">
+    <line x1="35" y1="18" x2="35" y2="8"/>
+    <line x1="50" y1="18" x2="50" y2="8"/>
+    <line x1="65" y1="18" x2="65" y2="8"/>
+    <line x1="35" y1="82" x2="35" y2="92"/>
+    <line x1="50" y1="82" x2="50" y2="92"/>
+    <line x1="65" y1="82" x2="65" y2="92"/>
+    <line x1="18" y1="35" x2="8" y2="35"/>
+    <line x1="18" y1="50" x2="8" y2="50"/>
+    <line x1="18" y1="65" x2="8" y2="65"/>
+    <line x1="82" y1="35" x2="92" y2="35"/>
+    <line x1="82" y1="50" x2="92" y2="50"/>
+    <line x1="82" y1="65" x2="92" y2="65"/>
+  </g>
+  <circle cx="40" cy="44" r="4" fill="#a0db13"/>
+  <circle cx="60" cy="44" r="4" fill="#a0db13"/>
+  <path d="M 40,58 Q 50,65 60,58" stroke="#a0db13" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>

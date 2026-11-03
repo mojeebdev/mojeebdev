@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Icon from "@/components/ui/Icon";
 import { PortraitCircle } from "@/components/ui/Portrait";
-import { alsoBehind, contact, creatorOfProduct, founderOf, person } from "@/content/site";
+import { alsoBehind, alsoFounded, contact, creatorOfProduct, founderOf, person } from "@/content/site";
 
-/** The profile hero, styled like a panel in the Den. */
+/** The profile hero, styled like a panel from the homepage workshop. */
 export default function Hero() {
   return (
     <section className="hero hero--den" aria-labelledby="hero-name">
@@ -22,7 +22,7 @@ export default function Hero() {
           {person.headline.lead} <span className="serif">{person.headline.accent}</span> {person.headline.tail}
         </p>
         <p className="hero__studio">
-          Founder of <a href={founderOf.href}>{founderOf.name}</a>. Creator of <a href={creatorOfProduct.href}>{creatorOfProduct.name}</a>.{" "}
+          Founder of <a href={founderOf.href}>{founderOf.name}</a>. Creator of <a href={creatorOfProduct.href}>{creatorOfProduct.name}</a> and <a href={alsoFounded.href}>{alsoFounded.name}</a>.{" "}
           <span className="hero__creator">
             Also behind{" "}
             {alsoBehind.map((c, i) => (
@@ -36,7 +36,7 @@ export default function Hero() {
         <div className="hero__ctas">
           <Link href="/work" className="btn btn--primary">Explore my work</Link>
           <Link href="/contact" className="btn">Work with me</Link>
-          <Link href="/" className="btn btn--ghost">Back to the Den <span aria-hidden="true">↗</span></Link>
+          <Link href="/" className="btn btn--ghost">Back to the workshop <span aria-hidden="true">↗</span></Link>
           <a href={contact.github} className="btn btn--ghost btn--icon">
             <Icon name="github" size={16} />
             <span>GitHub</span>

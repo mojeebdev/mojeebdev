@@ -9,7 +9,7 @@ export default function NotFound() {
       <h1 id="nf-title" className="h1">The leopard looked everywhere.</h1>
       <p className="dek">This page doesn’t exist, or it moved when the site was rebuilt.</p>
       <div className="hero__ctas">
-        <Link href="/" className="btn btn--primary">Back to the Den</Link>
+        <Link href="/" className="btn btn--primary">Back home</Link>
         <Link href="/projects" className="btn">Browse all projects</Link>
       </div>
     </section>

@@ -89,6 +89,43 @@ const specs: Record<CaseStudy["diagram"], Spec> = {
       { from: "gh", to: "traits" }, { from: "traits", to: "auth" }, { from: "auth", to: "wallet", bend: "v" }, { from: "wallet", to: "chain" }, { from: "auth", to: "chain", dashed: true },
     ],
   },
+  ihin: {
+    caption: "One Worker serves every surface. AI reads private evidence and proposes; a person approves before anything goes public or into a campaign.",
+    nodes: [
+      { id: "web", x: 20, y: 20, label: "ihin.si", sub: "Dispatches" },
+      { id: "circle", x: 20, y: 90, label: "Circle", sub: "invited creators" },
+      { id: "launch", x: 20, y: 160, label: "Launch", sub: "businesses" },
+      { id: "worker", x: 180, y: 90, label: "One Worker", sub: "host-aware SSR", accent: true },
+      { id: "store", x: 340, y: 20, label: "D1 + private R2", sub: "private evidence" },
+      { id: "ai", x: 340, y: 90, label: "AI extraction", sub: "insights · rates" },
+      { id: "review", x: 340, y: 160, label: "Human review", sub: "approve · decline", accent: true },
+      { id: "campaign", x: 500, y: 90, label: "Campaigns", sub: "DAETO workflow" },
+      { id: "measure", x: 500, y: 160, label: "Measurement", sub: "consented reports" },
+    ],
+    edges: [
+      { from: "web", to: "worker" }, { from: "circle", to: "worker" }, { from: "launch", to: "worker" },
+      { from: "worker", to: "store" }, { from: "worker", to: "ai" }, { from: "ai", to: "review", bend: "v" },
+      { from: "review", to: "campaign" }, { from: "campaign", to: "measure", bend: "v" },
+    ],
+  },
+  goldenrun: {
+    caption: "The device sends only shot inputs. The server replays each shot with the same physics and keeper, so a goal counts only if it really went in.",
+    nodes: [
+      { id: "player", x: 20, y: 20, label: "Player", sub: "drag to shoot" },
+      { id: "game", x: 180, y: 20, label: "Phaser game", sub: "React SPA" },
+      { id: "api", x: 340, y: 20, label: "Worker API", sub: "rate-limited" },
+      { id: "replay", x: 500, y: 20, label: "Server replay", sub: "same physics", accent: true },
+      { id: "passkey", x: 340, y: 120, label: "Passkeys", sub: "no passwords" },
+      { id: "d1", x: 500, y: 120, label: "D1", sub: "leaderboards" },
+      { id: "cron", x: 340, y: 220, label: "Hourly cron", sub: "Golden Cup weeks" },
+      { id: "review", x: 500, y: 220, label: "Held for review", sub: "unusual results", dashed: true },
+    ],
+    edges: [
+      { from: "player", to: "game" }, { from: "game", to: "api" }, { from: "api", to: "replay" },
+      { from: "passkey", to: "api", bend: "v" }, { from: "replay", to: "d1", bend: "v" }, { from: "cron", to: "d1" },
+      { from: "d1", to: "review", dashed: true, bend: "v" },
+    ],
+  },
   aitax: {
     caption: "Edge architecture with release gates. Statistics come only from indexed onchain events; live staking stays disabled until review.",
     nodes: [

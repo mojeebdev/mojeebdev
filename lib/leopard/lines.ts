@@ -22,7 +22,7 @@ export function pulseLines(p: Pulse, { den = false } = {}): LeopardLine[] {
     lines.push({ text: `Mojeeb's open-source tools were downloaded ${count(p.npm30)} times on npm in the last 30 days.`, href: "/profile#tools", cta: "Meet the tools" });
   }
   lines.push({ text: `There are ${p.projects} projects in the archive. The best ${p.caseStudies} have full case studies.`, href: "/work", cta: "Read the case studies" });
-  if (!den) lines.push({ text: "Want to see where all of it lives? Come into my Den.", href: "/", cta: "Enter the Den" });
+  if (!den) lines.push({ text: "Want to see all of it in one place? Step into the workshop on the homepage.", href: "/", cta: "Open the workshop" });
   else lines.push({ text: "Every glowing lantern up there is a note someone left in the guestbook.", href: "/guestbook", cta: "Light a lantern" });
   return lines;
 }
@@ -32,7 +32,7 @@ export function openerFor(referrer: string, ownHost: string, hour: number, time:
   let host = "";
   try { host = referrer ? new URL(referrer).hostname.replace(/^www\./, "") : ""; } catch {}
   if (host && host !== ownHost.replace(/^www\./, "")) {
-    if (/(^|\.)(x\.com|twitter\.com|t\.co)$/.test(host)) return "Came over from X? Welcome to my Den.";
+    if (/(^|\.)(x\.com|twitter\.com|t\.co)$/.test(host)) return "Came over from X? Welcome to Mojeeb's portfolio.";
     if (/linkedin\.com$/.test(host)) return "Hello from LinkedIn! Make yourself at home.";
     if (/github\.com$/.test(host)) return "A fellow GitHub dweller. Good to see you.";
     if (/arcapush\.com$/.test(host)) return "Back from Arcapush? That's Mojeeb's flagship.";

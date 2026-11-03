@@ -17,6 +17,7 @@ import { getHomeMetrics } from "@/lib/data/metrics";
 import { busiest, calendarDays, calendarEnd, streaks } from "@/lib/data/github";
 import { profilePageJsonLd } from "@/lib/jsonLd";
 import { caseStudies } from "@/content/caseStudies";
+import { countWord } from "@/lib/site";
 import { contact, studio } from "@/content/site";
 
 export const metadata: Metadata = {
@@ -59,7 +60,7 @@ export default async function Profile() {
         index="03"
         label="Selected work"
         title="Case studies"
-        dek="Six projects with the strongest evidence: studio products, open-source tools, a hackathon build carried further, and client engineering."
+        dek={`${countWord(caseStudies.length)} projects with the strongest evidence: studio products, open-source tools, a hackathon build carried further, an interactive game and client engineering.`}
         action={<Link href="/projects" className="arrow-link">All projects <span aria-hidden="true">→</span></Link>}
       >
         <div className="work-grid">

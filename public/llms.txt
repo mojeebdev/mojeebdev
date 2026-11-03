@@ -1,5 +1,5 @@
 # Mojeeb Titilayo · mojeeb.xyz
-# Machine-readable context for AI systems and search crawlers. Updated 2026-10-18.
+# Machine-readable context for AI systems and search crawlers. Updated 2026-11-03.
 
 ## Identity
 - Name: Mojeeb Titilayo
@@ -18,17 +18,20 @@
 
 ## Building
 - Arcapush (since February 2026): a discovery and distribution registry for products, AI agents and hackathon builds. https://arcapush.com. Live public metrics with definitions: https://arcapush.com/api/hero-metrics
+- Ìhìn (since October 2026): an AI-native creator distribution platform by BlindspotLab Limited. Launch for businesses, Circle for invited creators. Live, early stage. https://ihin.si
 
 ## Case studies
 - https://mojeeb.xyz/work/arcapush
+- https://mojeeb.xyz/work/ihin (AI-native creator distribution; live, private creator circle)
 - https://mojeeb.xyz/work/stackbrief
 - https://mojeeb.xyz/work/stylegraft
 - https://mojeeb.xyz/work/revel (BlindspotLab studio product; MCP + x402)
 - https://mojeeb.xyz/work/admon (Monad Mainnet ERC-721 build records)
+- https://mojeeb.xyz/work/goldenrun (unofficial fan football arcade; server-verified goals, passkeys)
 - https://mojeeb.xyz/work/aitax (client engineering; pre-release, no contract deployed)
 
 ## Pages
-- The Den (landing page, interactive 3D workshop): https://mojeeb.xyz/ · Profile: /profile · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
+- Home (interactive 3D workshop of the portfolio): https://mojeeb.xyz/ · Profile: /profile · Work: /work · All projects: /projects · About: /about · Activity: /activity · Lab: /lab · Writing: /writing · Now: /now · Guestbook: /guestbook · Contact: /contact
 
 ## Notes on figures
 Every number on the site states its source, definition, window and timestamp. All-time figures from Mojeeb's own records (for example "40+ projects shipped") name their source and are never combined with live counters.

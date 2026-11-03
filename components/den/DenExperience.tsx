@@ -210,21 +210,21 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
   const current = denStations.find((s) => s.id === active) || null;
   const tourIndex = current ? TOUR.indexOf(current.id) : -1;
   const lanternCount = entries?.length ?? 0;
-  const introTitle = asleep ? "Shh. The leopard is asleep." : phase === "greet" ? "Say hi to the leopard." : phase === "reach" ? "High five? Tap the paw." : "Welcome to the Den.";
+  const introTitle = asleep ? "Shh. The leopard is asleep." : phase === "greet" ? "Say hi to the leopard." : phase === "reach" ? "High five? Tap the paw." : "Welcome in.";
   const introText = asleep
     ? `It's ${lagosTimeLabel()} in Lagos. Tap the leopard to wake it up.`
     : phase === "five" || phase === "entering" ? lines[0]?.text ?? "Explore the products, experiments and ideas inside my workshop."
       : "Explore the products, experiments and ideas inside my workshop.";
 
   return (
-    <section className={"denw" + (night ? " is-night" : "") + (inIntro ? " is-intro" : "")} aria-label="The Leopard's Den: Mojeeb Titilayo's interactive workshop">
+    <section className={"denw" + (night ? " is-night" : "") + (inIntro ? " is-intro" : "")} aria-label="Mojeeb Titilayo's portfolio: an interactive workshop">
       <header className="denw__header">
         <div>
-          <p className="denw__eyebrow">{person.name} · {person.role}</p>
-          <h1>The Leopard&apos;s <em>Den.</em></h1>
+          <p className="denw__eyebrow">Portfolio · {person.role} · {person.location}</p>
+          <h1>Mojeeb <em>Titilayo.</em></h1>
           <p className="denw__lede">A tiny world built from live data. Every corner leads to something I&apos;ve actually built. My profile is the golden lantern.</p>
         </div>
-        <nav className="denw__header-actions" aria-label="Den shortcuts">
+        <nav className="denw__header-actions" aria-label="Shortcuts">
           <button type="button" onClick={openProfile} className="denw__header-gold">Profile</button>
           <Link href="/work">Work</Link>
           <Link href="/contact">Contact</Link>
@@ -265,7 +265,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
               <span className="denw__eyebrow">A little world, made with curiosity.</span>
               <div className="denw__intro-stage">
                 <button ref={catRef} type="button" className="denw__intro-cat" onClick={sayHi}
-                  aria-label={asleep ? "Wake the sleeping leopard" : phase === "greet" ? "Say hi to the leopard" : phase === "reach" ? "High-five the leopard and enter the Den" : "Entering the Den"}
+                  aria-label={asleep ? "Wake the sleeping leopard" : phase === "greet" ? "Say hi to the leopard" : phase === "reach" ? "High-five the leopard and enter the workshop" : "Entering the workshop"}
                   aria-disabled={phase === "five" || phase === "entering" || undefined} tabIndex={phase === "reach" ? -1 : 0}>
                   {asleep ? <LeopardRest size={260} /> : (
                     <Leopard pose={phase === "greet" ? "look" : phase === "reach" ? "reach" : "celebrate"}
@@ -274,7 +274,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
                 </button>
                 {!asleep && phase !== "greet" && (
                   <button ref={pawRef} type="button" className="denw__paw-hit" onClick={highFive}
-                    aria-label="Tap the paw: high-five the leopard and enter the Den" aria-disabled={phase !== "reach" || undefined} />
+                    aria-label="Tap the paw: high-five the leopard and enter the workshop" aria-disabled={phase !== "reach" || undefined} />
                 )}
                 {(phase === "five" || phase === "entering") && (
                   <span className="denw__burst" aria-hidden="true">

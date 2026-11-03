@@ -18,7 +18,7 @@ export const personEntity = {
   email: `mailto:${contact.personalEmail}`,
   image: { "@type": "ImageObject", contentUrl: `${BASE_URL}${portrait.src}`, caption: portrait.alt },
   jobTitle: "Product Engineer and Strategist",
-  disambiguatingDescription: "Founder of BlindspotLab. Creator of Arcapush.",
+  disambiguatingDescription: "Founder of BlindspotLab. Creator of Arcapush and Ìhìn.",
   description: person.summary,
   homeLocation: { "@type": "Place", name: person.location },
   founder: { "@id": ORG_ID },
@@ -52,12 +52,26 @@ const arcapushEntity = {
   dateCreated: "2026-02",
 };
 
+const ihinEntity = {
+  "@type": "WebApplication",
+  "@id": "https://ihin.si/#app",
+  name: "Ìhìn",
+  url: "https://ihin.si",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description: "An AI-native creator distribution platform connecting businesses with credible creators.",
+  creator: { "@id": PERSON_ID },
+  publisher: { "@id": ORG_ID },
+  dateCreated: "2026-10",
+};
+
 export const siteGraphJsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     personEntity,
     orgEntity,
     arcapushEntity,
+    ihinEntity,
     { "@type": "WebSite", "@id": WEBSITE_ID, url: BASE_URL, name: person.name, inLanguage: "en", publisher: { "@id": PERSON_ID } },
   ],
 };
@@ -103,5 +117,6 @@ export function caseStudyJsonLd(c: CaseStudy) {
     creator: { "@id": PERSON_ID },
     ...(isSoftware ? { codeRepository: c.links.find((l) => l.label === "Source")?.href, programmingLanguage: "TypeScript", license: "https://opensource.org/licenses/MIT" } : {}),
     sameAs: c.links.map((l) => l.href),
+    ...(c.cover ? { image: `${BASE_URL}${c.cover.src}` } : {}),
   };
 }

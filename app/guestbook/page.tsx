@@ -29,7 +29,7 @@ export default async function GuestbookPage() {
   }
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Guestbook", path: "/guestbook" }])} />
+      <JsonLd data={breadcrumbs([{ name: "Home", path: "/" }, { name: "Guestbook", path: "/guestbook" }])} />
       <header className="page-head">
         <p className="label">Guestbook</p>
         <h1 className="h1">Leave a note</h1>

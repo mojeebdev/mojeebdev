@@ -27,3 +27,10 @@
 .case__metrics { margin-bottom: 8px; }
 .case__sources a { color: var(--ink-2); }
 .case__next { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; }
+
+/* Project mark beside the title, and the project's own artwork under the header (official OG card or banner). */
+.case__title { display: flex; align-items: center; gap: 14px; }
+.case__mark { flex: none; width: 40px; height: 40px; border-radius: 10px; object-fit: contain; }
+.case__cover { margin: 28px 0 0; overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: var(--surface-2); box-shadow: var(--shadow-float); }
+.case__cover img { display: block; width: 100%; height: auto; }
+@media (max-width: 599px) { .case__mark { width: 32px; height: 32px; } .case__cover { border-radius: 14px; } }

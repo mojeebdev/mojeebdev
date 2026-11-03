@@ -3,7 +3,7 @@ const OFFSET_HOURS = 1;
 
 export const lagosHour = (now: Date = new Date()) => (now.getUTCHours() + OFFSET_HOURS) % 24;
 
-/** Day in the Den runs from 6am to 6pm Lagos time; evening and night are night. Keep in sync with the boot script. */
+/** Day on the site runs from 6am to 6pm Lagos time; evening and night are night. Keep in sync with the boot script. */
 export const isLagosNight = (now: Date = new Date()) => {
   const h = lagosHour(now);
   return h >= 18 || h < 6;

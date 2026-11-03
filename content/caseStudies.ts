@@ -21,7 +21,9 @@ export type CaseStudy = {
   outcome: string[];
   links: { label: string; href: string }[];
   sources: { label: string; href?: string }[];
-  diagram: "arcapush" | "stackbrief" | "stylegraft" | "revel" | "admon" | "aitax";
+  diagram: "arcapush" | "ihin" | "stackbrief" | "stylegraft" | "revel" | "admon" | "goldenrun" | "aitax";
+  /** Authentic artwork from the project itself (official OG card or banner), shown on the case study page. */
+  cover?: { src: string; alt: string; width: number; height: number };
   /** Optional live metric source key for the outcome block */
   liveMetrics?: "arcapush" | "npm:@blindspotlab/stackbrief" | "npm:@blindspotlab/stylegraft";
 };
@@ -84,8 +86,60 @@ export const caseStudies: CaseStudy[] = [
     liveMetrics: "arcapush",
   },
   {
-    slug: "stackbrief",
+    slug: "ihin",
     number: "02",
+    title: "Ìhìn",
+    dek: "An AI-native creator distribution platform: businesses launch creator-led campaigns, and invited creators with verified audiences carry them.",
+    kindLabel: "Studio product · founded by Mojeeb Titilayo",
+    statusLabel: "Live · private creator circle",
+    status: "live",
+    period: "October 2026 – present",
+    role: "Founder: product strategy, brand and design direction, and engineering. Ìhìn is a BlindspotLab Limited product; I own the product, the system architecture and the build.",
+    problem:
+      "Good products often fail to reach the people who would care about them. Ads read as noise, and creator marketing is hard to trust from both sides: businesses can't easily tell whether a creator's audience is real and relevant, and credible creators lack a fair, structured way to price their work and find the right campaigns.",
+    direction:
+      "Two connected sides on one platform. Launch is where businesses brief and run creator-led campaigns. Circle is an invitation-only home where creators establish verified audience profiles and publish rate cards. Campaigns follow DAETO (Discovery, Approach, Execution, Tracking, Optimisation), with a person making every approval rather than automated matching.",
+    approach: [
+      "One Cloudflare Worker serves React Router SSR with host-aware routing for `ihin.si`, `circle.ihin.si`, `launch.ihin.si` and `partner.ihin.si`, on D1 and private R2.",
+      "Creators join by invitation: single-use invitation tokens stored only as hashes, email one-time-code sign-in through Better Auth, and an application state machine in which only the founder can approve or decline, always with a reason.",
+      "Audience evidence stays private. Analytics screenshots are type-checked and kept in private R2; an AI pipeline (through OpenRouter) extracts audience insights and suggests USD rates, with budget and attempt caps and a manual-entry fallback, before a person reviews the result.",
+      "Campaign coordination and approval workflows follow the DAETO method, alongside Dispatches, an editorial publication that will only report consented campaign results.",
+      "Security in the platform itself: per-request CSP nonces, CSRF origin checks on every mutation, staff MFA, and preview hosts that refuse account and write endpoints.",
+    ],
+    stack: [
+      { layer: "Edge", items: ["Cloudflare Workers", "D1", "R2", "Cron Triggers"] },
+      { layer: "App", items: ["React Router 8 SSR", "React 19", "TypeScript", "Drizzle", "Zod"] },
+      { layer: "Identity", items: ["Better Auth", "Email one-time codes", "Google sign-in", "Staff MFA"] },
+      { layer: "AI", items: ["OpenRouter", "Audience extraction", "Rate suggestions"] },
+    ],
+    constraints: [
+      "Private by default: creator identity and audience evidence are sensitive, so nothing becomes public without approval.",
+      "No fictional social proof: the site shows no invented creators, campaigns or results.",
+      "One founder-engineer building both sides of a marketplace.",
+    ],
+    decisions: [
+      { title: "Invitation before scale", body: "A private Circle and invitation-only onboarding keep quality high while the operating model is proven, instead of opening a public waitlist." },
+      { title: "AI suggests, people decide", body: "The model reads evidence and proposes rates, but every creator approval and campaign decision is made by a person, and the pipeline falls back to manual entry when extraction fails." },
+      { title: "Truthful empty states", body: "Dispatches launched with a real but empty case-study archive rather than borrowed or imagined results." },
+    ],
+    outcome: [
+      "Live at ihin.si, with sign-in surfaces at circle.ihin.si and launch.ihin.si (checked 3 November 2026).",
+      "188 commits between 2026-10-24 and 2026-11-02 in a private repository.",
+      "Identity, creator onboarding, business onboarding, the campaign engine, finance, measurement and release hardening are implemented and covered by automated tests. By the repository's own status report, several external integrations are not yet verified live.",
+      "Early stage: no campaign results are published yet.",
+    ],
+    links: [
+      { label: "ihin.si", href: "https://ihin.si" },
+      { label: "Circle, for creators", href: "https://circle.ihin.si" },
+      { label: "Launch, for businesses", href: "https://launch.ihin.si" },
+    ],
+    sources: [{ label: "Ìhìn repository README and docs/IMPLEMENTATION_PROGRESS.md (private)" }, { label: "ihin.si", href: "https://ihin.si" }],
+    diagram: "ihin",
+    cover: { src: "/projects/ihin-og.png", alt: "Ìhìn's official social card: the Ìhìn logo and the line \u201cBuilt something worth seeing? Get it in front of the right people.\u201d", width: 1200, height: 630 },
+  },
+  {
+    slug: "stackbrief",
+    number: "03",
     title: "StackBrief",
     dek: "The architectural brief before a code change. An offline, source-cited CLI for developers and coding agents.",
     kindLabel: "Open source · MIT",
@@ -138,7 +192,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "stylegraft",
-    number: "03",
+    number: "04",
     title: "StyleGraft",
     dek: "Turns website inspiration into an original design system made for your product, as an agent skill for ChatGPT and Codex.",
     kindLabel: "Open source · MIT",
@@ -188,7 +242,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "revel",
-    number: "04",
+    number: "05",
     title: "Revel",
     dek: "An AI product strategist. Paste a URL and get a scored Reveal Index, a prioritised Blueprint and an exportable Action Queue, for people and for paying agents.",
     kindLabel: "Studio product · BlindspotLab",
@@ -239,7 +293,7 @@ export const caseStudies: CaseStudy[] = [
   },
   {
     slug: "admon",
-    number: "05",
+    number: "06",
     title: "Admon",
     dek: "Turns public GitHub activity into a wallet-owned build record, minted on Monad Mainnet, without letting anyone mint someone else's work.",
     kindLabel: "Hackathon submission · continued after",
@@ -286,8 +340,59 @@ export const caseStudies: CaseStudy[] = [
     diagram: "admon",
   },
   {
+    slug: "goldenrun",
+    number: "07",
+    title: "The Golden Run",
+    dek: "A free, mobile-first fan football arcade: drag, curl and strike past the keeper, with every counted goal verified on the server.",
+    kindLabel: "Interactive engineering · cultural experiment",
+    statusLabel: "Live",
+    status: "live",
+    period: "October 2026",
+    role: "Concept, product design and engineering: game design, Phaser gameplay and physics, the Cloudflare Worker API, passkey accounts, server-side shot verification and the weekly competition. Published by BlindspotLab Limited.",
+    problem:
+      "Cristiano Ronaldo's chase for 1,000 career goals gave football fans a shared story. A goal counter would be easy to build and easy to fake. A fan game only works if the goals feel earned and the competition rewards real skill.",
+    direction:
+      "Turn the moment into a proper arcade football game rather than a counter: precise drag-to-shoot controls with curl and lift, keepers of rising difficulty, story matchdays from 2008, a career Road to 1,000 and a weekly Golden Cup. Free to play, with no cash prizes and nothing to buy.",
+    approach: [
+      "A React and Phaser single-page app served from one Cloudflare Worker with Workers Static Assets. The Worker server-renders share previews and metadata for player and cup pages.",
+      "Fair play by replay: the device sends only each shot's inputs, and the server replays them with the same physics and goalkeeper to decide the result. Unusual results are held for review before they reach a leaderboard.",
+      "Passkey accounts (WebAuthn through SimpleWebAuthn): no email or password, just Face ID, fingerprint or a screen lock. Practice needs no account at all.",
+      "D1 stores players, runs and leaderboards; Workers rate limiting protects sign-in and writes; an hourly, idempotent cron opens and closes Golden Cup weeks and records provisional winners.",
+    ],
+    stack: [
+      { layer: "Game", items: ["Phaser 3", "React 19", "React Router", "TypeScript"] },
+      { layer: "Edge", items: ["Cloudflare Workers", "Static Assets", "D1", "Cron Triggers", "Rate limiting"] },
+      { layer: "Identity", items: ["Passkeys (WebAuthn)", "SimpleWebAuthn"] },
+      { layer: "Quality", items: ["Vitest", "Balance and load-check scripts"] },
+    ],
+    constraints: [
+      "Mobile first: one-finger controls that still allow curl and lift.",
+      "Scores must be trustworthy without trusting the client.",
+      "An unofficial fan game: no club crests, player likeness or affiliation claims.",
+    ],
+    decisions: [
+      { title: "Server-authoritative shots", body: "Replaying inputs on the server costs compute but makes the leaderboards credible, which is the whole point of a competition." },
+      { title: "Passkeys over passwords", body: "Dropping email and passwords lowers sign-up friction for a casual game and removes a whole class of account risk." },
+      { title: "Skill over grind", body: "Each verified goal counts once, and the weekly cup gives everyone the same twelve shots, so the best shooter wins rather than the most persistent." },
+    ],
+    outcome: [
+      "Live at goldenrun.fun (checked 3 November 2026).",
+      "Built in a day: 38 commits on 29 October 2026, in a public repository. The code is Apache-2.0; the name and branding are reserved.",
+      "An unofficial, independent fan game, not affiliated with, endorsed by or connected to any player, club, league, competition or award.",
+      "No player, goal or traffic figures are published here.",
+    ],
+    links: [
+      { label: "goldenrun.fun", href: "https://goldenrun.fun" },
+      { label: "The story", href: "https://goldenrun.fun/about" },
+      { label: "Source", href: "https://github.com/mojeebdev/goldenrun" },
+    ],
+    sources: [{ label: "Repository README, NOTICE and wrangler.jsonc", href: "https://github.com/mojeebdev/goldenrun" }, { label: "goldenrun.fun", href: "https://goldenrun.fun" }],
+    diagram: "goldenrun",
+    cover: { src: "/projects/goldenrun-og.png", alt: "The Golden Run's official artwork: a floodlit stadium and goalkeeper with the title, \u201c2008 \u2192 1,000\u201d and a Play now button.", width: 1200, height: 630 },
+  },
+  {
     slug: "aitax",
-    number: "06",
+    number: "08",
     title: "AITAX",
     dek: "Engineering for a client's Cloudflare-native prediction arcade on Robinhood Chain, built to be safe before it is live.",
     kindLabel: "Client engineering",
@@ -324,8 +429,9 @@ export const caseStudies: CaseStudy[] = [
       "123 commits between 2026-09-09 and 2026-09-18, handed off with integration, security, readiness and deployment documentation.",
     ],
     links: [{ label: "aitax.fun", href: "https://aitax.fun" }],
-    sources: [{ label: "Client repository README and docs/ (private)" }],
+    sources: [{ label: "Client repository README and docs/ (private)" }, { label: "Banner: aitax.fun/brand/banner.png (client's published artwork)", href: "https://aitax.fun" }],
     diagram: "aitax",
+    cover: { src: "/projects/aitax-banner.png", alt: "AITAX's official banner: the chip mark and the line \u201cAITAX, the King of Tax\u201d in lime on black.", width: 1500, height: 500 },
   },
 ];
 

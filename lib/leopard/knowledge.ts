@@ -22,6 +22,8 @@ const ENTRIES: Entry[] = [
   { keys: ["where", "location", "based", "lagos", "nigeria", "live", "timezone"], text: `Mojeeb is based in ${person.location}, on West Africa Time (UTC+1).`, href: "/about" },
   { keys: ["blindspotlab", "studio", "company", "agency", "rc"], text: `${studio.legalName} (${studio.registration}) is the studio Mojeeb founded, incorporated in ${studio.country} on ${studio.incorporatedLabel}. It turns rough ideas into live products: strategy, design, engineering and automation.`, href: studio.url },
   { keys: ["arcapush", "flagship", "registry", "discovery", "distribution"], text: study("arcapush")?.dek ?? "", href: "/work/arcapush" },
+  { keys: ["ihin", "ìhìn", "creator distribution", "creators", "influencer", "circle", "launch"], text: study("ihin")?.dek ?? "", href: "/work/ihin" },
+  { keys: ["golden run", "goldenrun", "football", "ronaldo", "game", "arcade"], text: `${study("goldenrun")?.dek ?? ""} It's an unofficial fan game.`, href: "/work/goldenrun" },
   { keys: ["stackbrief", "architecture brief", "repository brief", "constellation", "code graph"], text: study("stackbrief")?.dek ?? "", href: "/work/stackbrief" },
   { keys: ["stylegraft", "design.md", "design system"], text: study("stylegraft")?.dek ?? "", href: "/work/stylegraft" },
   { keys: ["revel", "reveal index", "product strategist", "x402"], text: study("revel")?.dek ?? "", href: "/work/revel" },
@@ -33,8 +35,8 @@ const ENTRIES: Entry[] = [
   { keys: ["daeto", "method", "process", "approach", "how do you work", "workflow"], text: `DAETO: ${daeto.map((d) => d.name).join(", ")}. Understand the problem before choosing the build, and improve from evidence rather than adding features.`, href: "/about#daeto" },
   { keys: ["principle", "philosophy", "believe", "values"], text: principles.map((p) => p.title).join(". ") + ".", href: "/about" },
   { keys: ["how many", "projects", "built", "portfolio", "archive", "shipped"], text: `${projects.length} projects are documented in the archive, ${caseStudies.length} with full case studies. Mojeeb's own records put the total shipped at 40+.`, href: "/projects" },
-  { keys: ["guestbook", "lantern", "note", "sign"], text: "Leave a note in the guestbook. Once it's approved, it floats over the Den as a lantern.", href: "/guestbook" },
-  { keys: ["den", "leopard", "mascot", "you", "your name", "cat"], text: "I'm the leopard who guards this Den. Mojeeb drew me as a layered SVG rig, and the workshop around me is Three.js. Everything I point at is real work.", href: "/" },
+  { keys: ["guestbook", "lantern", "note", "sign"], text: "Leave a note in the guestbook. Once it's approved, it floats over the workshop as a lantern.", href: "/guestbook" },
+  { keys: ["den", "leopard", "mascot", "you", "your name", "cat"], text: "I'm the leopard who guides visitors around Mojeeb's portfolio. Mojeeb drew me as a layered SVG rig, and the workshop around me is Three.js. Everything I point at is real work.", href: "/" },
   { keys: ["token", "$mojeeb", "coin", "crypto"], text: "There's a page about the $MOJEEB creator token, with its risks spelled out. I can't give financial advice.", href: "/token" },
   { keys: ["started", "history", "timeline", "journey", "when"], text: milestones.map((m) => `${m.date}: ${m.title}`).join(". ") + ".", href: "/about" },
   { keys: ["writing", "blog", "articles"], text: "Writing lives on the writing page.", href: "/writing" },
@@ -118,6 +120,6 @@ export function knowledgeText() {
     archive,
     "",
     "## Site paths",
-    "/ (the Den: the interactive 3D workshop visitors land in), /profile (Mojeeb's profile, metrics and case studies), /about, /about#daeto, /work, /projects, /activity, /lab, /lab/constellation, /writing, /now, /guestbook, /contact, /token (the $MOJEEB creator token page, with risk disclosures)",
+    "/ (home: the interactive 3D workshop visitors land in), /profile (Mojeeb's profile, metrics and case studies), /about, /about#daeto, /work, /projects, /activity, /lab, /lab/constellation, /writing, /now, /guestbook, /contact, /token (the $MOJEEB creator token page, with risk disclosures)",
   ].join("\n");
 }

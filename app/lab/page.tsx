@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 const experiments = [
   { href: "/lab/constellation", title: "Repository constellation", body: "A real codebase as a force-directed graph. Select any file to see its imports, its dependents and its blast radius, using StackBrief's own scan output. Canvas 2D with a hand-written simulation, no graph library.", tags: ["Canvas", "Force simulation", "StackBrief data"], feature: true, internal: true },
-  { href: "/?intro=1", title: "Enter the Den", body: "Replay the homepage introduction: a layered SVG leopard rig over a Three.js environment with soft shadows, dust and camera drift.", tags: ["Three.js", "SVG rig", "Interaction"], internal: true },
+  { href: "/?intro=1", title: "Meet the leopard", body: "Replay the homepage introduction: a layered SVG leopard rig over a Three.js environment with soft shadows, dust and camera drift.", tags: ["Three.js", "SVG rig", "Interaction"], internal: true },
   { href: "https://ratssacre.lol", title: "Ratssacre", body: "A browser night-vision precision shooting game. Spot movement across a dark farmyard and land the shot. Headshots only.", tags: ["Browser game", "Vite", "Cloudflare Workers"], note: "Private source" },
   { href: "https://word.outship.dev", title: "Word", body: "A word counter for any web page, served by Outship's Worker on its own hostname, with explicit counting rules and SSRF controls.", tags: ["Cloudflare Workers", "Next.js"], source: "https://github.com/mojeebdev/outship" },
   { href: "/activity", title: "Activity heatmap", body: "My public GitHub calendar with daily, weekly and cumulative views, keyboard navigation and range selection.", tags: ["SVG", "Data visualisation"], internal: true },
@@ -20,7 +20,7 @@ const experiments = [
 export default function LabPage() {
   return (
     <>
-      <JsonLd data={breadcrumbs([{ name: "The Den", path: "/" }, { name: "Lab", path: "/lab" }])} />
+      <JsonLd data={breadcrumbs([{ name: "Home", path: "/" }, { name: "Lab", path: "/lab" }])} />
       <header className="page-head">
         <p className="label">Lab</p>
         <h1 className="h1">The playful side</h1>

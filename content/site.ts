@@ -10,7 +10,7 @@ export const person = {
   /** As stated on the live mojeeb.xyz hero (18 Oct 2026). Set to null to hide. */
   availability: "Available for selected work" as string | null,
   summary:
-    "Product engineer and strategist. Founder of BlindspotLab and creator of Arcapush, the discovery and distribution registry for products, AI agents and hackathon builds. Also behind the open-source developer tools StackBrief, StyleGraft and the Arcapush CLI.",
+    "Product engineer and strategist. Founder of BlindspotLab and creator of Arcapush, the discovery and distribution registry for products, AI agents and hackathon builds, and Ìhìn, an AI-native creator distribution platform. Also behind the open-source developer tools StackBrief, StyleGraft and the Arcapush CLI.",
 };
 
 /**
@@ -68,6 +68,8 @@ export const contact = {
 /** Hero attribution: founder/creator line, then the published developer tools (linked to npm). */
 export const founderOf = { name: "BlindspotLab", href: "https://blindspotlab.xyz" } as const;
 export const creatorOfProduct = { name: "Arcapush", href: "https://arcapush.com" } as const;
+/** Newest studio product, named beside Arcapush in the hero. */
+export const alsoFounded = { name: "Ìhìn", href: "https://ihin.si" } as const;
 export const alsoBehind = [
   { name: "StackBrief", href: "https://www.npmjs.com/package/@blindspotlab/stackbrief" },
   { name: "StyleGraft", href: "https://www.npmjs.com/package/@blindspotlab/stylegraft" },
@@ -75,7 +77,7 @@ export const alsoBehind = [
 ] as const;
 
 export const nav = [
-  { href: "/", label: "The Den" },
+  { href: "/", label: "Home" },
   { href: "/profile", label: "Profile" },
   { href: "/work", label: "Work" },
   { href: "/activity", label: "Activity" },

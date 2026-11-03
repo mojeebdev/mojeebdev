@@ -30,7 +30,7 @@ export default function DenEasterEgg() {
     <div className="egg" role="status">
       <LeopardPeek size={110} expression="playful" />
       <div className="egg__bubble">
-        <p><strong>You found the den.</strong> Curious ones are always welcome.</p>
+        <p><strong>You found the leopard.</strong> Curious ones are always welcome.</p>
         <p className="egg__actions">
           <Link href="/?intro=1" onClick={() => setOpen(false)}>Replay the intro</Link>
           <button type="button" onClick={() => setOpen(false)}>Close</button>
