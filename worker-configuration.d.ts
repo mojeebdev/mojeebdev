@@ -7,7 +7,7 @@ interface __BaseEnv_Env {
 	LEOPARD_LIMITER: RateLimit;
 	IMAGES: ImagesBinding;
 	ASSETS: Fetcher;
-	GUESTBOOK_AUTO_APPROVE: "false";
+	GUESTBOOK_AUTO_APPROVE: "true";
 }
 declare namespace Cloudflare {
 	interface Env extends __BaseEnv_Env {}

@@ -26,7 +26,7 @@ export function getGuestbook(): GuestbookStatus {
   if (!env.GUESTBOOK_IP_SALT || env.GUESTBOOK_IP_SALT.length < 16) return { active: false, reason: "no-salt" };
   return {
     active: true,
-    guestbook: { store: guestbookStore(env.DB), salt: env.GUESTBOOK_IP_SALT, autoApprove: env.GUESTBOOK_AUTO_APPROVE === "true", limiter: env.GUESTBOOK_LIMITER },
+    guestbook: { store: guestbookStore(env.DB), salt: env.GUESTBOOK_IP_SALT, autoApprove: env.GUESTBOOK_AUTO_APPROVE !== "false", limiter: env.GUESTBOOK_LIMITER },
   };
 }
 

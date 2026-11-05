@@ -37,7 +37,7 @@ export interface WorkerBindings {
   GUESTBOOK_IP_SALT?: string;
   /** Secret (optional): token sign-in for moderation when Cloudflare Access is not configured. */
   GUESTBOOK_ADMIN_TOKEN?: string;
-  /** Var: "true" publishes clean entries immediately. Default is review first. */
+  /** Var: notes publish immediately unless this is "false", which turns review-first back on. Spam heuristics always apply. */
   GUESTBOOK_AUTO_APPROVE?: string;
   /** Vars: Cloudflare Access protecting /guestbook/admin and /api/guestbook/admin. */
   ACCESS_TEAM_DOMAIN?: string;

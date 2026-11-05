@@ -49,7 +49,7 @@ export default function GuestbookForm({ active }: { active: boolean }) {
         <Leopard pose="celebrate" expression="happy" size={120} />
         <div>
           <p className="h3">Thank you. The leopard approves.</p>
-          <p className="muted">{state.status === "approved" ? "Your note is live in the guestbook." : "Your note will appear after a quick review. That keeps the guestbook free of spam."}</p>
+          <p className="muted">{state.status === "approved" ? "Your note is live, and it now glows as a lantern over the workshop on the homepage." : "Your note was held for a quick check, because it looked like spam. If it's genuine, it will appear soon."}</p>
           <button type="button" className="text-btn" onClick={() => { setState({ phase: "idle" }); loadToken(); }}>Sign again</button>
         </div>
       </div>
@@ -87,7 +87,7 @@ export default function GuestbookForm({ active }: { active: boolean }) {
         <p className="gb-status" role="status" aria-live="polite">{state.phase === "error" ? <span className="gb-err">{state.message}</span> : !token ? <span className="meta">Preparing the form…</span> : null}</p>
       </div>
       <p id={`${id}-privacy`} className="gb-privacy meta">
-        Privacy: your name, message and optional link are shown publicly after review. Your IP address is never stored or published; only a salted hash is kept, to limit abuse. Ask me to remove an entry at any time: hello@mojeeb.xyz.
+        Privacy: your name, message and optional link are shown publicly as soon as you post. Anything offensive is removed. Your IP address is never stored or published; only a salted hash is kept, to limit abuse. Ask me to remove an entry at any time: hello@mojeeb.xyz.
       </p>
     </form>
   );

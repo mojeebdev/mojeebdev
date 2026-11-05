@@ -29,7 +29,7 @@ function stationNotes(p: Pulse, lanterns: number | null): Partial<Record<DenStat
     beacon: p.arcapush.indexed !== null ? `Live: Arcapush is indexing ${count(p.arcapush.indexed)} builds. The beacon glows brighter with platform traffic.` : undefined,
     workbench: p.github.week > 0 ? `Live: ${count(p.github.week)} public GitHub contributions in the last 7 days of the calendar, one spark each.` : undefined,
     builds: `Live: ${p.projects} tiles on the wall, one for every project in the archive.`,
-    guestbook: lanterns ? `Live: ${lanterns} lantern${lanterns === 1 ? "" : "s"} overhead, one for every approved note.` : undefined,
+    guestbook: lanterns ? `Live: ${lanterns} lantern${lanterns === 1 ? "" : "s"} overhead, one for every guestbook note.` : undefined,
   };
 }
 
@@ -125,7 +125,7 @@ export default function DenExperience({ pulse }: { pulse: Pulse }) {
   // Guestbook notes become lanterns. Fetched in the browser so the page never depends on the database.
   useEffect(() => {
     let alive = true;
-    fetch("/api/guestbook?limit=30", { cache: "no-store" })
+    fetch("/api/guestbook?limit=50", { cache: "no-store" })
       .then((r) => r.json())
       .then((d) => { if (alive) { const list: PublicEntry[] = d.active && Array.isArray(d.entries) ? d.entries : []; entriesRef.current = list; setEntries(list); } })
       .catch(() => { if (alive) setEntries([]); });

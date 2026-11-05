@@ -40,8 +40,17 @@ describe("guestbook API on D1", () => {
     expect((await (await GET(new Request("https://mojeeb.xyz/api/guestbook"))).json()).active).toBe(false);
   });
 
-  it("accepts a valid note into review, never publishing it before approval", async () => {
+  it("publishes a valid note immediately by default (open guestbook)", async () => {
     env.current = { DB: createTestD1(), GUESTBOOK_IP_SALT: SALT };
+    const res = await post({ name: "Ada", message: "Hello from Lagos", link: "ada.dev", token: await oldToken() });
+    expect(res.status).toBe(201);
+    expect(await res.json()).toEqual({ ok: true, status: "approved" });
+    const list = await (await GET(new Request("https://mojeeb.xyz/api/guestbook"))).json();
+    expect(list.entries[0]).toMatchObject({ name: "Ada", message: "Hello from Lagos" });
+  });
+
+  it("holds notes for review when GUESTBOOK_AUTO_APPROVE is \"false\"", async () => {
+    env.current = { DB: createTestD1(), GUESTBOOK_IP_SALT: SALT, GUESTBOOK_AUTO_APPROVE: "false" };
     const res = await post({ name: "Ada", message: "Hello from Lagos", link: "ada.dev", token: await oldToken() });
     expect(res.status).toBe(201);
     expect(res.headers.get("cache-control")).toContain("no-store");
