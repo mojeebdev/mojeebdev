@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     const status = looksSpammy(v.data.name, v.data.message) ? "spam" : autoApprove ? "approved" : "pending";
     await store.create({ ...v.data, status, ipHash });
     logEvent("info", "guestbook.submitted", { status });
-    // Spam is reported as pending: the sender sees the normal "after review" message.
+    // Spam is reported as pending: the sender is told the note is held for a quick check.
     return json({ ok: true, status: status === "spam" ? "pending" : status }, 201);
   } catch (err) {
     logEvent("error", "guestbook.submit_failed", errorFields(err));

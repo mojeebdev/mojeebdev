@@ -33,3 +33,7 @@
 .gb-admin { display: grid; gap: 16px; }
 .gb-admin__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .gb-more { display: grid; gap: 8px; justify-items: start; margin-top: var(--s-5); }
+
+/* Moderation: delete is the main action now that notes publish immediately. */
+.btn--danger { border-color: color-mix(in srgb, var(--danger) 55%, var(--line)); color: var(--danger); }
+.btn--danger:hover { background: color-mix(in srgb, var(--danger) 12%, transparent); border-color: var(--danger); }

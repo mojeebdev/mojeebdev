@@ -40,7 +40,7 @@ Every guestbook response carries `Cache-Control: private, no-store`. `/guestbook
 - **Same-origin check** on every POST, and JSON content type only.
 - **Rate limits in three layers:** an in-isolate window, the Workers Rate Limiting binding `GUESTBOOK_LIMITER` (5 per minute per hashed IP, across isolates), and D1 itself (3 per 10 minutes per hashed IP).
 - **Spam heuristics:** link stuffing and keyword spam are routed to the `spam` queue for review, never silently dropped. The sender sees the normal "after review" message.
-- **Review first:** new notes are `pending` unless `GUESTBOOK_AUTO_APPROVE` is `"true"`.
+- **Open by default:** clean notes are `approved` (live, and a lantern on the homepage) the moment they are posted. The owner deletes or hides anything offensive from `/guestbook/admin`, which opens on the live notes. Set `GUESTBOOK_AUTO_APPROVE` to `"false"` to bring back review-first.
 - **Rendering:** React escapes all text. Visitor links render with `rel="ugc nofollow noopener noreferrer"`. No HTML from visitors is ever rendered.
 - **IP addresses:** never stored or logged. Only an HMAC-SHA-256 of `CF-Connecting-IP` with the secret salt is kept, for rate limiting.
 - **Logs:** structured events only (for example `guestbook.submitted` with status `pending`). Logs never contain names, messages, links, IPs or hashes.

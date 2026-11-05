@@ -58,8 +58,9 @@
 		}
 	],
 	"vars": {
-		// "true" publishes clean entries without review. Spam heuristics still apply.
-		"GUESTBOOK_AUTO_APPROVE": "false"
+		// Open guestbook: clean notes go live (and become lanterns) immediately; the owner deletes anything offensive
+		// from /guestbook/admin. Set to "false" to require review first. Spam heuristics always apply.
+		"GUESTBOOK_AUTO_APPROVE": "true"
 		// Add once the Cloudflare Access application for /guestbook/admin exists (values are not secret):
 		// "ACCESS_TEAM_DOMAIN": "<your-team>.cloudflareaccess.com",
 		// "ACCESS_AUD": "<Application Audience (AUD) tag>"

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState, type FormEvent } from "react";
 import type { GuestbookEntry, ModerationAction, Status } from "@/lib/guestbook/schema";
 
 type Filter = Status | "all";
+/** The guestbook is open: notes go live at once, so moderation starts on what visitors can see. */
+const LABEL: Record<Filter, string> = { approved: "live", pending: "hidden", spam: "spam", all: "all" };
 type Auth = "access" | "token" | "none";
 type View =
   | { phase: "loading" }
@@ -13,7 +15,7 @@ type View =
 
 export default function GuestbookAdmin() {
   const [view, setView] = useState<View>({ phase: "loading" });
-  const [filter, setFilter] = useState<Filter>("pending");
+  const [filter, setFilter] = useState<Filter>("approved");
   const [notice, setNotice] = useState<string | null>(null);
   const [token, setToken] = useState("");
   const [version, setVersion] = useState(0);
@@ -64,10 +66,11 @@ export default function GuestbookAdmin() {
   const total = view.counts.pending + view.counts.approved + view.counts.spam;
   return (
     <div className="gb-admin">
+      <p className="meta">Notes go live as soon as they are posted. Delete anything offensive; Hide takes a note down without deleting it.</p>
       <p className="meta">Signed in as {view.moderator === "admin-token" ? "admin (token)" : view.moderator}.</p>
       <div className="archive__chips" role="group" aria-label="Filter by status">
-        {(["pending", "approved", "spam", "all"] as Filter[]).map((f) => (
-          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>{f} ({f === "all" ? total : view.counts[f]})</button>
+        {(["approved", "spam", "pending", "all"] as Filter[]).map((f) => (
+          <button key={f} type="button" aria-pressed={filter === f} onClick={() => setFilter(f)}>{LABEL[f]} ({f === "all" ? total : view.counts[f]})</button>
         ))}
         {view.auth === "token" && <button type="button" onClick={async () => { await fetch("/api/guestbook/admin/session", { method: "DELETE" }); reload(); }}>Sign out</button>}
       </div>
@@ -75,14 +78,14 @@ export default function GuestbookAdmin() {
       <ul role="list" className="gb-list">
         {view.entries.map((e) => (
           <li key={e.id} className="gb-entry">
-            <div className="gb-entry__head"><span className="gb-entry__name">{e.name}</span><span className="chip">{e.status}</span><time className="meta" dateTime={e.created_at}>{new Date(e.created_at).toLocaleString("en-GB")}</time></div>
+            <div className="gb-entry__head"><span className="gb-entry__name">{e.name}</span><span className="chip">{LABEL[e.status]}</span><time className="meta" dateTime={e.created_at}>{new Date(e.created_at).toLocaleString("en-GB")}</time></div>
             <p className="gb-entry__msg">{e.message}</p>
             {e.link && <p className="meta">{e.link}</p>}
             <div className="gb-admin__actions">
-              {e.status !== "approved" && <button type="button" className="btn btn--sm btn--primary" onClick={() => act(e.id, "approve")}>Approve</button>}
-              {e.status !== "pending" && <button type="button" className="btn btn--sm" onClick={() => act(e.id, "pending")}>Back to pending</button>}
+              <button type="button" className="btn btn--sm btn--danger" onClick={() => act(e.id, "delete")}>Delete</button>
+              {e.status !== "approved" && <button type="button" className="btn btn--sm" onClick={() => act(e.id, "approve")}>Publish</button>}
+              {e.status === "approved" && <button type="button" className="btn btn--sm" onClick={() => act(e.id, "pending")}>Hide</button>}
               {e.status !== "spam" && <button type="button" className="btn btn--sm" onClick={() => act(e.id, "spam")}>Spam</button>}
-              <button type="button" className="btn btn--sm btn--ghost" onClick={() => act(e.id, "delete")}>Delete</button>
             </div>
           </li>
         ))}

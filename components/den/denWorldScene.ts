@@ -35,7 +35,7 @@ export type DenWorldController = {
   setLanterns: (ids: string[]) => void;
   dispose: () => void;
 };
-const MAX_SPARKS = 40, MAX_LANTERNS = 30, MAX_TILES = 64;
+const MAX_SPARKS = 40, MAX_LANTERNS = 50, MAX_TILES = 64;
 
 const ink = 0x151a22, graphite = 0x303947, edge = 0x788ca4;
 const blue = 0x4c91f5, gold = 0xf5c66b, paper = 0xece5d7;

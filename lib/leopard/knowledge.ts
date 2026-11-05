@@ -35,7 +35,7 @@ const ENTRIES: Entry[] = [
   { keys: ["daeto", "method", "process", "approach", "how do you work", "workflow"], text: `DAETO: ${daeto.map((d) => d.name).join(", ")}. Understand the problem before choosing the build, and improve from evidence rather than adding features.`, href: "/about#daeto" },
   { keys: ["principle", "philosophy", "believe", "values"], text: principles.map((p) => p.title).join(". ") + ".", href: "/about" },
   { keys: ["how many", "projects", "built", "portfolio", "archive", "shipped"], text: `${projects.length} projects are documented in the archive, ${caseStudies.length} with full case studies. Mojeeb's own records put the total shipped at 40+.`, href: "/projects" },
-  { keys: ["guestbook", "lantern", "note", "sign"], text: "Leave a note in the guestbook. Once it's approved, it floats over the workshop as a lantern.", href: "/guestbook" },
+  { keys: ["guestbook", "lantern", "note", "sign"], text: "Leave a note in the guestbook and it floats over the workshop as a lantern straight away.", href: "/guestbook" },
   { keys: ["den", "leopard", "mascot", "you", "your name", "cat"], text: "I'm the leopard who guides visitors around Mojeeb's portfolio. Mojeeb drew me as a layered SVG rig, and the workshop around me is Three.js. Everything I point at is real work.", href: "/" },
   { keys: ["token", "$mojeeb", "coin", "crypto"], text: "There's a page about the $MOJEEB creator token, with its risks spelled out. I can't give financial advice.", href: "/token" },
   { keys: ["started", "history", "timeline", "journey", "when"], text: milestones.map((m) => `${m.date}: ${m.title}`).join(". ") + ".", href: "/about" },
